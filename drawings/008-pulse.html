@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 008</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#008</h1>
+  <p>Forty concentric irregular twelve-sided polygons around the centre of the page, each vertex placed a small random distance outward from the corresponding vertex of the polygon within.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const cx = p.width/2, cy = p.height/2, V = 12, N = 40;
+    const radii = Array(V).fill(10);
+    p.noFill(); p.stroke(20); p.strokeWeight(1);
+    for (let ring = 0; ring < N; ring++) {
+      for (let i = 0; i < V; i++) radii[i] += p.random(4, 9);
+      p.beginShape();
+      for (let i = 0; i < V; i++) {
+        const a = (i / V) * p.TWO_PI;
+        p.vertex(cx + Math.cos(a)*radii[i], cy + Math.sin(a)*radii[i]);
+      }
+      p.endShape(p.CLOSE);
+    }
+  }},
+  { strategy: "Work at a different speed", draw: (p) => {
+    const cx = p.width/2, cy = p.height/2, V = 12, N = 40;
+    const radii = Array(V).fill(4);
+    p.noFill(); p.stroke(20); p.strokeWeight(1);
+    for (let ring = 0; ring < N; ring++) {
+      const speed = ring < 20 ? 1 : 40;
+      for (let i = 0; i < V; i++) radii[i] += p.random(0.2*speed, 1.0*speed);
+      p.beginShape();
+      for (let i = 0; i < V; i++) {
+        const a = (i / V) * p.TWO_PI;
+        p.vertex(cx + Math.cos(a)*radii[i], cy + Math.sin(a)*radii[i]);
+      }
+      p.endShape(p.CLOSE);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

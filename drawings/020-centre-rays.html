@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 020</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#020</h1>
+  <p>One thousand points placed at random across the page. From the centre of the page, a straight line drawn to each point. The lines are coloured red, yellow, blue, or black; the colour chosen by the toss of a four-sided die.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLORS = [[200,40,40],[240,200,40],[40,80,200],[20,20,20]];
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    p.strokeWeight(0.6);
+    for (let i = 0; i < 1000; i++) {
+      const x = p.random(W), y = p.random(H);
+      const col = COLORS[Math.floor(p.random(4))];
+      p.stroke(col[0], col[1], col[2], 160);
+      p.line(cx, cy, x, y);
+    }
+  }},
+  { strategy: "Reverse", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    p.strokeWeight(0.6);
+    for (let i = 0; i < 1000; i++) {
+      const side = Math.floor(p.random(4));
+      let x, y;
+      if (side === 0) { x = p.random(W); y = 0; }
+      else if (side === 1) { x = W; y = p.random(H); }
+      else if (side === 2) { x = p.random(W); y = H; }
+      else { x = 0; y = p.random(H); }
+      const col = COLORS[Math.floor(p.random(4))];
+      p.stroke(col[0], col[1], col[2], 160);
+      p.line(x, y, cx, cy);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

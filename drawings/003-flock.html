@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 003</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#003</h1>
+  <p>Fifty points placed at random on the page; from each point, a path of thirty short segments, each segment's direction turned slightly from the last.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    p.stroke(20); p.strokeWeight(1.2); p.noFill();
+    for (let i = 0; i < 50; i++) {
+      let x = p.random(40, W-40), y = p.random(40, H-40);
+      let a = p.random(p.TWO_PI);
+      p.beginShape();
+      for (let s = 0; s < 30; s++) {
+        p.vertex(x, y);
+        const target = Math.atan2(cy - y, cx - x);
+        let da = target - a;
+        while (da > Math.PI) da -= 2*Math.PI;
+        while (da < -Math.PI) da += 2*Math.PI;
+        a += da * 0.08 + p.random(-0.2, 0.2);
+        const step = 14;
+        x += Math.cos(a)*step; y += Math.sin(a)*step;
+        if (Math.hypot(x-cx, y-cy) < 10) break;
+      }
+      p.endShape();
+    }
+    p.noStroke(); p.fill(200,40,40); p.circle(cx, cy, 10);
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    p.stroke(20, 80); p.strokeWeight(1); p.noFill();
+    for (let i = 0; i < 50; i++) {
+      let x = cx, y = cy;
+      let a = p.random(p.TWO_PI);
+      p.beginShape();
+      for (let s = 0; s < 30; s++) {
+        p.vertex(x, y);
+        a += p.random(-0.3, 0.3);
+        const step = 14;
+        x += Math.cos(a)*step; y += Math.sin(a)*step;
+      }
+      p.endShape();
+    }
+    p.noStroke(); p.fill(200,40,40); p.circle(cx, cy, 10);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

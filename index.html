@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>sol 0.1</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+  body { margin: 0; background: #f6f5f0; font-family: ui-monospace, monospace; color: #111; }
+  header { padding: 20px 24px; border-bottom: 1px solid #ddd; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+  h1 { margin: 0; font-size: 18px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .sub { color: #666; font-size: 13px; }
+  button { font: inherit; padding: 4px 10px; cursor: pointer; }
+  main { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; padding: 24px; }
+  .card { background: #fff; border: 1px solid #ddd; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+  .card:hover { border-color: #888; }
+  .preview { aspect-ratio: 1/1; border: 0; border-bottom: 1px solid #eee; background: #fff; width: 100%; display: block; }
+  .meta { padding: 12px 14px; }
+  .t { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+  .i { font-size: 13px; line-height: 1.5; color: #333; }
+</style>
+</head>
+<body>
+<header>
+  <h1>sol 0.1</h1>
+  <span class="sub">Wall drawings after Sol LeWitt. Click a tile to open.</span>
+</header>
+<main id="grid"></main>
+
+<script>
+const drawings = [
+  { num: '001', file: 'drawings/001-migrations.html',           instruction: 'Ten points on the left edge of the page and ten points on the right edge, unevenly spaced; from each left point a red line to a right point, from each right point a blue line to a left point, and at every intersection a small yellow circle.' },
+  { num: '002', file: 'drawings/002-grid-bleed.html',           instruction: 'A square divided into a twenty by twenty grid; one cell, chosen at random, is coloured red; each adjacent cell in turn is coloured red or black until no white cells remain.' },
+  { num: '003', file: 'drawings/003-flock.html',                instruction: 'Fifty points placed at random on the page; from each point, a path of thirty short segments, each segment\u2019s direction turned slightly from the last.' },
+  { num: '004', file: 'drawings/004-four-winds.html',           instruction: 'Forty straight lines from each of the four corners toward the opposite edges; the lines from the upper-left corner red, from the upper-right yellow, from the lower-right blue, from the lower-left black.' },
+  { num: '005', file: 'drawings/005-tangents.html',             instruction: 'Fifteen circles of random size, placed at random on the page; the intersection of any two circles is coloured red.' },
+  { num: '006', file: 'drawings/006-descent.html',              instruction: 'Eighty horizontal lines across the page, each divided into segments coloured alternately red and blue, each line shifted slightly to the right of the line above.' },
+  { num: '007', file: 'drawings/007-shatter.html',              instruction: 'The page divided into four equal squares; one square coloured black; each of the other three divided into four equal squares and treated the same; continuing until the squares are smaller than a fingernail.' },
+  { num: '008', file: 'drawings/008-pulse.html',                instruction: 'Forty concentric irregular twelve-sided polygons around the centre of the page, each vertex placed a small random distance outward from the corresponding vertex of the polygon within.' },
+  { num: '009', file: 'drawings/009-encounter.html',            instruction: 'A grid of black points and a grid of red points, the red grid rotated and shifted slightly from the black; from each black point a line to its nearest red point.' },
+  { num: '010', file: 'drawings/010-drift.html',                instruction: 'Three hundred short line segments placed at random on the page, the angle of each determined by its position; segments in the upper half blue, segments in the lower half yellow.' },
+  { num: '011', file: 'drawings/011-bisections.html',           instruction: 'A line drawn across the page at any angle; a second line perpendicular to it, passing through its midpoint; a third perpendicular to the second through its midpoint; continuing for forty lines.' },
+  { num: '012', file: 'drawings/012-cut-up.html',               instruction: 'Five words drawn at random from a random encyclopedia article. The five words determine, by the numeric value of their letters, the shapes drawn on the page, their counts, their colours, and their arrangement.' },
+  { num: '013', file: 'drawings/013-four-directions.html',      instruction: 'The page divided into a sixteen by sixteen grid. Within each cell, straight lines drawn in one of four directions — vertical, horizontal, diagonal left, diagonal right — the direction of each cell chosen by the toss of a coin.' },
+  { num: '014', file: 'drawings/014-arcs-from-corners.html',    instruction: 'Arcs from the four corners of the page and arcs from the midpoints of the four sides, each arc centred on its origin, each radius increasing by an equal step until the arc reaches the opposite edge.' },
+  { num: '015', file: 'drawings/015-all-points-connected.html', instruction: 'Fifty points placed at random on the page, evenly distributed. All of the points connected to each other by straight lines.' },
+  { num: '016', file: 'drawings/016-ten-thousand-lines.html',   instruction: 'Ten thousand short black lines, each of equal length, each at a random angle, drawn to cover the page evenly.' },
+  { num: '017', file: 'drawings/017-nested-cubes.html',         instruction: 'An isometric cube drawn in black lines at the centre of the page. Within it, a smaller isometric cube rotated by a quarter turn. Within that, a smaller still. Continue until the cube is too small to draw.' },
+  { num: '018', file: 'drawings/018-four-bands.html',           instruction: 'Four equal horizontal bands across the page. The first band filled with red parallel lines, the second with yellow, the third with blue, the fourth with black. The angle of the lines in each band is chosen by the toss of a coin.' },
+  { num: '019', file: 'drawings/019-inscribed-circles.html',    instruction: 'The page divided into a grid of twelve by twelve cells. Within each cell, a circle inscribed; within each circle a second circle, its diameter a random fraction of the first.' },
+  { num: '020', file: 'drawings/020-centre-rays.html',          instruction: 'One thousand points placed at random across the page. From the centre of the page, a straight line drawn to each point. The lines are coloured red, yellow, blue, or black; the colour chosen by the toss of a four-sided die.' },
+  { num: '021', file: 'drawings/021-recursive-square.html',     instruction: 'A square. Within it, four smaller squares of equal size. Within each smaller square, four smaller squares. Continue until the squares are one eighth of an inch across. The draughtsman may leave any square undivided by chance.' },
+  { num: '022', file: 'drawings/022-spindle.html',              instruction: 'A spiral drawn from the centre of the page, completing twenty revolutions outward. Along its length, black dots placed at regular angular intervals, each dot larger than the last.' },
+  { num: '023', file: 'drawings/023-clerks-ledger.html',        instruction: 'Two columns, each of one hundred horizontal lines of equal length. The lines on the left column red, those on the right blue. Every tenth line on each side crossed through with a black diagonal.' },
+  { num: '024', file: 'drawings/024-palm.html',                 instruction: 'A single vertical line from the top of the page to the bottom. At one hundred points along the line, a short horizontal stroke drawn; the strokes alternate left and right, and their lengths are decided by chance.' },
+  { num: '025', file: 'drawings/025-select-committee.html',     instruction: 'One thousand points placed at random on the page. Each point is examined: if the sum of its coordinates is even, enclosed in a small black square; if odd, in a small red square.' },
+  { num: '026', file: 'drawings/026-branching.html',            instruction: 'From a single point at the bottom centre of the page, a line rising upward. At random intervals the line divides into two; each branch continuing upward, each branch dividing again. Some branches yellow, others red; the rest black.' },
+  { num: '027', file: 'drawings/027-clamshell.html',            instruction: 'The page divided by a vertical line. On the left half, fifty curves drawn at random. On the right half, each curve mirrored across the line.' },
+  { num: '028', file: 'drawings/028-twin-settlements.html',     instruction: 'Two points on the horizontal centre line, one quarter of the way in from each edge. From each, fifty concentric arcs expanding outward; where the arcs of one meet the arcs of the other, a small black dot.' },
+  { num: '029', file: 'drawings/029-the-net.html',              instruction: 'A rectangle at the centre of the page. Within it, a fine grid forming a net. Outside, sixty straight lines each ending at a random point on the rectangle\u2019s boundary.' },
+  { num: '030', file: 'drawings/030-allegory.html',             instruction: 'Seven vertical bars in a row at the bottom of the page, widths chosen at random, heights proportional to the numbers one through seven in an order chosen by the toss of a die, each bar a single colour.' },
+  { num: '031', file: 'drawings/031-neo-bharatam.html',         instruction: 'Forty curves drawn across the page at random. For each curve, a second curve of the same length drawn as its mirror image across the vertical axis. Originals red, mirrors blue.' },
+];
+
+const grid = document.getElementById('grid');
+for (const d of drawings) {
+  const a = document.createElement('a');
+  a.className = 'card';
+  a.href = d.file;
+  a.innerHTML = `
+    <img class="preview" src="previews/${d.num}.png" alt="Wall Drawing ${d.num}" loading="lazy">
+
+    <div class="meta">
+      <div class="t">#${d.num}</div>
+      <div class="i">${d.instruction}</div>
+    </div>
+  `;
+  grid.appendChild(a);
+}
+</script>
+</body>
+</html>

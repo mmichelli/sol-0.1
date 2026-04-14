@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 001</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#001</h1>
+  <p>Ten points on the left edge of the page and ten points on the right edge, unevenly spaced; from each left point a red line to a right point, from each right point a blue line to a left point, and at every intersection a small yellow circle.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function ix([[x1,y1],[x2,y2]],[[x3,y3],[x4,y4]]) {
+  const d=(x1-x2)*(y3-y4)-(y1-y2)*(x3-x4); if (Math.abs(d)<1e-6) return null;
+  const t=((x1-x3)*(y3-y4)-(y1-y3)*(x3-x4))/d, u=((x1-x3)*(y1-y2)-(y1-y3)*(x1-x2))/d;
+  if (t<0||t>1||u<0||u>1) return null; return [x1+t*(x2-x1), y1+t*(y2-y1)];
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, m = 60, N = 10;
+    const j = () => p.random(-12, 12);
+    const L = Array.from({length:N}, (_,i) => [m,       m + i*((H-2*m)/(N-1)) + j()]);
+    const R = Array.from({length:N}, (_,i) => [W-m,     m + i*((H-2*m)/(N-1)) + j()]);
+    const segs = [];
+    p.strokeWeight(1.5);
+    for (const a of L) { const b = R[Math.floor(p.random(N))]; p.stroke(200,40,40); p.line(a[0],a[1],b[0],b[1]); segs.push([a,b]); }
+    for (const a of R) { const b = L[Math.floor(p.random(N))]; p.stroke(40,80,200); p.line(a[0],a[1],b[0],b[1]); segs.push([a,b]); }
+    p.noStroke(); p.fill(240,200,40);
+    for (let i=0;i<segs.length;i++) for (let k=i+1;k<segs.length;k++) { const x = ix(segs[i],segs[k]); if (x) p.circle(x[0],x[1],8); }
+    p.noStroke(); p.fill(20);
+    for (const [x,y] of L) p.circle(x,y,5);
+    for (const [x,y] of R) p.circle(x,y,5);
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W = p.width, H = p.height, m = 60, N = 10;
+    const j = () => p.random(-12, 12);
+    const T = Array.from({length:N}, (_,i) => [m + i*((W-2*m)/(N-1)) + j(), m]);
+    const B = Array.from({length:N}, (_,i) => [m + i*((W-2*m)/(N-1)) + j(), H-m]);
+    const segs = [];
+    p.strokeWeight(1.5);
+    for (const a of T) { const b = B[Math.floor(p.random(N))]; p.stroke(200,40,40); p.line(a[0],a[1],b[0],b[1]); segs.push([a,b]); }
+    for (const a of B) { const b = T[Math.floor(p.random(N))]; p.stroke(40,80,200); p.line(a[0],a[1],b[0],b[1]); segs.push([a,b]); }
+    p.noStroke(); p.fill(240,200,40);
+    for (let i=0;i<segs.length;i++) for (let k=i+1;k<segs.length;k++) { const x = ix(segs[i],segs[k]); if (x) p.circle(x[0],x[1],8); }
+    p.noStroke(); p.fill(20);
+    for (const [x,y] of T) p.circle(x,y,5);
+    for (const [x,y] of B) p.circle(x,y,5);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

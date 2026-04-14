@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 002</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#002</h1>
+  <p>A square divided into a twenty by twenty grid; one cell, chosen at random, is coloured red; each adjacent cell in turn is coloured red or black until no white cells remain.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const N = 20, s = p.width / N;
+    const g = Array.from({length:N}, () => Array(N).fill(0));
+    let frontier = [[Math.floor(p.random(N)), Math.floor(p.random(N))]];
+    g[frontier[0][1]][frontier[0][0]] = 1;
+    while (frontier.length) {
+      const next = [];
+      for (const [x,y] of frontier) {
+        for (const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+          const nx=x+dx, ny=y+dy;
+          if (nx<0||ny<0||nx>=N||ny>=N) continue;
+          if (g[ny][nx] !== 0) continue;
+          if (p.random() < 0.5) { g[ny][nx] = 1; next.push([nx,ny]); }
+          else { g[ny][nx] = 2; }
+        }
+      }
+      frontier = next;
+    }
+    p.noStroke();
+    for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+      const v = g[y][x];
+      if (v===1) p.fill(200,40,40); else if (v===2) p.fill(20); else p.fill(255);
+      p.rect(x*s, y*s, s, s);
+    }
+  }},
+  { strategy: "Only one element of each kind", draw: (p) => {
+    const N = 20, s = p.width / N;
+    const g = Array.from({length:N}, () => Array(N).fill(-1));
+    let frontier = [[Math.floor(p.random(N)), Math.floor(p.random(N))]];
+    g[frontier[0][1]][frontier[0][0]] = 0;
+    let step = 0;
+    while (frontier.length) {
+      step++;
+      const next = [];
+      for (const [x,y] of frontier) {
+        for (const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+          const nx=x+dx, ny=y+dy;
+          if (nx<0||ny<0||nx>=N||ny>=N) continue;
+          if (g[ny][nx] !== -1) continue;
+          g[ny][nx] = step; next.push([nx,ny]);
+        }
+      }
+      frontier = next;
+    }
+    p.noStroke();
+    for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+      const v = g[y][x];
+      const t = 1 - v/step;
+      p.fill(200*t + 20, 40*t, 40*t);
+      p.rect(x*s, y*s, s, s);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

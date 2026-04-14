@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 005</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#005</h1>
+  <p>Fifteen circles of random size, placed at random on the page; the intersection of any two circles is coloured red.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    const circles = [];
+    for (let i = 0; i < 15; i++) {
+      const r = p.random(40, 140);
+      circles.push({ x: p.random(r, W-r), y: p.random(r, H-r), r });
+    }
+    for (let i = 0; i < circles.length; i++) for (let j = i+1; j < circles.length; j++) {
+      const a = circles[i], b = circles[j];
+      const d = Math.hypot(a.x-b.x, a.y-b.y);
+      if (d >= a.r + b.r || d <= Math.abs(a.r-b.r)) continue;
+      p.drawingContext.save();
+      p.drawingContext.beginPath();
+      p.drawingContext.arc(a.x, a.y, a.r, 0, 2*Math.PI);
+      p.drawingContext.clip();
+      p.drawingContext.beginPath();
+      p.drawingContext.arc(b.x, b.y, b.r, 0, 2*Math.PI);
+      p.drawingContext.fillStyle = 'rgb(200,40,40)';
+      p.drawingContext.fill();
+      p.drawingContext.restore();
+    }
+    p.noFill(); p.stroke(20); p.strokeWeight(1.5);
+    for (const c of circles) p.circle(c.x, c.y, c.r*2);
+  }},
+  { strategy: "Emphasize the flaws", draw: (p) => {
+    const W = p.width, H = p.height;
+    const circles = [];
+    for (let i = 0; i < 15; i++) {
+      const r = p.random(40, 140);
+      circles.push({ x: p.random(r, W-r), y: p.random(r, H-r), r });
+    }
+    p.noFill(); p.stroke(20); p.strokeWeight(2.5);
+    for (const c of circles) {
+      p.beginShape();
+      for (let t = 0; t <= p.TWO_PI + 0.1; t += 0.05) {
+        const rr = c.r + p.random(-10, 10);
+        p.curveVertex(c.x + Math.cos(t)*rr, c.y + Math.sin(t)*rr);
+      }
+      p.endShape();
+    }
+    for (let i = 0; i < circles.length; i++) for (let j = i+1; j < circles.length; j++) {
+      const a = circles[i], b = circles[j];
+      const d = Math.hypot(a.x-b.x, a.y-b.y);
+      if (d >= a.r + b.r || d <= Math.abs(a.r-b.r)) continue;
+      p.stroke(200,40,40); p.strokeWeight(1);
+      const mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+      for (let k = 0; k < 40; k++) {
+        p.line(mx + p.random(-20,20), my + p.random(-20,20), mx + p.random(-20,20), my + p.random(-20,20));
+      }
+      p.stroke(20); p.strokeWeight(2.5);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

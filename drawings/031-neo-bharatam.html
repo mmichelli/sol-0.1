@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 031</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#031</h1>
+  <p>Forty curves drawn across the page at random. For each curve, a second curve of the same length drawn as its mirror image across the vertical axis. Original curves are red; their mirrors are blue.</p>
+  <p class="source">Inspired by Wikipedia: <em>Anita Ratnam</em> — a dancer combining classical and contemporary forms.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function drawCurves(p, N) {
+  const W = p.width, H = p.height, mid = W/2;
+  p.noFill(); p.strokeWeight(1.4);
+  for (let i = 0; i < N; i++) {
+    const pts = [];
+    let x = p.random(20, W-20), y = p.random(20, H-20);
+    for (let s = 0; s < 10; s++) {
+      pts.push([x, y]);
+      x += p.random(-40, 40); y += p.random(-40, 40);
+    }
+    p.stroke(200,40,40);
+    p.beginShape(); for (const [px,py] of pts) p.curveVertex(px, py); p.endShape();
+    p.stroke(40,80,200);
+    p.beginShape(); for (const [px,py] of pts) p.curveVertex(2*mid - px, py); p.endShape();
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => drawCurves(p, 40) },
+  { strategy: "Repetition is a form of change", draw: (p) => drawCurves(p, 120) },
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

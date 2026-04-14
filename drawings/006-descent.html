@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 006</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#006</h1>
+  <p>Eighty horizontal lines across the page, each divided into segments coloured alternately red and blue, each line shifted slightly to the right of the line above.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, N = 80;
+    p.strokeWeight(3);
+    let off = 0;
+    for (let i = 0; i < N; i++) {
+      const y = 30 + i * ((H-60)/(N-1));
+      off += p.random(-2, 6);
+      const segs = 2 + Math.floor(p.random(6));
+      const cuts = [0]; for (let s=0; s<segs-1; s++) cuts.push(p.random(1));
+      cuts.push(1); cuts.sort();
+      for (let s = 0; s < segs; s++) {
+        p.stroke(s % 2 === 0 ? p.color(200,40,40) : p.color(40,80,200));
+        const x1 = 20 + off + cuts[s] * (W-40);
+        const x2 = 20 + off + cuts[s+1] * (W-40);
+        p.line(x1, y, x2, y);
+      }
+    }
+  }},
+  { strategy: "Reverse", draw: (p) => {
+    const W = p.width, H = p.height, N = 80;
+    p.strokeWeight(3);
+    let off = 0;
+    for (let i = 0; i < N; i++) {
+      const x = 30 + i * ((W-60)/(N-1));
+      off += p.random(-6, 2);
+      const segs = 2 + Math.floor(p.random(6));
+      const cuts = [0]; for (let s=0; s<segs-1; s++) cuts.push(p.random(1));
+      cuts.push(1); cuts.sort();
+      for (let s = 0; s < segs; s++) {
+        p.stroke(s % 2 === 0 ? p.color(40,80,200) : p.color(200,40,40));
+        const y1 = 20 + off + cuts[s] * (H-40);
+        const y2 = 20 + off + cuts[s+1] * (H-40);
+        p.line(x, y1, x, y2);
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

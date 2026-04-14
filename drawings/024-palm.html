@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 024</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#024</h1>
+  <p>A single vertical line from the top of the page to the bottom. At one hundred points along the line, a short horizontal stroke drawn; the strokes on the left and right alternate, and their lengths are decided by chance.</p>
+  <p class="source">Inspired by Wikipedia: <em>San Adrián</em> — "a monastery dedicated to San Adrián y la Virgen de la Palma."</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, m = 30;
+    p.stroke(20); p.strokeWeight(1.5);
+    p.line(cx, m, cx, H-m);
+    for (let i = 0; i < 100; i++) {
+      const y = m + i * (H - 2*m)/99;
+      const len = p.random(20, 220);
+      const side = i % 2 === 0 ? -1 : 1;
+      p.strokeWeight(1);
+      p.line(cx, y, cx + side*len, y);
+    }
+  }},
+  { strategy: "Always the first step", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, m = 30;
+    p.stroke(20); p.strokeWeight(1.5);
+    p.line(cx, m, cx, H-m);
+    for (let i = 0; i < 10; i++) {
+      const y = m + i * (H - 2*m)/99;
+      const len = p.random(100, 300);
+      const side = i % 2 === 0 ? -1 : 1;
+      p.strokeWeight(2);
+      p.line(cx, y, cx + side*len, y);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

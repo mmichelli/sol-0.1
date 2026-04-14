@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 021</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#021</h1>
+  <p>A square. Within it, four smaller squares of equal size. Within each smaller square, four smaller squares. Continue until the squares are one eighth of an inch across. The draughtsman may leave any square undivided by chance.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    p.stroke(20); p.strokeWeight(1); p.noFill();
+    function rec(x, y, s) {
+      p.rect(x, y, s, s);
+      if (s < 10) return;
+      if (p.random() < 0.2) return;
+      const h = s/2;
+      rec(x, y, h); rec(x+h, y, h); rec(x, y+h, h); rec(x+h, y+h, h);
+    }
+    rec(0, 0, p.width);
+  }},
+  { strategy: "Make a sudden, destructive, unpredictable action; incorporate", draw: (p) => {
+    p.stroke(20); p.strokeWeight(1);
+    function rec(x, y, s, depth) {
+      p.noFill(); p.rect(x, y, s, s);
+      if (s < 10) return;
+      if (depth > 1 && p.random() < 0.12) { p.fill(20); p.rect(x, y, s, s); return; }
+      if (p.random() < 0.2) return;
+      const h = s/2;
+      rec(x, y, h, depth+1); rec(x+h, y, h, depth+1); rec(x, y+h, h, depth+1); rec(x+h, y+h, h, depth+1);
+    }
+    rec(0, 0, p.width, 0);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 015</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#015</h1>
+  <p>Fifty points placed at random on the page, evenly distributed. All of the points connected to each other by straight lines.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function genPoints(p, N, m) {
+  const W = p.width, H = p.height;
+  const pts = [];
+  for (let i = 0; i < N; i++) {
+    let best = null, bestMin = -1;
+    for (let t = 0; t < 20; t++) {
+      const cand = [p.random(m, W-m), p.random(m, H-m)];
+      let mn = Infinity;
+      for (const q of pts) mn = Math.min(mn, Math.hypot(q[0]-cand[0], q[1]-cand[1]));
+      if (mn > bestMin) { bestMin = mn; best = cand; }
+    }
+    pts.push(best);
+  }
+  return pts;
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const pts = genPoints(p, 50, 40);
+    p.stroke(20, 60); p.strokeWeight(0.8);
+    for (let i = 0; i < pts.length; i++) for (let j = i+1; j < pts.length; j++)
+      p.line(pts[i][0], pts[i][1], pts[j][0], pts[j][1]);
+    p.noStroke(); p.fill(20);
+    for (const [x,y] of pts) p.circle(x,y,4);
+  }},
+  { strategy: "Courage!", draw: (p) => {
+    const pts = genPoints(p, 150, 30);
+    p.stroke(20, 25); p.strokeWeight(0.5);
+    for (let i = 0; i < pts.length; i++) for (let j = i+1; j < pts.length; j++)
+      p.line(pts[i][0], pts[i][1], pts[j][0], pts[j][1]);
+    p.noStroke(); p.fill(20);
+    for (const [x,y] of pts) p.circle(x,y,3);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

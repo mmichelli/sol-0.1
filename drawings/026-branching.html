@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 026</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#026</h1>
+  <p>From a single point at the bottom centre of the page, a line rising upward. At random intervals the line divides into two, each branch continuing upward, each branch dividing again. Some branches are coloured yellow, others red; the rest black.</p>
+  <p class="source">Inspired by Wikipedia: <em>Eikan-dō Zenrin-ji</em> — "famous for its fall foliage."</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    p.strokeWeight(1.2);
+    function grow(x, y, a, steps) {
+      if (steps <= 0 || y < 20 || x < 0 || x > W) return;
+      const col = p.random(['black','black','red','yellow','black']);
+      if (col==='red') p.stroke(200,40,40); else if (col==='yellow') p.stroke(240,200,40); else p.stroke(20);
+      const len = p.random(10, 30);
+      const nx = x + Math.cos(a)*len, ny = y + Math.sin(a)*len;
+      p.line(x, y, nx, ny);
+      if (p.random() < 0.35 && steps > 3) {
+        grow(nx, ny, a - p.random(0.2, 0.8), steps - 1);
+        grow(nx, ny, a + p.random(0.2, 0.8), steps - 1);
+      } else {
+        grow(nx, ny, a + p.random(-0.3, 0.3), steps - 1);
+      }
+    }
+    grow(W/2, H - 20, -Math.PI/2, 60);
+  }},
+  { strategy: "The most important thing is the thing most easily forgotten", draw: (p) => {
+    const W = p.width, H = p.height;
+    p.strokeWeight(1.2);
+    function grow(x, y, a, steps, canDraw) {
+      if (steps <= 0 || y < 20 || x < 0 || x > W) return;
+      const col = p.random(['black','black','red','yellow','black']);
+      if (col==='red') p.stroke(200,40,40); else if (col==='yellow') p.stroke(240,200,40); else p.stroke(20);
+      const len = p.random(10, 30);
+      const nx = x + Math.cos(a)*len, ny = y + Math.sin(a)*len;
+      if (canDraw) p.line(x, y, nx, ny);
+      if (p.random() < 0.4 && steps > 3) {
+        grow(nx, ny, a - p.random(0.2, 0.8), steps - 1, true);
+        grow(nx, ny, a + p.random(0.2, 0.8), steps - 1, true);
+      } else {
+        grow(nx, ny, a + p.random(-0.3, 0.3), steps - 1, true);
+      }
+    }
+    grow(W/2, H - 20, -Math.PI/2, 60, false);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

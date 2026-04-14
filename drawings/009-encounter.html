@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 009</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#009</h1>
+  <p>A grid of black points and a grid of red points, the red grid rotated and shifted slightly from the black; from each black point a line to its nearest red point.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, m = 60, N = 10;
+    const black = [], red = [];
+    for (let r=0;r<N;r++) for (let c2=0;c2<N;c2++) black.push([m + c2*((W-2*m)/(N-1)), m + r*((H-2*m)/(N-1))]);
+    const ang = p.random(-0.3, 0.3), sh = [p.random(-40, 40), p.random(-40, 40)];
+    for (const [x,y] of black) {
+      const dx = x - W/2, dy = y - H/2;
+      red.push([W/2 + dx*Math.cos(ang) - dy*Math.sin(ang) + sh[0], H/2 + dx*Math.sin(ang) + dy*Math.cos(ang) + sh[1]]);
+    }
+    p.stroke(20, 120); p.strokeWeight(1);
+    for (const [x,y] of black) {
+      let best = red[0], bd = Infinity;
+      for (const r of red) { const d = (r[0]-x)**2 + (r[1]-y)**2; if (d < bd) { bd = d; best = r; } }
+      p.line(x, y, best[0], best[1]);
+    }
+    p.noStroke();
+    p.fill(20); for (const [x,y] of black) p.circle(x,y,5);
+    p.fill(200,40,40); for (const [x,y] of red) p.circle(x,y,5);
+  }},
+  { strategy: "Discard an axiom", draw: (p) => {
+    const W = p.width, H = p.height, m = 40;
+    const black = [], red = [];
+    for (let i = 0; i < 100; i++) black.push([p.random(m, W-m), p.random(m, H-m)]);
+    for (let i = 0; i < 100; i++) red.push([p.random(m, W-m), p.random(m, H-m)]);
+    p.stroke(20, 120); p.strokeWeight(1);
+    for (const [x,y] of black) {
+      let best = red[0], bd = Infinity;
+      for (const r of red) { const d = (r[0]-x)**2 + (r[1]-y)**2; if (d < bd) { bd = d; best = r; } }
+      p.line(x, y, best[0], best[1]);
+    }
+    p.noStroke();
+    p.fill(20); for (const [x,y] of black) p.circle(x,y,5);
+    p.fill(200,40,40); for (const [x,y] of red) p.circle(x,y,5);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

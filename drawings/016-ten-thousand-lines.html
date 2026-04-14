@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 016</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#016</h1>
+  <p>Ten thousand short black lines, each of equal length, each at a random angle, drawn to cover the page evenly.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, len = 8;
+    p.stroke(20, 140); p.strokeWeight(0.7);
+    for (let i = 0; i < 10000; i++) {
+      const x = p.random(W), y = p.random(H), a = p.random(p.TWO_PI);
+      p.line(x, y, x + Math.cos(a)*len, y + Math.sin(a)*len);
+    }
+  }},
+  { strategy: "Change nothing and continue with immaculate consistency", draw: (p) => {
+    const W = p.width, H = p.height, len = 8;
+    const angle = p.random(p.TWO_PI);
+    const dx = Math.cos(angle)*len, dy = Math.sin(angle)*len;
+    p.stroke(20, 140); p.strokeWeight(0.7);
+    for (let i = 0; i < 10000; i++) {
+      const x = p.random(W), y = p.random(H);
+      p.line(x, y, x + dx, y + dy);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

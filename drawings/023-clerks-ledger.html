@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 023</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#023</h1>
+  <p>Two columns, each of one hundred horizontal lines of equal length. The lines on the left column red, those on the right blue. Every tenth line on each side crossed through with a black diagonal.</p>
+  <p class="source">Inspired by Wikipedia: <em>David Beamish</em> — "Clerk of the Parliaments… between 16 April 2011 and 15 April 2017."</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, m = 60, gap = 40;
+    const colW = (W - 2*m - gap)/2;
+    p.strokeWeight(1.5);
+    for (let i = 0; i < 100; i++) {
+      const y = m + i * (H - 2*m)/99;
+      p.stroke(200,40,40); p.line(m, y, m + colW, y);
+      p.stroke(40,80,200); p.line(m + colW + gap, y, W - m, y);
+      if ((i+1) % 10 === 0) {
+        p.stroke(20); p.strokeWeight(2);
+        p.line(m, y-8, m+colW, y+8);
+        p.line(m+colW+gap, y-8, W-m, y+8);
+        p.strokeWeight(1.5);
+      }
+    }
+  }},
+  { strategy: "State the problem in words as clearly as possible", draw: (p) => {
+    const W = p.width, H = p.height, m = 60, gap = 40;
+    const colW = (W - 2*m - gap)/2;
+    p.strokeWeight(1.5);
+    p.textSize(9); p.textFont('monospace');
+    for (let i = 0; i < 100; i++) {
+      const y = m + i * (H - 2*m)/99;
+      p.stroke(200,40,40); p.line(m, y, m + colW, y);
+      p.stroke(40,80,200); p.line(m + colW + gap, y, W - m, y);
+      p.noStroke(); p.fill(20);
+      p.text(String(i+1).padStart(3,'0'), m - 30, y+3);
+      p.text(String(i+1).padStart(3,'0'), m + colW + gap - 30, y+3);
+      if ((i+1) % 10 === 0) {
+        p.stroke(20); p.strokeWeight(2);
+        p.line(m, y-8, m+colW, y+8);
+        p.line(m+colW+gap, y-8, W-m, y+8);
+        p.strokeWeight(1.5);
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

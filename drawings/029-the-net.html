@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 029</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#029</h1>
+  <p>A rectangle placed at the centre of the page, two thirds as wide as the page. Within the rectangle, a fine grid of lines forming a net. Outside the rectangle, sixty straight lines, each ending at a random point on the rectangle's boundary.</p>
+  <p class="source">Inspired by Wikipedia: <em>Merle Frohms</em> — "plays as a goalkeeper."</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    const rw = W*2/3, rh = H*0.45;
+    const x0 = (W-rw)/2, y0 = (H-rh)/2, x1 = x0+rw, y1 = y0+rh;
+    p.stroke(20); p.strokeWeight(1); p.noFill();
+    for (let x = x0; x <= x1; x += 14) p.line(x, y0, x, y1);
+    for (let y = y0; y <= y1; y += 14) p.line(x0, y, x1, y);
+    p.strokeWeight(1);
+    for (let i = 0; i < 60; i++) {
+      const side = Math.floor(p.random(4));
+      let tx, ty;
+      if (side === 0) { tx = p.random(x0,x1); ty = y0; }
+      else if (side === 1) { tx = x1; ty = p.random(y0,y1); }
+      else if (side === 2) { tx = p.random(x0,x1); ty = y1; }
+      else { tx = x0; ty = p.random(y0,y1); }
+      let sx, sy;
+      do { sx = p.random(W); sy = p.random(H); } while (sx>x0&&sx<x1&&sy>y0&&sy<y1);
+      p.line(sx, sy, tx, ty);
+    }
+    p.stroke(20); p.strokeWeight(2); p.rect(x0, y0, rw, rh);
+  }},
+  { strategy: "Do nothing for as long as possible", draw: (p) => {
+    const W = p.width, H = p.height;
+    const rw = W*2/3, rh = H*0.45;
+    const x0 = (W-rw)/2, y0 = (H-rh)/2;
+    p.stroke(20); p.strokeWeight(2); p.noFill();
+    p.rect(x0, y0, rw, rh);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 014</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#014</h1>
+  <p>Arcs from the four corners of the page and arcs from the midpoints of the four sides, each arc centred on its origin, each radius increasing by an equal step until the arc reaches the opposite edge.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    const origins = [[0,0],[W,0],[W,H],[0,H],[W/2,0],[W,H/2],[W/2,H],[0,H/2]];
+    p.noFill(); p.stroke(20); p.strokeWeight(1);
+    const diag = Math.hypot(W,H), step = 32;
+    for (const [ox, oy] of origins) {
+      for (let r = step; r < diag; r += step) {
+        p.arc(ox, oy, r*2, r*2, 0, p.TWO_PI);
+      }
+    }
+  }},
+  { strategy: "Remove specifics and convert to ambiguities", draw: (p) => {
+    const W = p.width, H = p.height;
+    const origins = [[0,0],[W,0],[W,H],[0,H],[W/2,0],[W,H/2],[W/2,H],[0,H/2]];
+    p.noFill(); p.strokeWeight(1.2);
+    const diag = Math.hypot(W,H), step = 32;
+    for (const [ox, oy] of origins) {
+      for (let r = step; r < diag; r += step) {
+        p.stroke(20, p.random(20, 120));
+        const a0 = p.random(p.TWO_PI), a1 = a0 + p.random(0.3, 2.0);
+        p.arc(ox, oy, r*2, r*2, a0, a1);
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

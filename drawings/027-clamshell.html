@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 027</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#027</h1>
+  <p>The page divided by a vertical line. On the left half, fifty curves drawn at random. On the right half, each curve mirrored across the line.</p>
+  <p class="source">Inspired by Wikipedia: <em>LG Chocolate 3 (VX8560)</em> — "a clamshell design."</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, mid = W/2;
+    p.stroke(20); p.strokeWeight(1); p.line(mid, 0, mid, H);
+    p.noFill(); p.strokeWeight(1.3);
+    for (let i = 0; i < 50; i++) {
+      p.stroke(20);
+      const pts = [];
+      let x = p.random(30, mid - 10), y = p.random(30, H - 30);
+      for (let s = 0; s < 12; s++) {
+        pts.push([x, y]);
+        x += p.random(-30, 30); y += p.random(-30, 30);
+        x = Math.max(10, Math.min(mid - 10, x));
+      }
+      p.beginShape(); for (const [px,py] of pts) p.curveVertex(px, py); p.endShape();
+      p.beginShape(); for (const [px,py] of pts) p.curveVertex(2*mid - px, py); p.endShape();
+    }
+  }},
+  { strategy: "Feedback recordings into an acoustic situation", draw: (p) => {
+    const W = p.width, H = p.height, midX = W/2, midY = H/2;
+    p.stroke(20, 100); p.strokeWeight(1); p.line(midX, 0, midX, H); p.line(0, midY, W, midY);
+    p.noFill(); p.strokeWeight(1.3);
+    for (let i = 0; i < 40; i++) {
+      p.stroke(20);
+      const pts = [];
+      let x = p.random(30, midX - 10), y = p.random(30, midY - 10);
+      for (let s = 0; s < 10; s++) {
+        pts.push([x, y]);
+        x += p.random(-30, 30); y += p.random(-30, 30);
+        x = Math.max(10, Math.min(midX - 10, x));
+        y = Math.max(10, Math.min(midY - 10, y));
+      }
+      for (const [fx, fy] of [[1,1],[-1,1],[1,-1],[-1,-1]]) {
+        p.beginShape();
+        for (const [px,py] of pts) {
+          const nx = fx > 0 ? px : 2*midX - px;
+          const ny = fy > 0 ? py : 2*midY - py;
+          p.curveVertex(nx, ny);
+        }
+        p.endShape();
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

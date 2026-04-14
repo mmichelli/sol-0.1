@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 013</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#013</h1>
+  <p>The page divided into a sixteen by sixteen grid. Within each cell, straight lines drawn in one of four directions — vertical, horizontal, diagonal left, diagonal right — the direction of each cell chosen by the toss of a coin.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const N = 16, s = p.width / N;
+    p.stroke(20); p.strokeWeight(1);
+    for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+      const dir = Math.floor(p.random(4));
+      const x0 = x*s, y0 = y*s;
+      for (let i = 2; i < s; i += 3) {
+        if (dir === 0) p.line(x0 + i, y0, x0 + i, y0 + s);
+        else if (dir === 1) p.line(x0, y0 + i, x0 + s, y0 + i);
+        else if (dir === 2) { p.line(x0, y0 + i, x0 + s - i, y0 + s); p.line(x0 + i, y0, x0 + s, y0 + s - i); }
+        else { p.line(x0, y0 + i, x0 + s - i, y0 + s); p.line(x0 + i, y0, x0 + s, y0 + s - i); }
+      }
+    }
+  }},
+  { strategy: "Don't be frightened of clichés", draw: (p) => {
+    const N = 8, s = p.width / N;
+    const pal = [[255,255,255],[255,255,255],[255,255,255],[200,40,40],[240,200,40],[40,80,200],[20,20,20]];
+    p.stroke(20); p.strokeWeight(3);
+    for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+      const col = pal[Math.floor(p.random(pal.length))];
+      p.fill(col[0],col[1],col[2]);
+      p.rect(x*s, y*s, s, s);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

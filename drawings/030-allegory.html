@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 030</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#030</h1>
+  <p>Seven vertical bars stood in a row at the bottom of the page. The bars have widths chosen at random; their heights are proportional to the numbers one through seven, in an order chosen by the toss of a die. Each bar is coloured a single hue: red, yellow, blue, black, or green.</p>
+  <p class="source">Inspired by Wikipedia: <em>Peoples of Europe, preserve your most sacred goods!</em> — a painted allegorical procession, 1895.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, N = 7, m = 60;
+    const heights = [1,2,3,4,5,6,7];
+    for (let i = heights.length-1; i>0; i--) { const j = Math.floor(p.random(i+1)); [heights[i],heights[j]]=[heights[j],heights[i]]; }
+    const widths = Array.from({length:N}, () => p.random(0.5, 1.5));
+    const wSum = widths.reduce((a,b)=>a+b,0);
+    const cols = [[200,40,40],[240,200,40],[40,80,200],[20,20,20],[40,140,70]];
+    let x = m;
+    const available = W - 2*m, hUnit = (H - 2*m)/7;
+    p.noStroke();
+    for (let i = 0; i < N; i++) {
+      const w = widths[i]/wSum * available;
+      const h = heights[i] * hUnit;
+      const col = cols[Math.floor(p.random(cols.length))];
+      p.fill(col[0],col[1],col[2]);
+      p.rect(x, H - m - h, w, h);
+      x += w;
+    }
+  }},
+  { strategy: "Use an old idea", draw: (p) => {
+    const W = p.width, H = p.height, N = 7, m = 60;
+    const cols = [[200,40,40],[240,200,40],[40,80,200],[20,20,20],[40,140,70]];
+    const w = (W - 2*m) / N;
+    const h = (H - 2*m) * 0.7;
+    p.noStroke();
+    for (let i = 0; i < N; i++) {
+      const col = cols[i % cols.length];
+      p.fill(col[0],col[1],col[2]);
+      p.rect(m + i*w, H - m - h, w, h);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

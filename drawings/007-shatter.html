@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 007</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#007</h1>
+  <p>The page divided into four equal squares; one square coloured black; each of the other three divided into four equal squares and treated the same; continuing until the squares are smaller than a fingernail.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    p.stroke(20); p.strokeWeight(1);
+    function rec(x, y, w, h) {
+      if (w < 18 || h < 18) return;
+      const hw = w/2, hh = h/2;
+      const quads = [[x,y],[x+hw,y],[x,y+hh],[x+hw,y+hh]];
+      const black = Math.floor(p.random(4));
+      for (let i = 0; i < 4; i++) {
+        const [qx, qy] = quads[i];
+        if (i === black) { p.fill(20); p.rect(qx, qy, hw, hh); }
+        else { p.noFill(); p.rect(qx, qy, hw, hh); rec(qx, qy, hw, hh); }
+      }
+    }
+    rec(0, 0, p.width, p.height);
+  }},
+  { strategy: "Honour thy error as a hidden intention", draw: (p) => {
+    p.stroke(20); p.strokeWeight(1);
+    function rec(x, y, w, h) {
+      if (w < 18 || h < 18) return;
+      const hw = w/2, hh = h/2;
+      const quads = [[x,y],[x+hw,y],[x,y+hh],[x+hw,y+hh]];
+      const black = Math.floor(p.random(4));
+      for (let i = 0; i < 4; i++) {
+        let [qx, qy] = quads[i];
+        const jx = p.random(-hw*0.08, hw*0.08), jy = p.random(-hh*0.08, hh*0.08);
+        qx += jx; qy += jy;
+        if (i === black) { p.fill(20); p.rect(qx, qy, hw, hh); }
+        else { p.noFill(); p.rect(qx, qy, hw, hh); rec(qx, qy, hw, hh); }
+      }
+    }
+    rec(0, 0, p.width, p.height);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

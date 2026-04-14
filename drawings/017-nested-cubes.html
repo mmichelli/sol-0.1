@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 017</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#017</h1>
+  <p>An isometric cube drawn in black lines at the centre of the page. Within it, a smaller isometric cube rotated by a quarter turn. Within that, a smaller still. Continue until the cube is too small to draw.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function drawCube(p, cx, cy, s, rot, weight) {
+  const verts = [];
+  for (let i = 0; i < 8; i++) {
+    const dx = (i & 1) ? 1 : -1, dy = (i & 2) ? 1 : -1, dz = (i & 4) ? 1 : -1;
+    const x3 = dx*s, y3 = dy*s, z3 = dz*s;
+    const a = Math.PI/6 + rot;
+    const x2 = x3*Math.cos(a) - z3*Math.cos(a) + cx;
+    const y2 = x3*Math.sin(a) + z3*Math.sin(a) - y3 + cy;
+    verts.push([x2, y2]);
+  }
+  const edges = [[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]];
+  p.strokeWeight(weight); p.stroke(20); p.noFill();
+  for (const [a,b] of edges) p.line(verts[a][0], verts[a][1], verts[b][0], verts[b][1]);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const cx = p.width/2, cy = p.height/2;
+    function rec(s, rot) {
+      if (s < 8) return;
+      drawCube(p, cx, cy, s, rot, 1);
+      rec(s * 0.7, rot + Math.PI/2);
+    }
+    rec(260, 0);
+  }},
+  { strategy: "Not building a wall; making a brick", draw: (p) => {
+    drawCube(p, p.width/2, p.height/2, 300, p.random(p.TWO_PI), 3);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 012</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .words { margin-top: 10px; font-size: 13px; color: #555; }
+  .words span { display: inline-block; margin-right: 10px; padding: 2px 6px; background: #f6f5f0; border: 1px solid #eee; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>#012</h1>
+  <p>Five words drawn at random from a random encyclopedia article. The five words determine, by the numeric value of their letters, the shapes drawn on the page, their counts, their colours, and their arrangement.</p>
+  <p class="strategy" id="strategy"></p>
+  <div class="words" id="words">fetching…</div>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const PALETTE = [[20,20,20],[200,40,40],[40,80,200],[240,200,40],[40,140,70]];
+const SHAPES = ['circle','square','triangle','line','arc'];
+function hashStr(s) { let h = 0; for (const c of s) h = (h*31 + c.charCodeAt(0)) >>> 0; return h; }
+
+async function fetchWords() {
+  try {
+    const r = await fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary');
+    const j = await r.json();
+    const text = (j.extract || j.title || '').toLowerCase();
+    const pool = text.match(/[a-z]{4,}/g) || [];
+    if (pool.length < 5) throw new Error('too few words');
+    const picked = [];
+    while (picked.length < 5 && pool.length) {
+      picked.push(pool.splice(Math.floor(Math.random()*pool.length), 1)[0]);
+    }
+    return picked;
+  } catch (e) {
+    return ['machine','chance','harbour','ladder','ash'];
+  }
+}
+
+const FAKE = ['syzygy','quartz','melancholy','transistor','ephemeron','plinth','meridian','tungsten','monograph','pelagic','obelisk','vellum'];
+
+function drawFromWords(p, words) {
+  const W = p.width, H = p.height;
+  words.forEach((word) => {
+    const h = hashStr(word);
+    const shape = SHAPES[h % SHAPES.length];
+    const col = PALETTE[(h >>>3) % PALETTE.length];
+    const count = 20 + ((h >>>6) % 80);
+    const size = 20 + ((h >>>12) % 120);
+    const angle = ((h >>>18) % 360) * Math.PI / 180;
+    for (let i = 0; i < count; i++) {
+      const x = p.random(40, W-40), y = p.random(40, H-40);
+      if (shape === 'line') {
+        p.stroke(col[0],col[1],col[2],180); p.strokeWeight(1.5); p.noFill();
+        p.line(x - Math.cos(angle)*size/2, y - Math.sin(angle)*size/2, x + Math.cos(angle)*size/2, y + Math.sin(angle)*size/2);
+      } else if (shape === 'arc') {
+        p.stroke(col[0],col[1],col[2],200); p.strokeWeight(2); p.noFill();
+        p.arc(x, y, size, size, angle, angle + Math.PI);
+      } else if (shape === 'circle') {
+        p.noStroke(); p.fill(col[0],col[1],col[2],140); p.circle(x, y, size * 0.4);
+      } else if (shape === 'square') {
+        p.noStroke(); p.fill(col[0],col[1],col[2],140);
+        p.push(); p.translate(x,y); p.rotate(angle); p.rectMode(p.CENTER); p.rect(0,0,size*0.4,size*0.4); p.pop();
+      } else {
+        p.noStroke(); p.fill(col[0],col[1],col[2],140);
+        const ss = size * 0.3;
+        p.push(); p.translate(x,y); p.rotate(angle); p.triangle(-ss, ss, ss, ss, 0, -ss); p.pop();
+      }
+    }
+  });
+}
+
+const solutions = [
+  { strategy: null, fetch: fetchWords, draw: drawFromWords },
+  { strategy: "Try faking it!", fetch: async () => {
+    const out = [];
+    const pool = FAKE.slice();
+    while (out.length < 5) out.push(pool.splice(Math.floor(Math.random()*pool.length), 1)[0]);
+    return out;
+  }, draw: drawFromWords },
+];
+
+(async () => {
+  const chosen = solutions[Math.floor(Math.random()*solutions.length)];
+  const strategyEl = document.getElementById('strategy');
+  if (strategyEl) strategyEl.textContent = chosen.strategy ? '→ ' + chosen.strategy : '';
+  const words = await chosen.fetch();
+  document.getElementById('words').innerHTML = words.map(w => `<span>${w}</span>`).join('');
+  new p5((p) => {
+    p.setup = () => {
+      const c = p.createCanvas(720, 720); c.parent('h'); p.noLoop(); p.background(255);
+      chosen.draw(p, words);
+    };
+  });
+})();
+</script>
+</body>
+</html>

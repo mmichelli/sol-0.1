@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wall Drawing 025</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#025</h1>
+  <p>One thousand points placed at random on the page. Each point is examined: if the sum of its coordinates is even, it is enclosed in a small black square; if odd, it is enclosed in a small red square.</p>
+  <p class="source">Inspired by Wikipedia: <em>January 6th Committee</em> — "a select committee… established to investigate."</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    p.noFill(); p.strokeWeight(1);
+    for (let i = 0; i < 1000; i++) {
+      const x = p.random(p.width), y = p.random(p.height);
+      const even = (Math.floor(x) + Math.floor(y)) % 2 === 0;
+      p.stroke(even ? p.color(20) : p.color(200,40,40));
+      p.rect(x-4, y-4, 8, 8);
+    }
+  }},
+  { strategy: "Accretion", draw: (p) => {
+    p.noFill(); p.strokeWeight(1);
+    const seeds = [];
+    for (let i = 0; i < 5; i++) seeds.push([p.random(p.width), p.random(p.height)]);
+    for (let i = 0; i < 1000; i++) {
+      const s = seeds[Math.floor(p.random(seeds.length))];
+      const a = p.random(p.TWO_PI);
+      const r = Math.abs(p.randomGaussian(0, 80));
+      const x = s[0] + Math.cos(a)*r, y = s[1] + Math.sin(a)*r;
+      if (x < 0 || y < 0 || x > p.width || y > p.height) continue;
+      const even = (Math.floor(x) + Math.floor(y)) % 2 === 0;
+      p.stroke(even ? p.color(20) : p.color(200,40,40));
+      p.rect(x-4, y-4, 8, 8);
+      if (p.random() < 0.3) seeds.push([x, y]);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
