@@ -19,53 +19,67 @@
 <button onclick="location.reload()">Re-render</button>
 <div class="holder" id="h"></div>
 <script>
-// Using p5.Graphics for mask-based composition
-function compose(p, offset) {
+// Each shape contributes to a single channel (R/G/B) on a membership mask.
+// We then recolour the mask's R/G/B membership into LeWitt mixing rules.
+function compose(p, offs) {
   const W = p.width, H = p.height;
   const cx = W/2, cy = H/2, R = 200;
-  const offs = offset || [[0,0],[0,0],[0,0]];
-  const mkMask = (fn) => { const g = p.createGraphics(W, H); g.noStroke(); g.fill(255); fn(g); return g; };
-  const circ = mkMask(g => g.circle(cx + offs[0][0], cy + offs[0][1], R*2));
-  const sq   = mkMask(g => { g.rectMode(p.CENTER); g.rect(cx + offs[1][0], cy + offs[1][1], R*1.7, R*1.7); });
-  const tri  = mkMask(g => {
-    const [dx, dy] = offs[2];
-    const tR = R*1.1;
-    g.triangle(cx+dx, cy+dy - tR, cx+dx - tR*0.866, cy+dy + tR*0.5, cx+dx + tR*0.866, cy+dy + tR*0.5);
-  });
-  // Inspect each pixel of the three masks and paint
-  circ.loadPixels(); sq.loadPixels(); tri.loadPixels();
-  const out = p.createGraphics(W, H);
-  out.loadPixels();
-  const idx = (x, y) => (y*W + x) * 4;
-  const isOn = (buf, x, y) => buf.pixels[idx(x,y)+3] > 100;
+
+  const mask = p.createGraphics(W, H);
+  mask.pixelDensity(1);
+  mask.noStroke();
+  mask.background(0);
+  // ADD blend so channels accumulate
+  mask.blendMode(mask.ADD);
+
+  // circle → red channel
+  mask.fill(255, 0, 0);
+  mask.circle(cx + offs[0][0], cy + offs[0][1], R*2);
+
+  // square → green channel
+  mask.fill(0, 255, 0);
+  mask.rectMode(mask.CENTER);
+  mask.rect(cx + offs[1][0], cy + offs[1][1], R*1.7, R*1.7);
+
+  // triangle → blue channel
+  mask.fill(0, 0, 255);
+  const tR = R*1.1;
+  const tx = cx + offs[2][0], ty = cy + offs[2][1];
+  mask.triangle(tx, ty - tR, tx - tR*0.866, ty + tR*0.5, tx + tR*0.866, ty + tR*0.5);
+
+  mask.loadPixels();
+
+  // LeWitt-style palette: only one shape, two, or all three
   const PAL = {
-    "100": [200,40,40], "010": [240,200,40], "001": [40,80,200],
-    "110": [230,110,40], "101": [120,60,140], "011": [40,140,70],
-    "111": [20,20,20], "000": [255,255,255]
+    "000": [255, 255, 255], // none → white background
+    "100": [200,  40,  40], // circle only → red
+    "010": [240, 200,  40], // square only → yellow
+    "001": [ 40,  80, 200], // triangle only → blue
+    "110": [230, 110,  40], // circle+square → orange
+    "101": [120,  60, 140], // circle+triangle → purple
+    "011": [ 40, 140,  70], // square+triangle → green
+    "111": [ 20,  20,  20], // all three → black
   };
-  for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
-      const key = (isOn(circ,x,y)?"1":"0") + (isOn(sq,x,y)?"1":"0") + (isOn(tri,x,y)?"1":"0");
-      const col = PAL[key];
-      const i = idx(x, y);
-      out.pixels[i] = col[0]; out.pixels[i+1] = col[1]; out.pixels[i+2] = col[2]; out.pixels[i+3] = 255;
-    }
+
+  const out = p.createGraphics(W, H);
+  out.pixelDensity(1);
+  out.loadPixels();
+  const px = mask.pixels, op = out.pixels;
+  const len = W * H;
+  for (let i = 0; i < len; i++) {
+    const j = i * 4;
+    const key = (px[j] > 128 ? "1" : "0") + (px[j+1] > 128 ? "1" : "0") + (px[j+2] > 128 ? "1" : "0");
+    const col = PAL[key];
+    op[j] = col[0]; op[j+1] = col[1]; op[j+2] = col[2]; op[j+3] = 255;
   }
   out.updatePixels();
   p.image(out, 0, 0);
 }
+
 const solutions = [
-  { strategy: null, draw: (p) => {
-    const R = 180;
-    compose(p, [[-90, 40], [70, 40], [0, -100]]);
-  }},
-  { strategy: "Turn it upside down", draw: (p) => {
-    compose(p, [[-90, -40], [70, -40], [0, 100]]);
-  }},
-  { strategy: "Remove specifics and convert to ambiguities", draw: (p) => {
-    // three shapes drifted apart; overlaps minimal
-    compose(p, [[-180, 0], [180, 0], [0, -180]]);
-  }},
+  { strategy: null, draw: (p) => compose(p, [[-90, 40], [70, 40], [0, -100]]) },
+  { strategy: "Turn it upside down", draw: (p) => compose(p, [[-90, -40], [70, -40], [0, 100]]) },
+  { strategy: "Remove specifics and convert to ambiguities", draw: (p) => compose(p, [[-180, 0], [180, 0], [0, -180]]) },
 ];
 </script>
 <script src="runner.js"></script>
