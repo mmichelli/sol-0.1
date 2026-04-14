@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 039</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#039</h1>
+  <p>Ten rectangles placed at random on the page. Within each, a smaller rectangle drawn in a second colour; within that, a third smaller rectangle in a third colour; nested three deep.</p>
+  <p class="source">Seed — <em>hypotheca</em>: an obligation by which property of a debtor was made over to his creditor in security of his debt.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const RED = [200,40,40], YELLOW = [240,200,40], BLUE = [40,80,200], BLACK = [20,20,20];
+function nested(p, x, y, w, h, colors, depth, shrink) {
+  if (depth <= 0) return;
+  const col = colors[colors.length - depth];
+  p.stroke(col[0], col[1], col[2]); p.strokeWeight(1.4); p.noFill();
+  p.rect(x, y, w, h);
+  const nw = w * shrink, nh = h * shrink;
+  const nx = x + (w - nw)/2, ny = y + (h - nh)/2;
+  nested(p, nx, ny, nw, nh, colors, depth - 1, shrink);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, m = 30;
+    const palette = [BLACK, RED, BLUE];
+    for (let i = 0; i < 10; i++) {
+      const w = p.random(60, 200), h = p.random(60, 200);
+      const x = p.random(m, W - m - w), y = p.random(m, H - m - h);
+      nested(p, x, y, w, h, palette, 3, 0.65);
+    }
+  }},
+  { strategy: "Ghost echoes", draw: (p) => {
+    const W = p.width, H = p.height, m = 30;
+    const palette = [BLACK, RED, BLUE];
+    for (let i = 0; i < 10; i++) {
+      const w = p.random(60, 200), h = p.random(60, 200);
+      const x = p.random(m, W - m - w), y = p.random(m, H - m - h);
+      nested(p, x, y, w, h, palette, 3, 0.65);
+      // echo: faint displaced copy
+      p.push();
+      p.stroke(0, 0, 0, 40); p.strokeWeight(0.6); p.noFill();
+      for (let k = 1; k <= 3; k++) p.rect(x + k*4, y + k*4, w, h);
+      p.pop();
+    }
+  }},
+  { strategy: "Disconnect from desire", draw: (p) => {
+    const W = p.width, H = p.height, m = 30;
+    const palette = [BLACK, BLACK, BLACK];
+    for (let i = 0; i < 10; i++) {
+      const w = p.random(60, 200), h = p.random(60, 200);
+      const x = p.random(m, W - m - w), y = p.random(m, H - m - h);
+      nested(p, x, y, w, h, palette, 3, 0.65);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

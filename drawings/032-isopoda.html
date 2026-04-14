@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 032</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#032</h1>
+  <p>A narrow oval at the centre of the page. From each side of the oval, seven pairs of curving legs; each leg divided into three equal segments, the pairs evenly spaced along the oval's length.</p>
+  <p class="source">Seed — <em>isopoda</em>: an order of sessile-eyed Crustacea, usually having seven pairs of legs, which are all similar in structure.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function drawLeg(p, x, y, dir, segs, seg) {
+  let cx = x, cy = y, a = dir * p.PI/3;
+  for (let i = 0; i < segs; i++) {
+    const nx = cx + Math.cos(a) * seg;
+    const ny = cy + Math.sin(a) * seg;
+    p.line(cx, cy, nx, ny);
+    cx = nx; cy = ny; a += dir * 0.35;
+  }
+  p.circle(cx, cy, 3);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    const bodyH = 340, bodyW = 70;
+    p.stroke(20); p.strokeWeight(1.4); p.noFill();
+    p.ellipse(cx, cy, bodyW, bodyH);
+    const seg = 40;
+    for (let i = 0; i < 7; i++) {
+      const y = cy - bodyH/2 + (i + 1) * bodyH/8;
+      drawLeg(p, cx - bodyW/2, y, -1, 3, seg);
+      drawLeg(p, cx + bodyW/2, y, 1, 3, seg);
+    }
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    const bodyH = 340, bodyW = 70;
+    p.stroke(20); p.strokeWeight(1.2); p.noFill();
+    p.ellipse(cx, cy, bodyW, bodyH);
+    const seg = 24;
+    for (let i = 0; i < 7; i++) {
+      const y = cy - bodyH/2 + (i + 1) * bodyH/8;
+      drawLeg(p, cx - bodyW/2, y, -1, 7, seg);
+      drawLeg(p, cx + bodyW/2, y, 1, 7, seg);
+    }
+  }},
+  { strategy: "Ask your body", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    const bodyH = 340, bodyW = 70;
+    p.stroke(20); p.strokeWeight(1.4); p.noFill();
+    p.beginShape();
+    for (let a = 0; a < p.TWO_PI; a += 0.1) {
+      const r = 1 + p.random(-0.15, 0.15);
+      p.vertex(cx + Math.cos(a)*bodyW/2*r, cy + Math.sin(a)*bodyH/2*r);
+    }
+    p.endShape(p.CLOSE);
+    for (let i = 0; i < 7; i++) {
+      const y = cy - bodyH/2 + (i + 1) * bodyH/8;
+      drawLeg(p, cx - bodyW/2, y, -1, 3, p.random(25, 55));
+      drawLeg(p, cx + bodyW/2, y, 1, 3, p.random(25, 55));
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

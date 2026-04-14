@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 038</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#038</h1>
+  <p>A single large circle at the centre of the page. The circle is divided into two halves by a straight line; each half then divided into two by a perpendicular line; each quarter halved again, and so on, until no piece is wider than a fingernail. Every second piece is coloured blue.</p>
+  <p class="source">Seed — <em>hydrolytic</em>: tending to remove or separate water; eliminating water.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function subdivide(p, cx, cy, r, angle, depth, fill) {
+  if (depth === 0 || r < 16) {
+    p.noStroke();
+    if (fill) p.fill(40,80,200); else p.fill(255);
+    // draw pie slice by scanning?
+    // Use p5 arc: draw as chord slice
+    p.push();
+    p.translate(cx, cy);
+    p.rotate(angle);
+    p.arc(0, 0, r*2, r*2, 0, p.HALF_PI, p.PIE);
+    p.pop();
+    p.noFill(); p.stroke(20); p.strokeWeight(0.8);
+    p.push(); p.translate(cx, cy); p.rotate(angle); p.arc(0, 0, r*2, r*2, 0, p.HALF_PI, p.PIE); p.pop();
+    return;
+  }
+  subdivide(p, cx, cy, r, angle, depth-1, fill);
+  subdivide(p, cx, cy, r, angle + p.HALF_PI, depth-1, !fill);
+  subdivide(p, cx, cy, r, angle + p.PI, depth-1, fill);
+  subdivide(p, cx, cy, r, angle + 3*p.HALF_PI, depth-1, !fill);
+}
+function slices(p, cx, cy, R, N, startFill) {
+  p.noStroke();
+  for (let i = 0; i < N; i++) {
+    const a1 = (i / N) * p.TWO_PI, a2 = ((i+1) / N) * p.TWO_PI;
+    p.fill(i % 2 === startFill ? [40,80,200] : [255,255,255]);
+    p.arc(cx, cy, R*2, R*2, a1, a2, p.PIE);
+  }
+  p.noFill(); p.stroke(20); p.strokeWeight(0.9);
+  p.circle(cx, cy, R*2);
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * p.TWO_PI;
+    p.line(cx, cy, cx + R*Math.cos(a), cy + R*Math.sin(a));
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2, R = Math.min(W,H)/2 - 30;
+    // halving six times → 64 slices
+    slices(p, cx, cy, R, 64, 0);
+  }},
+  { strategy: "Water", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2, R = Math.min(W,H)/2 - 30;
+    p.noStroke();
+    for (let i = 0; i < 128; i++) {
+      const a1 = (i / 128) * p.TWO_PI, a2 = ((i+1) / 128) * p.TWO_PI;
+      const t = Math.abs(Math.sin(a1*3));
+      p.fill(40, 80, 200, 50 + t*200);
+      p.arc(cx, cy, R*2, R*2, a1, a2, p.PIE);
+    }
+    p.noFill(); p.stroke(20); p.strokeWeight(0.9);
+    p.circle(cx, cy, R*2);
+  }},
+  { strategy: "Short circuit", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2, R = Math.min(W,H)/2 - 30;
+    // just one cut
+    p.fill(40,80,200); p.noStroke();
+    p.arc(cx, cy, R*2, R*2, 0, p.PI, p.PIE);
+    p.fill(255);
+    p.arc(cx, cy, R*2, R*2, p.PI, p.TWO_PI, p.PIE);
+    p.noFill(); p.stroke(20); p.strokeWeight(1);
+    p.circle(cx, cy, R*2);
+    p.line(cx - R, cy, cx + R, cy);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

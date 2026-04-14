@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 034</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#034</h1>
+  <p>Twenty small squares placed at random across the page. A single continuous line begins at one square and visits each square in turn, always travelling next to the nearest square it has not yet reached, until all have been visited.</p>
+  <p class="source">Seed — <em>peddle</em>: to travel about with wares for sale; to go from place to place, or from house to house, for the purpose of retailing goods.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function placeSquares(p, n, size, m) {
+  const W = p.width, H = p.height, out = [];
+  let tries = 0;
+  while (out.length < n && tries < 500) {
+    const x = p.random(m, W - m - size), y = p.random(m, H - m - size);
+    if (out.every(s => Math.hypot(s.x - x, s.y - y) > size*2)) out.push({x, y});
+    tries++;
+  }
+  return out;
+}
+function nearestPath(squares, start) {
+  const n = squares.length, visited = new Array(n).fill(false);
+  const order = [start]; visited[start] = true;
+  for (let k = 1; k < n; k++) {
+    const last = squares[order[order.length-1]];
+    let best = -1, bd = Infinity;
+    for (let j = 0; j < n; j++) {
+      if (visited[j]) continue;
+      const d = Math.hypot(squares[j].x - last.x, squares[j].y - last.y);
+      if (d < bd) { bd = d; best = j; }
+    }
+    order.push(best); visited[best] = true;
+  }
+  return order;
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const sq = placeSquares(p, 20, 20, 30);
+    p.noFill(); p.stroke(20); p.strokeWeight(1.2);
+    for (const s of sq) p.rect(s.x, s.y, 20, 20);
+    const order = nearestPath(sq, 0);
+    p.strokeWeight(1);
+    for (let i = 0; i < order.length - 1; i++) {
+      const a = sq[order[i]], b = sq[order[i+1]];
+      p.line(a.x + 10, a.y + 10, b.x + 10, b.y + 10);
+    }
+  }},
+  { strategy: "Look at the order in which you do things", draw: (p) => {
+    const sq = placeSquares(p, 20, 20, 30);
+    p.noFill(); p.stroke(20); p.strokeWeight(1.2);
+    for (let i = 0; i < sq.length; i++) {
+      const s = sq[i];
+      p.rect(s.x, s.y, 20, 20);
+      p.noStroke(); p.fill(20); p.textSize(10); p.textAlign(p.CENTER, p.CENTER);
+      p.text(i+1, s.x + 10, s.y + 10);
+      p.noFill(); p.stroke(20);
+    }
+    // Visit in original (random) order, not nearest
+    p.strokeWeight(0.8);
+    for (let i = 0; i < sq.length - 1; i++) {
+      const a = sq[i], b = sq[i+1];
+      p.line(a.x + 10, a.y + 10, b.x + 10, b.y + 10);
+    }
+  }},
+  { strategy: "Go slowly all the way round the outside", draw: (p) => {
+    const sq = placeSquares(p, 20, 20, 30);
+    p.noFill(); p.stroke(20); p.strokeWeight(1.2);
+    for (const s of sq) p.rect(s.x, s.y, 20, 20);
+    // Convex hull order
+    const pts = sq.map(s => ({x: s.x + 10, y: s.y + 10}));
+    pts.sort((a,b) => a.x - b.x || a.y - b.y);
+    const cross = (O,A,B) => (A.x-O.x)*(B.y-O.y) - (A.y-O.y)*(B.x-O.x);
+    const lower = [];
+    for (const pt of pts) { while (lower.length >= 2 && cross(lower[lower.length-2], lower[lower.length-1], pt) <= 0) lower.pop(); lower.push(pt); }
+    const upper = [];
+    for (let i = pts.length - 1; i >= 0; i--) { const pt = pts[i]; while (upper.length >= 2 && cross(upper[upper.length-2], upper[upper.length-1], pt) <= 0) upper.pop(); upper.push(pt); }
+    const hull = lower.slice(0, -1).concat(upper.slice(0, -1));
+    p.strokeWeight(1);
+    p.beginShape();
+    for (const pt of hull) p.vertex(pt.x, pt.y);
+    p.endShape(p.CLOSE);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
