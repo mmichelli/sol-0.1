@@ -52,6 +52,30 @@ const solutions = [
       p.circle(b[0], b[1], i*12*2);
     }
   }},
+  { strategy: "Give way to your worst impulse", draw: (p) => {
+    const W = p.width, H = p.height, N = 20, step = 20;
+    const centres = [];
+    for (let i = 0; i < 8; i++) centres.push([p.random(W), p.random(H)]);
+    p.noFill(); p.stroke(20); p.strokeWeight(1);
+    for (const c of centres) {
+      for (let i = 1; i <= N; i++) p.circle(c[0], c[1], i*step*2);
+    }
+    p.fill(20); p.noStroke();
+    for (let ci = 0; ci < centres.length; ci++) for (let cj = ci+1; cj < centres.length; cj++) {
+      const a = centres[ci], b = centres[cj];
+      const d = Math.hypot(a[0]-b[0], a[1]-b[1]);
+      for (let i = 1; i <= N; i++) for (let j = 1; j <= N; j++) {
+        const ra = i*step, rb = j*step;
+        if (ra + rb < d || Math.abs(ra - rb) > d) continue;
+        const x = (d*d + ra*ra - rb*rb) / (2*d);
+        const h = Math.sqrt(Math.max(0, ra*ra - x*x));
+        const mx = a[0] + x*(b[0]-a[0])/d, my = a[1] + x*(b[1]-a[1])/d;
+        const rx = -(b[1]-a[1])/d, ry = (b[0]-a[0])/d;
+        p.circle(mx + rx*h, my + ry*h, 4);
+        if (h > 0.5) p.circle(mx - rx*h, my - ry*h, 4);
+      }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

@@ -76,6 +76,30 @@ const solutions = [
       }
     }
   }},
+  { strategy: "Retrace your steps", draw: (p) => {
+    const W = p.width, H = p.height, N = 80;
+    p.strokeWeight(3);
+    let off = 0;
+    for (let i = 0; i < N; i++) {
+      const y = 30 + i * ((H-60)/(N-1));
+      off += p.random(-2, 6);
+      const segs = 2 + Math.floor(p.random(6));
+      const cuts = [0]; for (let s=0; s<segs-1; s++) cuts.push(p.random(1));
+      cuts.push(1); cuts.sort();
+      for (let s = 0; s < segs; s++) {
+        p.stroke(s % 2 === 0 ? p.color(200,40,40) : p.color(40,80,200));
+        const x1 = 20 + off + cuts[s] * (W-40);
+        const x2 = 20 + off + cuts[s+1] * (W-40);
+        p.line(x1, y, x2, y);
+      }
+      for (let s = segs-1; s >= 0; s--) {
+        p.stroke(s % 2 === 0 ? p.color(200,40,40,100) : p.color(40,80,200,100));
+        const x1 = 20 + off + cuts[s] * (W-40);
+        const x2 = 20 + off + cuts[s+1] * (W-40);
+        p.line(x2, y+2, x1, y+2);
+      }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

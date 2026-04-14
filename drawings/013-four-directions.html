@@ -63,6 +63,24 @@ const solutions = [
       }
     }
   }},
+  { strategy: "Trust in the you of now", draw: (p) => {
+    const N = 16, s = p.width / N;
+    const W = p.width, H = p.height;
+    p.stroke(20); p.strokeWeight(1);
+    for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+      const cx = x*s + s/2 - W/2, cy = y*s + s/2 - H/2;
+      const ang = Math.atan2(cy, cx), rad = Math.hypot(cx, cy);
+      const arm = Math.floor(((ang + rad*0.02 + Math.PI*2) / (Math.PI/2)) % 4);
+      const dir = ((arm % 4) + 4) % 4;
+      const x0 = x*s, y0 = y*s;
+      for (let i = 2; i < s; i += 3) {
+        if (dir === 0) p.line(x0 + i, y0, x0 + i, y0 + s);
+        else if (dir === 1) p.line(x0, y0 + i, x0 + s, y0 + i);
+        else if (dir === 2) { p.line(x0, y0 + i, x0 + s - i, y0 + s); p.line(x0 + i, y0, x0 + s, y0 + s - i); }
+        else { p.line(x0, y0 + i, x0 + s - i, y0 + s); p.line(x0 + i, y0, x0 + s, y0 + s - i); }
+      }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

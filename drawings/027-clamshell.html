@@ -82,6 +82,23 @@ const solutions = [
       p.beginShape(); for (const [px,py] of pts) p.curveVertex(2*mid - px, py); p.endShape();
     }
   }},
+  { strategy: "How would you explain this to your parents?", draw: (p) => {
+    const W = p.width, H = p.height, mid = W/2;
+    p.stroke(20); p.strokeWeight(3); p.line(mid, 0, mid, H);
+    p.noFill(); p.strokeWeight(4);
+    for (let i = 0; i < 10; i++) {
+      p.stroke(20);
+      const pts = [];
+      let x = p.random(30, mid - 10), y = p.random(30, H - 30);
+      for (let s = 0; s < 12; s++) {
+        pts.push([x, y]);
+        x += p.random(-60, 60); y += p.random(-60, 60);
+        x = Math.max(10, Math.min(mid - 10, x));
+      }
+      p.beginShape(); for (const [px,py] of pts) p.curveVertex(px, py); p.endShape();
+      p.beginShape(); for (const [px,py] of pts) p.curveVertex(2*mid - px, py); p.endShape();
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

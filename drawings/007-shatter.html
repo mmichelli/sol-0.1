@@ -68,6 +68,17 @@ const solutions = [
     }
     rec(0, 0, p.width, p.height, 0);
   }},
+  { strategy: "Overtly resist change", draw: (p) => {
+    p.stroke(20); p.strokeWeight(1);
+    const W = p.width, H = p.height, hw = W/2, hh = H/2;
+    const quads = [[0,0],[hw,0],[0,hh],[hw,hh]];
+    const black = Math.floor(p.random(4));
+    for (let i = 0; i < 4; i++) {
+      const [qx, qy] = quads[i];
+      if (i === black) { p.fill(20); p.rect(qx, qy, hw, hh); }
+      else { p.noFill(); p.rect(qx, qy, hw, hh); }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

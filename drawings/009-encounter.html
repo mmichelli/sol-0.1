@@ -73,6 +73,33 @@ const solutions = [
     p.fill(20); for (const [x,y] of black) p.circle(x,y,5);
     p.fill(200,40,40); for (const [x,y] of red) p.circle(x,y,5);
   }},
+  { strategy: "Consider transitions", draw: (p) => {
+    const W = p.width, H = p.height, m = 60, N = 10;
+    const black = [], red = [];
+    for (let r=0;r<N;r++) for (let c2=0;c2<N;c2++) black.push([m + c2*((W-2*m)/(N-1)), m + r*((H-2*m)/(N-1))]);
+    const ang = p.random(-0.3, 0.3), sh = [p.random(-40, 40), p.random(-40, 40)];
+    for (const [x,y] of black) {
+      const dx = x - W/2, dy = y - H/2;
+      red.push([W/2 + dx*Math.cos(ang) - dy*Math.sin(ang) + sh[0], H/2 + dx*Math.sin(ang) + dy*Math.cos(ang) + sh[1]]);
+    }
+    p.strokeWeight(1);
+    const SEG = 20;
+    for (const [x,y] of black) {
+      let best = red[0], bd = Infinity;
+      for (const r of red) { const d = (r[0]-x)**2 + (r[1]-y)**2; if (d < bd) { bd = d; best = r; } }
+      for (let i = 0; i < SEG; i++) {
+        const t0 = i/SEG, t1 = (i+1)/SEG;
+        const x0 = x + (best[0]-x)*t0, y0 = y + (best[1]-y)*t0;
+        const x1 = x + (best[0]-x)*t1, y1 = y + (best[1]-y)*t1;
+        const tm = (t0+t1)/2;
+        p.stroke(20 + (200-20)*tm, 20 + (40-20)*tm, 20 + (40-20)*tm, 180);
+        p.line(x0, y0, x1, y1);
+      }
+    }
+    p.noStroke();
+    p.fill(20); for (const [x,y] of black) p.circle(x,y,5);
+    p.fill(200,40,40); for (const [x,y] of red) p.circle(x,y,5);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

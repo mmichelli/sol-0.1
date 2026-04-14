@@ -73,6 +73,21 @@ const solutions = [
       p.circle(cx + Math.cos(a)*r, cy + Math.sin(a)*r, 1 + t*16);
     }
   }},
+  { strategy: "From nothing to more than nothing", draw: (p) => {
+    const cx = p.width/2, cy = p.height/2;
+    p.noStroke(); p.fill(20);
+    p.circle(cx, cy, 2);
+    const turns = 20, dots = turns*8, rMax = Math.min(p.width, p.height)/2 - 30;
+    const silent = 3/turns;
+    for (let i = 0; i < dots; i++) {
+      const t = i/dots;
+      if (t < silent) continue;
+      const a = t * turns * p.TWO_PI;
+      const r = t * rMax;
+      const u = (t - silent) / (1 - silent);
+      p.circle(cx + Math.cos(a)*r, cy + Math.sin(a)*r, 0.5 + u*18);
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

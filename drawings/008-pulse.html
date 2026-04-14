@@ -62,6 +62,21 @@ const solutions = [
       p.endShape(p.CLOSE);
     }
   }},
+  { strategy: "Twist the spine", draw: (p) => {
+    const cx = p.width/2, cy = p.height/2, V = 12, N = 40;
+    const radii = Array(V).fill(10);
+    p.noFill(); p.stroke(20); p.strokeWeight(1);
+    for (let ring = 0; ring < N; ring++) {
+      for (let i = 0; i < V; i++) radii[i] += p.random(4, 9);
+      const twist = ring * 0.08;
+      p.beginShape();
+      for (let i = 0; i < V; i++) {
+        const a = (i / V) * p.TWO_PI + twist;
+        p.vertex(cx + Math.cos(a)*radii[i], cy + Math.sin(a)*radii[i]);
+      }
+      p.endShape(p.CLOSE);
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

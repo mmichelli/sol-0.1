@@ -92,6 +92,14 @@ const solutions = [
     while (out.length < 5) out.push(pool.splice(Math.floor(Math.random()*pool.length), 1)[0]);
     return out;
   }, draw: drawFromWords },
+  { strategy: "What context would look right?", fetch: async () => {
+    const PLACES = ['paris','london','tokyo','kyoto','berlin','madrid','lisbon','rome','naples','venice','florence','athens','cairo','istanbul','moscow','warsaw','prague','vienna','budapest','dublin','oslo','stockholm','helsinki','reykjavik','amsterdam','brussels','zurich','geneva','munich','hamburg','bordeaux','marseille','barcelona','seville','porto','dakar','nairobi','lagos','accra','marrakech','alexandria','delhi','mumbai','chennai','bangalore','kolkata','karachi','lahore','dhaka','kabul','tehran','baghdad','damascus','beirut','jerusalem','amman','riyadh','beijing','shanghai','chengdu','xian','lhasa','seoul','pyongyang','osaka','sapporo','taipei','manila','jakarta','bangkok','hanoi','saigon','singapore','sydney','melbourne','brisbane','perth','auckland','wellington','vancouver','toronto','montreal','chicago','boston','seattle','portland','denver','austin','houston','miami','detroit','atlanta','havana','kingston','bogota','lima','quito','santiago','brasilia','recife','valparaiso','patagonia','andes','sahara','yukon','tuscany','bavaria','provence','catalonia','siberia','mongolia','kerala','rajasthan','normandy','anatolia'];
+    const r = await fetch('data:application/json,' + encodeURIComponent(JSON.stringify(PLACES)));
+    const pool = (await r.json()).slice();
+    const picked = [];
+    while (picked.length < 5) picked.push(pool.splice(Math.floor(Math.random()*pool.length), 1)[0]);
+    return picked;
+  }, draw: drawFromWords },
 ];
 
 (async () => {

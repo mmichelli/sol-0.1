@@ -56,6 +56,19 @@ const solutions = [
     }
     rec(0, 0, p.width, 0);
   }},
+  { strategy: "Look at the order in which you do things", draw: (p) => {
+    p.noFill(); p.strokeWeight(1);
+    function rec(x, y, s, depth) {
+      const a = Math.min(255, 20 + depth * 40);
+      p.stroke(20, a);
+      p.rect(x, y, s, s);
+      if (s < 10) return;
+      if (p.random() < 0.2) return;
+      const h = s/2;
+      rec(x, y, h, depth+1); rec(x+h, y, h, depth+1); rec(x, y+h, h, depth+1); rec(x+h, y+h, h, depth+1);
+    }
+    rec(0, 0, p.width, 0);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

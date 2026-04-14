@@ -58,6 +58,36 @@ const solutions = [
     p.noStroke(); p.fill(20);
     for (const [x,y] of pts) p.circle(x,y,5);
   }},
+  { strategy: "Define an area as 'safe' and use it as an anchor", draw: (p) => {
+    const W = p.width, H = p.height;
+    const bw = W*0.2, bh = H*0.2;
+    const bx0 = W/2 - bw/2, by0 = H/2 - bh/2, bx1 = bx0 + bw, by1 = by0 + bh;
+    function segHitsBox(x0, y0, x1, y1) {
+      const dx = x1 - x0, dy = y1 - y0;
+      let t0 = 0, t1 = 1;
+      const p_ = [-dx, dx, -dy, dy];
+      const q_ = [x0 - bx0, bx1 - x0, y0 - by0, by1 - y0];
+      for (let i = 0; i < 4; i++) {
+        if (p_[i] === 0) { if (q_[i] < 0) return false; }
+        else {
+          const t = q_[i] / p_[i];
+          if (p_[i] < 0) { if (t > t1) return false; if (t > t0) t0 = t; }
+          else { if (t < t0) return false; if (t < t1) t1 = t; }
+        }
+      }
+      return true;
+    }
+    const pts = genPoints(p, 50, 40);
+    p.stroke(20, 60); p.strokeWeight(0.8);
+    for (let i = 0; i < pts.length; i++) for (let j = i+1; j < pts.length; j++) {
+      if (segHitsBox(pts[i][0], pts[i][1], pts[j][0], pts[j][1])) continue;
+      p.line(pts[i][0], pts[i][1], pts[j][0], pts[j][1]);
+    }
+    p.noFill(); p.stroke(20, 120); p.strokeWeight(1);
+    p.rect(bx0, by0, bw, bh);
+    p.noStroke(); p.fill(20);
+    for (const [x,y] of pts) p.circle(x,y,4);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

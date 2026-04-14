@@ -60,6 +60,14 @@ const solutions = [
       }
     }
   }},
+  { strategy: "Put in earplugs", draw: (p) => {
+    p.noFill(); p.strokeWeight(1);
+    p.stroke(200,40,40);
+    for (let i = 0; i < 1000; i++) {
+      const x = p.random(p.width), y = p.random(p.height);
+      p.rect(x-4, y-4, 8, 8);
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

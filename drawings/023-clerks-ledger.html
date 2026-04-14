@@ -83,6 +83,16 @@ const solutions = [
       }
     }
   }},
+  { strategy: "Discover the recipes you are using and abandon them", draw: (p) => {
+    const W = p.width, H = p.height;
+    p.strokeWeight(1.5);
+    for (let i = 0; i < 200; i++) {
+      const y = p.random(H);
+      const x1 = p.random(W), x2 = p.random(W);
+      if (p.random() < 0.5) p.stroke(200,40,40); else p.stroke(40,80,200);
+      p.line(x1, y, x2, y);
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>
