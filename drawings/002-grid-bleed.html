@@ -71,6 +71,33 @@ const solutions = [
       p.rect(x*s, y*s, s, s);
     }
   }},
+  { strategy: "Simple subtraction", draw: (p) => {
+    const N = 20, s = p.width / N;
+    const g = Array.from({length:N}, () => Array(N).fill(0));
+    let frontier = [[Math.floor(p.random(N)), Math.floor(p.random(N))]];
+    g[frontier[0][1]][frontier[0][0]] = 1;
+    while (frontier.length) {
+      const next = [];
+      for (const [x,y] of frontier) {
+        for (const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+          const nx=x+dx, ny=y+dy;
+          if (nx<0||ny<0||nx>=N||ny>=N) continue;
+          if (g[ny][nx] !== 0) continue;
+          const r = p.random();
+          if (r < 0.4) { g[ny][nx] = 1; next.push([nx,ny]); }
+          else if (r < 0.75) { g[ny][nx] = 2; }
+          else { g[ny][nx] = 3; }
+        }
+      }
+      frontier = next;
+    }
+    p.noStroke();
+    for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+      const v = g[y][x];
+      if (v===1) p.fill(200,40,40); else if (v===2) p.fill(20); else p.fill(255);
+      p.rect(x*s, y*s, s, s);
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

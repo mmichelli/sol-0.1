@@ -48,6 +48,27 @@ const solutions = [
     p.stroke(20); p.strokeWeight(2); p.noFill();
     p.rect(x0, y0, rw, rh);
   }},
+  { strategy: "Don't be afraid of things because they are easy to do", draw: (p) => {
+    const W = p.width, H = p.height;
+    const rw = W*2/3, rh = H*0.45;
+    const x0 = (W-rw)/2, y0 = (H-rh)/2, x1 = x0+rw, y1 = y0+rh;
+    p.stroke(20); p.strokeWeight(1); p.noFill();
+    for (let x = x0; x <= x1; x += 14) p.line(x, y0, x, y1);
+    for (let y = y0; y <= y1; y += 14) p.line(x0, y, x1, y);
+    p.stroke(20, 120); p.strokeWeight(0.8);
+    for (let i = 0; i < 300; i++) {
+      const side = Math.floor(p.random(4));
+      let tx, ty;
+      if (side === 0) { tx = p.random(x0,x1); ty = y0; }
+      else if (side === 1) { tx = x1; ty = p.random(y0,y1); }
+      else if (side === 2) { tx = p.random(x0,x1); ty = y1; }
+      else { tx = x0; ty = p.random(y0,y1); }
+      let sx, sy;
+      do { sx = p.random(W); sy = p.random(H); } while (sx>x0&&sx<x1&&sy>y0&&sy<y1);
+      p.line(sx, sy, tx, ty);
+    }
+    p.stroke(20); p.strokeWeight(2); p.rect(x0, y0, rw, rh);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

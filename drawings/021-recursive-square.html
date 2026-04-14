@@ -42,6 +42,20 @@ const solutions = [
     }
     rec(0, 0, p.width, 0);
   }},
+  { strategy: "Be extravagant", draw: (p) => {
+    p.stroke(20); p.strokeWeight(1); p.noFill();
+    function rec(x, y, s, depth) {
+      p.rect(x, y, s, s);
+      if (s < 6) return;
+      if (depth >= 5) return;
+      if (p.random() < 0.2) return;
+      const h = s/3;
+      for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
+        rec(x + i*h, y + j*h, h, depth+1);
+      }
+    }
+    rec(0, 0, p.width, 0);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

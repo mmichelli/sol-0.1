@@ -58,6 +58,28 @@ const solutions = [
     }
     p.noStroke(); p.fill(200,40,40); p.circle(cx, cy, 10);
   }},
+  { strategy: "Distorting time", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    p.stroke(20); p.strokeWeight(1.2); p.noFill();
+    for (let i = 0; i < 50; i++) {
+      let x = p.random(40, W-40), y = p.random(40, H-40);
+      let a = p.random(p.TWO_PI);
+      p.beginShape();
+      for (let s = 0; s < 30; s++) {
+        p.vertex(x, y);
+        const target = Math.atan2(cy - y, cx - x);
+        let da = target - a;
+        while (da > Math.PI) da -= 2*Math.PI;
+        while (da < -Math.PI) da += 2*Math.PI;
+        a += da * 0.08 + p.random(-0.2, 0.2);
+        const step = p.random() < 0.3 ? p.random(1, 3) : p.random(20, 80);
+        x += Math.cos(a)*step; y += Math.sin(a)*step;
+        if (Math.hypot(x-cx, y-cy) < 10) break;
+      }
+      p.endShape();
+    }
+    p.noStroke(); p.fill(200,40,40); p.circle(cx, cy, 10);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

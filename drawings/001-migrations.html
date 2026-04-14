@@ -54,6 +54,29 @@ const solutions = [
     for (const [x,y] of T) p.circle(x,y,5);
     for (const [x,y] of B) p.circle(x,y,5);
   }},
+  { strategy: "Ghost echoes", draw: (p) => {
+    const W = p.width, H = p.height, m = 60, N = 10;
+    const j = () => p.random(-12, 12);
+    const L = Array.from({length:N}, (_,i) => [m,       m + i*((H-2*m)/(N-1)) + j()]);
+    const R = Array.from({length:N}, (_,i) => [W-m,     m + i*((H-2*m)/(N-1)) + j()]);
+    const segs = [];
+    p.strokeWeight(1.5);
+    for (const a of L) {
+      const b = R[Math.floor(p.random(N))];
+      p.stroke(200,40,40,60); p.line(a[0]+6,a[1]+4,b[0]+6,b[1]+4);
+      p.stroke(200,40,40); p.line(a[0],a[1],b[0],b[1]); segs.push([a,b]);
+    }
+    for (const a of R) {
+      const b = L[Math.floor(p.random(N))];
+      p.stroke(40,80,200,60); p.line(a[0]-6,a[1]+4,b[0]-6,b[1]+4);
+      p.stroke(40,80,200); p.line(a[0],a[1],b[0],b[1]); segs.push([a,b]);
+    }
+    p.noStroke(); p.fill(240,200,40);
+    for (let i=0;i<segs.length;i++) for (let k=i+1;k<segs.length;k++) { const x = ix(segs[i],segs[k]); if (x) p.circle(x[0],x[1],8); }
+    p.noStroke(); p.fill(20);
+    for (const [x,y] of L) p.circle(x,y,5);
+    for (const [x,y] of R) p.circle(x,y,5);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

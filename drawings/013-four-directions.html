@@ -43,6 +43,26 @@ const solutions = [
       p.rect(x*s, y*s, s, s);
     }
   }},
+  { strategy: "Faced with a choice, do both", draw: (p) => {
+    const N = 16, s = p.width / N;
+    p.stroke(20); p.strokeWeight(1);
+    for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+      const dirs = [];
+      while (dirs.length < 2) {
+        const d = Math.floor(p.random(4));
+        if (!dirs.includes(d)) dirs.push(d);
+      }
+      const x0 = x*s, y0 = y*s;
+      for (const dir of dirs) {
+        for (let i = 2; i < s; i += 3) {
+          if (dir === 0) p.line(x0 + i, y0, x0 + i, y0 + s);
+          else if (dir === 1) p.line(x0, y0 + i, x0 + s, y0 + i);
+          else if (dir === 2) { p.line(x0, y0 + i, x0 + s - i, y0 + s); p.line(x0 + i, y0, x0 + s, y0 + s - i); }
+          else { p.line(x0, y0 + i, x0 + s - i, y0 + s); p.line(x0 + i, y0, x0 + s, y0 + s - i); }
+        }
+      }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

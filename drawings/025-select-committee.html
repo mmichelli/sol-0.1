@@ -45,6 +45,21 @@ const solutions = [
       if (p.random() < 0.3) seeds.push([x, y]);
     }
   }},
+  { strategy: "Allow an easement (a way of escaping from a fixed situation)", draw: (p) => {
+    p.strokeWeight(1);
+    for (let i = 0; i < 1000; i++) {
+      const x = p.random(p.width), y = p.random(p.height);
+      if (p.random() < 0.1) {
+        p.noStroke(); p.fill(40,140,70);
+        p.circle(x, y, 5);
+      } else {
+        p.noFill();
+        const even = (Math.floor(x) + Math.floor(y)) % 2 === 0;
+        p.stroke(even ? p.color(20) : p.color(200,40,40));
+        p.rect(x-4, y-4, 8, 8);
+      }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

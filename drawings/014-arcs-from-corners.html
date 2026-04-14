@@ -43,6 +43,20 @@ const solutions = [
       }
     }
   }},
+  { strategy: "Cascades", draw: (p) => {
+    const W = p.width, H = p.height;
+    const origins = [[0,0],[W,0],[W,H],[0,H],[W/2,0],[W,H/2],[W/2,H],[0,H/2]];
+    p.noFill(); p.stroke(20); p.strokeWeight(1);
+    const diag = Math.hypot(W,H), step = 32;
+    for (const [ox, oy] of origins) {
+      for (let k = 0; k < 4; k++) {
+        const shrink = 1 - k*0.08, offset = k*8;
+        for (let r = step + offset; r < diag*shrink; r += step) {
+          p.arc(ox, oy, r*2*shrink, r*2*shrink, 0, p.TWO_PI);
+        }
+      }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

@@ -55,6 +55,29 @@ function drawBands(p, palette) {
 const solutions = [
   { strategy: null, draw: (p) => drawBands(p, [[200,40,40],[240,200,40],[40,80,200],[20,20,20]]) },
   { strategy: "Mute and continue", draw: (p) => drawBands(p, [[220,220,220],[170,170,170],[110,110,110],[40,40,40]]) },
+  { strategy: "Is there something missing?", draw: (p) => {
+    const W = p.width, H = p.height, bandH = H/4;
+    const palette = [[200,40,40],[240,200,40],[40,80,200],[20,20,20]];
+    const skip = Math.floor(p.random(4));
+    p.strokeWeight(1.2);
+    for (let b = 0; b < 4; b++) {
+      if (b === skip) continue;
+      const col = palette[b];
+      p.stroke(col[0],col[1],col[2]);
+      const y0 = b * bandH, y1 = y0 + bandH;
+      const angle = p.random([0, Math.PI/4, Math.PI/2, -Math.PI/4]);
+      const spacing = 6;
+      const diag = Math.hypot(W, bandH);
+      const nx = Math.cos(angle + Math.PI/2), ny = Math.sin(angle + Math.PI/2);
+      const cx = W/2, cy = (y0+y1)/2;
+      for (let i = -diag; i < diag; i += spacing) {
+        const mx = cx + nx*i, my = cy + ny*i;
+        const dx = Math.cos(angle)*diag, dy = Math.sin(angle)*diag;
+        const clipped = clipLine(mx - dx, my - dy, mx + dx, my + dy, 0, y0, W, y1);
+        if (clipped) p.line(clipped[0], clipped[1], clipped[2], clipped[3]);
+      }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

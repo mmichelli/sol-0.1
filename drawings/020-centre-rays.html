@@ -45,6 +45,26 @@ const solutions = [
       p.line(x, y, cx, cy);
     }
   }},
+  { strategy: "When is it for?", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    const r = Math.hypot(W, H)/2;
+    p.strokeWeight(0.6);
+    const cardinals = [-Math.PI/2, 0, Math.PI/2, Math.PI];
+    for (const base of cardinals) {
+      for (let i = 0; i < 120; i++) {
+        const a = base + p.random(-0.08, 0.08);
+        const col = COLORS[Math.floor(p.random(4))];
+        p.stroke(col[0], col[1], col[2], 180);
+        p.line(cx, cy, cx + Math.cos(a)*r, cy + Math.sin(a)*r);
+      }
+    }
+    for (let i = 0; i < 120; i++) {
+      const a = p.random(p.TWO_PI);
+      const col = COLORS[Math.floor(p.random(4))];
+      p.stroke(col[0], col[1], col[2], 100);
+      p.line(cx, cy, cx + Math.cos(a)*r, cy + Math.sin(a)*r);
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

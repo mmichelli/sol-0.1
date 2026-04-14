@@ -41,6 +41,15 @@ const solutions = [
       p.fill(20); p.noStroke(); p.circle(cx, cy, 4); p.stroke(20);
     }
   }},
+  { strategy: "Tidy up", draw: (p) => {
+    const N = 12, s = p.width / N;
+    p.noFill(); p.stroke(20); p.strokeWeight(1);
+    for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+      const cx = x*s + s/2, cy = y*s + s/2;
+      p.circle(cx, cy, s*0.9);
+      p.circle(cx, cy, s*0.45);
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

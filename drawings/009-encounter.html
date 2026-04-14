@@ -53,6 +53,26 @@ const solutions = [
     p.fill(20); for (const [x,y] of black) p.circle(x,y,5);
     p.fill(200,40,40); for (const [x,y] of red) p.circle(x,y,5);
   }},
+  { strategy: "Cut a vital connection", draw: (p) => {
+    const W = p.width, H = p.height, m = 60, N = 10;
+    const black = [], red = [];
+    for (let r=0;r<N;r++) for (let c2=0;c2<N;c2++) black.push([m + c2*((W-2*m)/(N-1)), m + r*((H-2*m)/(N-1))]);
+    const ang = p.random(-0.3, 0.3), sh = [p.random(-40, 40), p.random(-40, 40)];
+    for (const [x,y] of black) {
+      const dx = x - W/2, dy = y - H/2;
+      red.push([W/2 + dx*Math.cos(ang) - dy*Math.sin(ang) + sh[0], H/2 + dx*Math.sin(ang) + dy*Math.cos(ang) + sh[1]]);
+    }
+    p.stroke(20, 120); p.strokeWeight(1);
+    for (const [x,y] of black) {
+      if (p.random() < 0.4) continue;
+      let best = red[0], bd = Infinity;
+      for (const r of red) { const d = (r[0]-x)**2 + (r[1]-y)**2; if (d < bd) { bd = d; best = r; } }
+      p.line(x, y, best[0], best[1]);
+    }
+    p.noStroke();
+    p.fill(20); for (const [x,y] of black) p.circle(x,y,5);
+    p.fill(200,40,40); for (const [x,y] of red) p.circle(x,y,5);
+  }},
 ];
 </script>
 <script src="runner.js"></script>
