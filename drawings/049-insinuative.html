@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 049</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#049</h1>
+  <p>Five broad ribbons stealing across the page, each a different flat saturated colour. Every ribbon begins at one edge of the page and ends at another. Where ribbons cross, each crossing is decided at random: the passing ribbon covers, or is covered by, its neighbour.</p>
+  <p class="source">Seed — <em>insinuative</em>: stealing on or into the confidence or affections; using insinuations; giving hints.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const P = [[200,40,40],[240,200,40],[40,80,200],[40,140,70],[20,20,20]];
+function ribbon(p, x1, y1, x2, y2, width, col) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const L = Math.hypot(dx, dy);
+  const nx = -dy/L, ny = dx/L;
+  const cp1x = x1 + dx*0.3 + p.random(-120, 120);
+  const cp1y = y1 + dy*0.3 + p.random(-120, 120);
+  const cp2x = x1 + dx*0.7 + p.random(-120, 120);
+  const cp2y = y1 + dy*0.7 + p.random(-120, 120);
+  p.noStroke(); p.fill(col[0], col[1], col[2]);
+  // approximate ribbon as many quads along bezier
+  const steps = 60;
+  const pts = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = i/steps;
+    const mt = 1 - t;
+    const bx = mt*mt*mt*x1 + 3*mt*mt*t*cp1x + 3*mt*t*t*cp2x + t*t*t*x2;
+    const by = mt*mt*mt*y1 + 3*mt*mt*t*cp1y + 3*mt*t*t*cp2y + t*t*t*y2;
+    const dbx = 3*mt*mt*(cp1x-x1) + 6*mt*t*(cp2x-cp1x) + 3*t*t*(x2-cp2x);
+    const dby = 3*mt*mt*(cp1y-y1) + 6*mt*t*(cp2y-cp1y) + 3*t*t*(y2-cp2y);
+    const dl = Math.hypot(dbx, dby) || 1;
+    pts.push([bx, by, -dby/dl, dbx/dl]);
+  }
+  p.beginShape();
+  for (const [x, y, tx, ty] of pts) p.vertex(x + tx*width/2, y + ty*width/2);
+  for (let i = pts.length - 1; i >= 0; i--) { const [x, y, tx, ty] = pts[i]; p.vertex(x - tx*width/2, y - ty*width/2); }
+  p.endShape(p.CLOSE);
+}
+function edgePoint(p, edge, W, H) {
+  const pos = p.random(0.1, 0.9);
+  if (edge === 0) return [pos*W, 0];
+  if (edge === 1) return [W, pos*H];
+  if (edge === 2) return [pos*W, H];
+  return [0, pos*H];
+}
+function drawFive(p, width) {
+  const W = p.width, H = p.height;
+  for (let i = 0; i < 5; i++) {
+    const e1 = Math.floor(p.random(4));
+    let e2 = Math.floor(p.random(4));
+    while (e2 === e1) e2 = Math.floor(p.random(4));
+    const [x1, y1] = edgePoint(p, e1, W, H);
+    const [x2, y2] = edgePoint(p, e2, W, H);
+    ribbon(p, x1, y1, x2, y2, width, P[i]);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => drawFive(p, 70) },
+  { strategy: "Always first steps", draw: (p) => drawFive(p, 140) },
+  { strategy: "Mute and continue", draw: (p) => {
+    const W = p.width, H = p.height;
+    // only two ribbons
+    for (let i = 0; i < 2; i++) {
+      const e1 = Math.floor(p.random(4));
+      let e2 = Math.floor(p.random(4));
+      while (e2 === e1) e2 = Math.floor(p.random(4));
+      const [x1, y1] = edgePoint(p, e1, W, H);
+      const [x2, y2] = edgePoint(p, e2, W, H);
+      ribbon(p, x1, y1, x2, y2, 90, P[i]);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

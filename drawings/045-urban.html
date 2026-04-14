@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 045</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#045</h1>
+  <p>Twenty tall rectangles standing shoulder to shoulder across the page. Each rectangle of a different width and height, each filled a single flat saturated colour from red, yellow, blue, green, or black. Above, the sky is left white.</p>
+  <p class="source">Seed — <em>urban</em>: of or belonging to a city or town; cultivated; polite; suiting those living in a city.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const P = [[200,40,40],[240,200,40],[40,80,200],[40,140,70],[20,20,20]];
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, N = 20;
+    const widths = Array.from({length: N}, () => p.random(0.5, 1.5));
+    const wSum = widths.reduce((a,b)=>a+b,0);
+    p.noStroke();
+    let x = 0;
+    for (let i = 0; i < N; i++) {
+      const w = widths[i]/wSum * W;
+      const h = p.random(H*0.3, H*0.85);
+      const col = P[Math.floor(p.random(P.length))];
+      p.fill(col[0], col[1], col[2]);
+      p.rect(x, H - h, w, h);
+      x += w;
+    }
+  }},
+  { strategy: "Emphasize differences", draw: (p) => {
+    const W = p.width, H = p.height, N = 20;
+    const widths = Array.from({length: N}, () => p.random(0.3, 1.8));
+    const wSum = widths.reduce((a,b)=>a+b,0);
+    p.noStroke();
+    let x = 0;
+    for (let i = 0; i < N; i++) {
+      const w = widths[i]/wSum * W;
+      const tall = i % 2 === 0;
+      const h = tall ? p.random(H*0.7, H*0.95) : p.random(H*0.08, H*0.25);
+      const col = P[i % P.length];
+      p.fill(col[0], col[1], col[2]);
+      p.rect(x, H - h, w, h);
+      x += w;
+    }
+  }},
+  { strategy: "Fill every beat with something", draw: (p) => {
+    const W = p.width, H = p.height, N = 20;
+    const widths = Array.from({length: N}, () => p.random(0.5, 1.5));
+    const wSum = widths.reduce((a,b)=>a+b,0);
+    p.noStroke();
+    let x = 0;
+    for (let i = 0; i < N; i++) {
+      const w = widths[i]/wSum * W;
+      // every rectangle goes full height but as stacked blocks
+      const col1 = P[Math.floor(p.random(P.length))];
+      const col2 = P[Math.floor(p.random(P.length))];
+      const split = p.random(H*0.3, H*0.7);
+      p.fill(col1[0], col1[1], col1[2]); p.rect(x, 0, w, split);
+      p.fill(col2[0], col2[1], col2[2]); p.rect(x, split, w, H - split);
+      x += w;
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

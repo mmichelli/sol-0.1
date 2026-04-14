@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 044</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#044</h1>
+  <p>From the centre of the page, forty-eight wedges fanning outward to the edge, each wedge filled flat with a single saturated colour. The colours cycle red, yellow, blue, green, black around the page.</p>
+  <p class="source">Seed — <em>aromatical</em>: pertaining to aroma; fragrant; odoriferous; of a large class of compounds — oils, balsams, camphors — many diffusive.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const P = [[200,40,40],[240,200,40],[40,80,200],[40,140,70],[20,20,20]];
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    const R = Math.hypot(W, H)/2 + 10;
+    const N = 48;
+    p.noStroke();
+    for (let i = 0; i < N; i++) {
+      const a1 = (i/N) * p.TWO_PI, a2 = ((i+1)/N) * p.TWO_PI;
+      const col = P[i % P.length];
+      p.fill(col[0], col[1], col[2]);
+      p.arc(cx, cy, R*2, R*2, a1, a2, p.PIE);
+    }
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    const rings = [80, 180, 280, 380];
+    const N = 48;
+    p.noStroke();
+    // paint outer to inner
+    for (let k = rings.length - 1; k >= 0; k--) {
+      const R = rings[k];
+      for (let i = 0; i < N; i++) {
+        const a1 = (i/N) * p.TWO_PI + k*0.1, a2 = ((i+1)/N) * p.TWO_PI + k*0.1;
+        const col = P[(i + k) % P.length];
+        p.fill(col[0], col[1], col[2]);
+        p.arc(cx, cy, R*2, R*2, a1, a2, p.PIE);
+      }
+    }
+    // centre dot
+    p.fill(255); p.circle(cx, cy, 30);
+  }},
+  { strategy: "Make a sudden, destructive, unpredictable action; incorporate", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    const R = Math.hypot(W, H)/2 + 10;
+    const N = 48;
+    p.noStroke();
+    for (let i = 0; i < N; i++) {
+      const a1 = (i/N) * p.TWO_PI, a2 = ((i+1)/N) * p.TWO_PI;
+      const col = P[i % P.length];
+      p.fill(col[0], col[1], col[2]);
+      p.arc(cx, cy, R*2, R*2, a1, a2, p.PIE);
+    }
+    // a slash of white across the whole page
+    p.push();
+    p.translate(cx, cy);
+    p.rotate(p.random(p.TWO_PI));
+    p.fill(255);
+    p.rect(-R, -40, 2*R, 80);
+    p.pop();
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

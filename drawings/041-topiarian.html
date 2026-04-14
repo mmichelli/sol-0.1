@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 041</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#041</h1>
+  <p>The page filled solid green. From the field, twelve geometric shapes — circles, triangles, squares — clipped away, each revealing a single flat colour beneath: red, yellow, blue, or black.</p>
+  <p class="source">Seed — <em>topiarian</em>: of or pertaining to the ornamental cutting and trimming of trees, hedges; practicing ornamental gardening.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLORS = [[200,40,40],[240,200,40],[40,80,200],[20,20,20]];
+const GREEN = [40,140,70];
+function punchShape(p, kind, x, y, s, col) {
+  p.fill(col[0], col[1], col[2]); p.noStroke();
+  if (kind === 0) p.circle(x, y, s);
+  else if (kind === 1) {
+    p.push(); p.translate(x, y); p.rotate(p.random(p.TWO_PI));
+    p.triangle(-s/2, s/2, s/2, s/2, 0, -s/2); p.pop();
+  }
+  else { p.push(); p.translate(x, y); p.rotate(p.random(p.TWO_PI));
+    p.rect(-s/2, -s/2, s, s); p.pop();
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    p.noStroke(); p.fill(GREEN[0], GREEN[1], GREEN[2]); p.rect(0, 0, W, H);
+    for (let i = 0; i < 12; i++) {
+      const kind = Math.floor(p.random(3));
+      const s = p.random(80, 180);
+      const x = p.random(s/2 + 20, W - s/2 - 20);
+      const y = p.random(s/2 + 20, H - s/2 - 20);
+      punchShape(p, kind, x, y, s, COLORS[Math.floor(p.random(COLORS.length))]);
+    }
+  }},
+  { strategy: "Only one element of each kind", draw: (p) => {
+    const W = p.width, H = p.height;
+    p.noStroke(); p.fill(GREEN[0], GREEN[1], GREEN[2]); p.rect(0, 0, W, H);
+    for (let kind = 0; kind < 3; kind++) {
+      const s = 240;
+      const x = W/2 + (kind - 1) * 200;
+      const y = H/2;
+      punchShape(p, kind, x, y, s, COLORS[kind]);
+    }
+  }},
+  { strategy: "Accretion", draw: (p) => {
+    const W = p.width, H = p.height;
+    p.noStroke(); p.fill(GREEN[0], GREEN[1], GREEN[2]); p.rect(0, 0, W, H);
+    for (let i = 0; i < 60; i++) {
+      const kind = Math.floor(p.random(3));
+      const s = p.random(30, 90);
+      const x = p.random(s, W - s), y = p.random(s, H - s);
+      punchShape(p, kind, x, y, s, COLORS[Math.floor(p.random(COLORS.length))]);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

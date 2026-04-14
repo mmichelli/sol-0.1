@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 046</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#046</h1>
+  <p>The page divided by straight cuts into a mosaic of four-sided figures, no two having parallel sides. Each region filled flat with one of four colours: red, yellow, blue, or green.</p>
+  <p class="source">Seed — <em>trapezium</em>: a plane figure bounded by four right lines, of which no two are parallel.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLORS = [[200,40,40],[240,200,40],[40,80,200],[40,140,70]];
+// Split a polygon by a line through two random edges
+function clipBelow(poly, A, B) {
+  // keep points on left side of AB
+  const out = [];
+  const side = (P) => (B.x - A.x)*(P.y - A.y) - (B.y - A.y)*(P.x - A.x);
+  for (let i = 0; i < poly.length; i++) {
+    const cur = poly[i], nxt = poly[(i+1) % poly.length];
+    const sc = side(cur), sn = side(nxt);
+    if (sc <= 0) out.push(cur);
+    if ((sc < 0 && sn > 0) || (sc > 0 && sn < 0)) {
+      const t = sc / (sc - sn);
+      out.push({ x: cur.x + t*(nxt.x - cur.x), y: cur.y + t*(nxt.y - cur.y) });
+    }
+  }
+  return out;
+}
+function splitPoly(p, poly) {
+  // pick two distinct edges, pick random t on each, connect
+  const n = poly.length;
+  if (n < 3) return [poly];
+  const i = Math.floor(p.random(n));
+  let j = Math.floor(p.random(n));
+  while (j === i) j = Math.floor(p.random(n));
+  const ti = 0.2 + p.random() * 0.6, tj = 0.2 + p.random() * 0.6;
+  const A = { x: poly[i].x + ti*(poly[(i+1)%n].x - poly[i].x), y: poly[i].y + ti*(poly[(i+1)%n].y - poly[i].y) };
+  const B = { x: poly[j].x + tj*(poly[(j+1)%n].x - poly[j].x), y: poly[j].y + tj*(poly[(j+1)%n].y - poly[j].y) };
+  const left = clipBelow(poly, A, B);
+  const right = clipBelow(poly, B, A);
+  return [left, right];
+}
+function drawMosaic(p, iterations, colours) {
+  const W = p.width, H = p.height;
+  let pieces = [[{x:0,y:0},{x:W,y:0},{x:W,y:H},{x:0,y:H}]];
+  for (let k = 0; k < iterations; k++) {
+    const nxt = [];
+    for (const poly of pieces) {
+      if (poly.length >= 3 && p.random() < 0.85) {
+        const split = splitPoly(p, poly);
+        nxt.push(...split);
+      } else nxt.push(poly);
+    }
+    pieces = nxt;
+  }
+  p.noStroke();
+  for (const poly of pieces) {
+    const col = colours[Math.floor(p.random(colours.length))];
+    p.fill(col[0], col[1], col[2]);
+    p.beginShape();
+    for (const pt of poly) p.vertex(pt.x, pt.y);
+    p.endShape(p.CLOSE);
+  }
+  p.stroke(20); p.strokeWeight(1.1); p.noFill();
+  for (const poly of pieces) {
+    p.beginShape();
+    for (const pt of poly) p.vertex(pt.x, pt.y);
+    p.endShape(p.CLOSE);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => drawMosaic(p, 4, COLORS) },
+  { strategy: "Into the impossible", draw: (p) => drawMosaic(p, 7, COLORS) },
+  { strategy: "Disconnect from desire", draw: (p) => drawMosaic(p, 4, [[20,20,20]]) },
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

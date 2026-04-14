@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 050</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#050</h1>
+  <p>The page divided into three equal horizontal bands of flat saturated colour — red above, yellow in the middle, blue below. Across all three bands, two hundred small black discs scattered at random, conspiring in the field.</p>
+  <p class="source">Seed — <em>carbonaro</em>: a member of a secret political association in Italy, organized for the purpose of changing the government into a republic.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const RED = [200,40,40], YELLOW = [240,200,40], BLUE = [40,80,200], BLACK = [20,20,20];
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    p.noStroke();
+    p.fill(RED[0],RED[1],RED[2]); p.rect(0, 0, W, H/3);
+    p.fill(YELLOW[0],YELLOW[1],YELLOW[2]); p.rect(0, H/3, W, H/3);
+    p.fill(BLUE[0],BLUE[1],BLUE[2]); p.rect(0, 2*H/3, W, H/3);
+    p.fill(BLACK[0], BLACK[1], BLACK[2]);
+    for (let i = 0; i < 200; i++) {
+      p.circle(p.random(W), p.random(H), p.random(8, 22));
+    }
+  }},
+  { strategy: "Honor thy error as a hidden intention", draw: (p) => {
+    const W = p.width, H = p.height;
+    p.noStroke();
+    // bands slightly tilted (the error)
+    p.push();
+    p.translate(W/2, H/2); p.rotate(-0.08); p.translate(-W/2, -H/2);
+    p.fill(RED[0],RED[1],RED[2]); p.rect(-40, -40, W+80, H/3 + 40);
+    p.fill(YELLOW[0],YELLOW[1],YELLOW[2]); p.rect(-40, H/3, W+80, H/3);
+    p.fill(BLUE[0],BLUE[1],BLUE[2]); p.rect(-40, 2*H/3, W+80, H/3 + 80);
+    p.pop();
+    p.fill(BLACK[0], BLACK[1], BLACK[2]);
+    for (let i = 0; i < 200; i++) {
+      p.circle(p.random(W), p.random(H), p.random(8, 22));
+    }
+  }},
+  { strategy: "Only one element of each kind", draw: (p) => {
+    const W = p.width, H = p.height;
+    p.noStroke();
+    p.fill(RED[0],RED[1],RED[2]); p.rect(0, 0, W, H/3);
+    p.fill(YELLOW[0],YELLOW[1],YELLOW[2]); p.rect(0, H/3, W, H/3);
+    p.fill(BLUE[0],BLUE[1],BLUE[2]); p.rect(0, 2*H/3, W, H/3);
+    // three discs, one per band, each a different size
+    p.fill(BLACK[0], BLACK[1], BLACK[2]);
+    p.circle(W*0.3, H/6, 80);
+    p.circle(W*0.7, H/2, 140);
+    p.circle(W*0.5, 5*H/6, 200);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

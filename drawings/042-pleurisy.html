@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 042</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#042</h1>
+  <p>A twelve-by-twelve grid of squares, filling the page. Each square filled flat: red, orange, or yellow; the colour chosen by the distance of the square from a point of inflammation placed at random.</p>
+  <p class="source">Seed — <em>pleurisy</em>: an inflammation of the pleura, usually accompanied with fever, pain, and exudation into the pleural cavity.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const RED = [200,40,40], ORANGE = [230,110,40], YELLOW = [240,200,40];
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, N = 12;
+    const cw = W/N, ch = H/N;
+    const fx = p.random(W), fy = p.random(H);
+    const maxD = Math.hypot(W, H) * 0.6;
+    p.noStroke();
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const x = c*cw + cw/2, y = r*ch + ch/2;
+        const d = Math.hypot(x - fx, y - fy) / maxD;
+        const col = d < 0.33 ? RED : d < 0.66 ? ORANGE : YELLOW;
+        p.fill(col[0], col[1], col[2]);
+        p.rect(c*cw, r*ch, cw, ch);
+      }
+    }
+  }},
+  { strategy: "Two sources of heat", draw: (p) => {
+    const W = p.width, H = p.height, N = 12;
+    const cw = W/N, ch = H/N;
+    const f1x = p.random(W), f1y = p.random(H);
+    const f2x = p.random(W), f2y = p.random(H);
+    const maxD = Math.hypot(W, H) * 0.5;
+    p.noStroke();
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const x = c*cw + cw/2, y = r*ch + ch/2;
+        const d = Math.min(Math.hypot(x-f1x,y-f1y), Math.hypot(x-f2x,y-f2y)) / maxD;
+        const col = d < 0.33 ? RED : d < 0.66 ? ORANGE : YELLOW;
+        p.fill(col[0], col[1], col[2]);
+        p.rect(c*cw, r*ch, cw, ch);
+      }
+    }
+  }},
+  { strategy: "Reverse", draw: (p) => {
+    const W = p.width, H = p.height, N = 12;
+    const cw = W/N, ch = H/N;
+    const fx = p.random(W), fy = p.random(H);
+    const maxD = Math.hypot(W, H) * 0.6;
+    p.noStroke();
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const x = c*cw + cw/2, y = r*ch + ch/2;
+        const d = Math.hypot(x - fx, y - fy) / maxD;
+        const col = d < 0.33 ? YELLOW : d < 0.66 ? ORANGE : RED;
+        p.fill(col[0], col[1], col[2]);
+        p.rect(c*cw, r*ch, cw, ch);
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
