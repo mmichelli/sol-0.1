@@ -51,6 +51,28 @@ const solutions = [
       p.circle(cx + Math.cos(a)*r, cy + Math.sin(a)*r, 20 + t*120);
     }
   }},
+  { strategy: "Ask your body", draw: (p) => {
+    const cx = p.width/2, cy = p.height/2;
+    p.noFill(); p.stroke(20); p.strokeWeight(1);
+    const turns = 20, steps = 2000, rMax = Math.min(p.width, p.height)/2 - 30;
+    p.beginShape();
+    for (let i = 0; i <= steps; i++) {
+      const t = i/steps;
+      const a = t * turns * p.TWO_PI;
+      const breath = 1 + 0.08 * p.noise(t*6, 0) * Math.sin(t*Math.PI*3 + p.noise(t*4)*p.TWO_PI);
+      const r = t * rMax * breath;
+      p.vertex(cx + Math.cos(a)*r, cy + Math.sin(a)*r);
+    }
+    p.endShape();
+    p.noStroke(); p.fill(20);
+    for (let i = 0; i < turns*8; i++) {
+      const t = i/(turns*8);
+      const a = t * turns * p.TWO_PI;
+      const breath = 1 + 0.08 * p.noise(t*6, 0) * Math.sin(t*Math.PI*3 + p.noise(t*4)*p.TWO_PI);
+      const r = t * rMax * breath;
+      p.circle(cx + Math.cos(a)*r, cy + Math.sin(a)*r, 1 + t*16);
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

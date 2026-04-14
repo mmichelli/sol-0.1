@@ -85,6 +85,13 @@ const solutions = [
     while (out.length < 5) out.push(pool.splice(Math.floor(Math.random()*pool.length), 1)[0]);
     return out;
   }, draw: drawFromWords },
+  { strategy: "Once the search is in progress, something will be found", fetch: async () => {
+    const COMMON = ['time','year','people','way','day','man','thing','woman','life','child','world','school','state','family','student','group','country','problem','hand','part','place','case','week','company','system','program','question','work','government','number','night','point','home','water','room','mother','area','money','story','fact','month','lot','right','study','book','eye','job','word','business','issue','side','kind','head','house','service','friend','father','power','hour','game','line','end','member','law','car','city','community','name','president','team','minute','idea','kid','body','information','back','parent','face','others','level','office','door','health','person','art','war','history','party','result','change','morning','reason','research','girl','guy','moment','air','teacher','force','education','foot','boy','age','policy','music','market','sense','nation','plan','college','interest','death','experience','effect','use','class','control','care','field','development','role','effort','rate','heart','drug','show','leader','light','voice','wife','police','mind','price','report','decision','son','hope','view','relationship','town','road','arm','truth','sport','race','round','peace','news','tree','song','window','river','box','door','stone','flower','star','moon','sun','sky','sea','ocean','mountain','forest','valley','beach','island','bridge','castle','garden','village','desert','lake','stream','meadow','cloud','wind','rain','snow','storm','fire','ice','shadow','mirror','dream','ghost','angel','wizard','dragon','tower','cave','key','crown','sword','shield','feather','ribbon','paper','candle','clock','ladder','harbour','compass','lantern','ash','machine','chance','transistor'];
+    const out = [];
+    const pool = COMMON.slice();
+    while (out.length < 5) out.push(pool.splice(Math.floor(Math.random()*pool.length), 1)[0]);
+    return out;
+  }, draw: drawFromWords },
 ];
 
 (async () => {

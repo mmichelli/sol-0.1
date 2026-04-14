@@ -51,6 +51,23 @@ const solutions = [
     }
     rec(0, 0, p.width, p.height);
   }},
+  { strategy: "Infinitesimal gradations", draw: (p) => {
+    p.stroke(20); p.strokeWeight(1);
+    const W = p.width;
+    function rec(x, y, w, h, depth) {
+      if (w < 18 || h < 18) return;
+      const hw = w/2, hh = h/2;
+      const quads = [[x,y],[x+hw,y],[x,y+hh],[x+hw,y+hh]];
+      const black = Math.floor(p.random(4));
+      const g = Math.min(200, 20 + depth * 18);
+      for (let i = 0; i < 4; i++) {
+        const [qx, qy] = quads[i];
+        if (i === black) { p.fill(g); p.rect(qx, qy, hw, hh); }
+        else { p.noFill(); p.rect(qx, qy, hw, hh); rec(qx, qy, hw, hh, depth+1); }
+      }
+    }
+    rec(0, 0, p.width, p.height, 0);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

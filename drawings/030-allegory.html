@@ -51,6 +51,24 @@ const solutions = [
       p.rect(m + i*w, H - m - h, w, h);
     }
   }},
+  { strategy: "Give the game away", draw: (p) => {
+    const W = p.width, H = p.height, N = 7, m = 60;
+    const heights = [1,2,3,4,5,6,7];
+    const widths = Array.from({length:N}, () => p.random(0.5, 1.5));
+    const wSum = widths.reduce((a,b)=>a+b,0);
+    const cols = [[200,40,40],[240,200,40],[40,80,200],[20,20,20],[40,140,70]];
+    let x = m;
+    const available = W - 2*m, hUnit = (H - 2*m)/7;
+    p.noStroke();
+    for (let i = 0; i < N; i++) {
+      const w = widths[i]/wSum * available;
+      const h = heights[i] * hUnit;
+      const col = cols[Math.floor(p.random(cols.length))];
+      p.fill(col[0],col[1],col[2]);
+      p.rect(x, H - m - h, w, h);
+      x += w;
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

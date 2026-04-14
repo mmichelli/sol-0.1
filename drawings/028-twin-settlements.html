@@ -44,6 +44,14 @@ const solutions = [
     const off = p.random(60, 200);
     renderTwo(p, [p.width/2 - off, p.height*0.35 + p.random(-60,60)], [p.width/2 + off, p.height*0.65 + p.random(-60,60)], 14, 42);
   }},
+  { strategy: "Just carry on", draw: (p) => {
+    const a = [p.width*0.25, p.height/2], b = [p.width*0.75, p.height/2];
+    p.noFill(); p.stroke(20); p.strokeWeight(1);
+    for (let i = 1; i <= 200; i++) {
+      p.circle(a[0], a[1], i*12*2);
+      p.circle(b[0], b[1], i*12*2);
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

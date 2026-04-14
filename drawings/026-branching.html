@@ -58,6 +58,27 @@ const solutions = [
     }
     grow(W/2, H - 20, -Math.PI/2, 60, false);
   }},
+  { strategy: "The tape is now the music", draw: (p) => {
+    const W = p.width, H = p.height;
+    function grow(x, y, a, steps, depth) {
+      if (steps <= 0 || y < 20 || x < 0 || x > W) return;
+      const col = p.random(['black','black','red','yellow','black']);
+      const alpha = Math.max(20, 255 - depth*28);
+      const sw = Math.max(0.4, 6 - depth*0.8);
+      if (col==='red') p.stroke(200,40,40,alpha); else if (col==='yellow') p.stroke(240,200,40,alpha); else p.stroke(20,alpha);
+      p.strokeWeight(sw);
+      const len = p.random(10, 30);
+      const nx = x + Math.cos(a)*len, ny = y + Math.sin(a)*len;
+      p.line(x, y, nx, ny);
+      if (p.random() < 0.35 && steps > 3) {
+        grow(nx, ny, a - p.random(0.2, 0.8), steps - 1, depth + 1);
+        grow(nx, ny, a + p.random(0.2, 0.8), steps - 1, depth + 1);
+      } else {
+        grow(nx, ny, a + p.random(-0.3, 0.3), steps - 1, depth + 1);
+      }
+    }
+    grow(W/2, H - 20, -Math.PI/2, 60, 0);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

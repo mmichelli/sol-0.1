@@ -56,6 +56,33 @@ const solutions = [
       }
     }
   }},
+  { strategy: "Make a blank valuable by putting it in an exquisite frame", draw: (p) => {
+    const W = p.width, H = p.height, m = 60, gap = 40;
+    const colW = (W - 2*m - gap)/2;
+    p.noFill(); p.stroke(20);
+    p.strokeWeight(4); p.rect(20, 20, W-40, H-40);
+    p.strokeWeight(1); p.rect(32, 32, W-64, H-64);
+    p.strokeWeight(1.2);
+    const fs = 14;
+    for (const [cx, cy] of [[20,20],[W-20,20],[W-20,H-20],[20,H-20]]) {
+      const sx = cx < W/2 ? 1 : -1, sy = cy < H/2 ? 1 : -1;
+      p.line(cx + sx*fs, cy, cx + sx*fs*3, cy);
+      p.line(cx, cy + sy*fs, cx, cy + sy*fs*3);
+      p.noFill(); p.circle(cx + sx*fs*2, cy + sy*fs*2, fs);
+    }
+    p.strokeWeight(1.5);
+    for (let i = 0; i < 100; i++) {
+      const y = m + i * (H - 2*m)/99;
+      p.stroke(200,40,40); p.line(m, y, m + colW, y);
+      p.stroke(40,80,200); p.line(m + colW + gap, y, W - m, y);
+      if ((i+1) % 10 === 0) {
+        p.stroke(20); p.strokeWeight(2);
+        p.line(m, y-8, m+colW, y+8);
+        p.line(m+colW+gap, y-8, W-m, y+8);
+        p.strokeWeight(1.5);
+      }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

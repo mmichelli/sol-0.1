@@ -50,6 +50,14 @@ const solutions = [
     p.noStroke(); p.fill(20);
     for (const [x,y] of pts) p.circle(x,y,3);
   }},
+  { strategy: "Use fewer notes", draw: (p) => {
+    const pts = genPoints(p, 15, 60);
+    p.stroke(20, 140); p.strokeWeight(1);
+    for (let i = 0; i < pts.length; i++) for (let j = i+1; j < pts.length; j++)
+      if (p.random() < 0.5) p.line(pts[i][0], pts[i][1], pts[j][0], pts[j][1]);
+    p.noStroke(); p.fill(20);
+    for (const [x,y] of pts) p.circle(x,y,5);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

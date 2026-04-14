@@ -37,6 +37,17 @@ const solutions = [
       p.line(x, y, x + dx, y + dy);
     }
   }},
+  { strategy: "Decorate, decorate", draw: (p) => {
+    const W = p.width, H = p.height, len = 8;
+    p.stroke(20, 140); p.strokeWeight(0.7);
+    for (let i = 0; i < 10000; i++) {
+      const x = p.random(W), y = p.random(H), a = p.random(p.TWO_PI);
+      const ex = x + Math.cos(a)*len, ey = y + Math.sin(a)*len;
+      p.line(x, y, ex, ey);
+      const px = -Math.sin(a)*2, py = Math.cos(a)*2;
+      p.line(ex - px, ey - py, ex + px, ey + py);
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>
