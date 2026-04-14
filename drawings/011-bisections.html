@@ -67,6 +67,22 @@ const solutions = [
       len *= 0.94;
     }
   }},
+  { strategy: "Short circuit", draw: (p) => {
+    const W = p.width, H = p.height;
+    p.stroke(20); p.strokeWeight(1.2);
+    let a = p.random(p.TWO_PI);
+    let cx = W/2 + p.random(-100, 100), cy = H/2 + p.random(-100, 100);
+    let len = Math.min(W,H) * 0.9;
+    for (let i = 0; i < 8; i++) {
+      const hx = Math.cos(a)*len/2, hy = Math.sin(a)*len/2;
+      p.line(cx - hx, cy - hy, cx + hx, cy + hy);
+      const t = p.random(-0.35, 0.35);
+      cx = cx + hx * t * 2;
+      cy = cy + hy * t * 2;
+      a += Math.PI/2;
+      len *= 0.94;
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

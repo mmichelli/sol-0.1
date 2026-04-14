@@ -76,6 +76,29 @@ const solutions = [
       }
     }
   }},
+  { strategy: "Spectrum analysis", draw: (p) => {
+    const W = p.width, H = p.height;
+    const corners = [
+      { o:[0,0],     a0: 0,           a1: Math.PI/2 },
+      { o:[W,0],     a0: Math.PI/2,   a1: Math.PI },
+      { o:[W,H],     a0: Math.PI,     a1: 3*Math.PI/2 },
+      { o:[0,H],     a0: 3*Math.PI/2, a1: 2*Math.PI },
+    ];
+    p.colorMode(p.HSB, 360, 100, 100, 255);
+    p.strokeWeight(1);
+    for (let ci = 0; ci < corners.length; ci++) {
+      const k = corners[ci];
+      for (let i = 0; i < 40; i++) {
+        const t = i/39;
+        const a = k.a0 + (k.a1 - k.a0)*t;
+        const d = Math.hypot(W,H);
+        const hue = ((ci*90) + t*90) % 360;
+        p.stroke(hue, 80, 90, 180);
+        p.line(k.o[0], k.o[1], k.o[0]+Math.cos(a)*d, k.o[1]+Math.sin(a)*d);
+      }
+    }
+    p.colorMode(p.RGB, 255);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

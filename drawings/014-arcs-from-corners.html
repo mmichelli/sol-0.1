@@ -57,6 +57,20 @@ const solutions = [
       }
     }
   }},
+  { strategy: "Emphasize repetitions", draw: (p) => {
+    const W = p.width, H = p.height;
+    const origins = [[0,0],[W,0],[W,H],[0,H],[W/2,0],[W,H/2],[W/2,H],[0,H/2]];
+    p.noFill(); p.stroke(20, 120); p.strokeWeight(1);
+    const diag = Math.hypot(W,H), step = 32;
+    for (const [ox, oy] of origins) {
+      for (let r = step; r < diag; r += step) {
+        for (let k = 0; k < 3; k++) {
+          const dx = p.random(-2, 2), dy = p.random(-2, 2);
+          p.arc(ox + dx, oy + dy, r*2, r*2, 0, p.TWO_PI);
+        }
+      }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

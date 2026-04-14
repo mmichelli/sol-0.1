@@ -65,6 +65,23 @@ const solutions = [
       p.line(cx, cy, cx + Math.cos(a)*r, cy + Math.sin(a)*r);
     }
   }},
+  { strategy: "Be dirty", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2;
+    p.noStroke();
+    for (let i = 0; i < 1000; i++) {
+      const x = p.random(W), y = p.random(H);
+      const col = COLORS[Math.floor(p.random(4))];
+      const len = Math.hypot(x - cx, y - cy);
+      const dots = Math.max(6, Math.floor(len / 3));
+      for (let k = 0; k < dots; k++) {
+        const t = k/dots;
+        const px = cx + (x - cx)*t + p.random(-2, 2);
+        const py = cy + (y - cy)*t + p.random(-2, 2);
+        p.fill(col[0], col[1], col[2], p.random(60, 180));
+        p.circle(px, py, p.random(0.5, 1.8));
+      }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

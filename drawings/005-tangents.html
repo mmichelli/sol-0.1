@@ -95,6 +95,35 @@ const solutions = [
     p.noFill(); p.stroke(20); p.strokeWeight(1.5);
     for (const c of circles) p.circle(c.x, c.y, c.r*2);
   }},
+  { strategy: "Cluster analysis", draw: (p) => {
+    const W = p.width, H = p.height;
+    const circles = [];
+    const counts = [10, 3, 2];
+    for (const n of counts) {
+      const cx = p.random(150, W-150), cy = p.random(150, H-150);
+      for (let i = 0; i < n; i++) {
+        const r = p.random(40, 140);
+        const x = cx + p.random(-80, 80), y = cy + p.random(-80, 80);
+        circles.push({ x: Math.max(r, Math.min(W-r, x)), y: Math.max(r, Math.min(H-r, y)), r });
+      }
+    }
+    for (let i = 0; i < circles.length; i++) for (let j = i+1; j < circles.length; j++) {
+      const a = circles[i], b = circles[j];
+      const d = Math.hypot(a.x-b.x, a.y-b.y);
+      if (d >= a.r + b.r || d <= Math.abs(a.r-b.r)) continue;
+      p.drawingContext.save();
+      p.drawingContext.beginPath();
+      p.drawingContext.arc(a.x, a.y, a.r, 0, 2*Math.PI);
+      p.drawingContext.clip();
+      p.drawingContext.beginPath();
+      p.drawingContext.arc(b.x, b.y, b.r, 0, 2*Math.PI);
+      p.drawingContext.fillStyle = 'rgb(200,40,40)';
+      p.drawingContext.fill();
+      p.drawingContext.restore();
+    }
+    p.noFill(); p.stroke(20); p.strokeWeight(1.5);
+    for (const c of circles) p.circle(c.x, c.y, c.r*2);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

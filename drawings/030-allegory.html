@@ -69,6 +69,32 @@ const solutions = [
       x += w;
     }
   }},
+  { strategy: "The inconsistency principle", draw: (p) => {
+    const W = p.width, H = p.height, N = 7, m = 60;
+    const heights = [1,2,3,4,5,6,7];
+    for (let i = heights.length-1; i>0; i--) { const j = Math.floor(p.random(i+1)); [heights[i],heights[j]]=[heights[j],heights[i]]; }
+    const widths = Array.from({length:N}, () => p.random(0.5, 1.5));
+    const wSum = widths.reduce((a,b)=>a+b,0);
+    const cols = [[200,40,40],[240,200,40],[40,80,200],[20,20,20],[40,140,70]];
+    const available = W - 2*m, hUnit = (H - 2*m)/7;
+    let x = m;
+    p.noStroke();
+    for (let i = 0; i < N; i++) {
+      const w = widths[i]/wSum * available;
+      const h = heights[i] * hUnit;
+      const col = cols[Math.floor(p.random(cols.length))];
+      const gap = p.random(-w*0.5, w*0.8);
+      x += gap;
+      const angle = p.random() < 0.4 ? p.random(-0.3, 0.3) : 0;
+      p.push();
+      p.translate(x + w/2, H - m - h/2);
+      p.rotate(angle);
+      p.fill(col[0],col[1],col[2]);
+      p.rect(-w/2, -h/2, w, h);
+      p.pop();
+      x += w;
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

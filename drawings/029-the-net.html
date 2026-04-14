@@ -69,6 +69,15 @@ const solutions = [
     }
     p.stroke(20); p.strokeWeight(2); p.rect(x0, y0, rw, rh);
   }},
+  { strategy: "Go outside. Shut the door.", draw: (p) => {
+    const W = p.width, H = p.height;
+    const rw = W*2/3, rh = H*0.45;
+    const x0 = (W-rw)/2, y0 = (H-rh)/2, x1 = x0+rw, y1 = y0+rh;
+    p.stroke(20); p.strokeWeight(1); p.noFill();
+    for (let x = x0; x <= x1; x += 14) p.line(x, y0, x, y1);
+    for (let y = y0; y <= y1; y += 14) p.line(x0, y, x1, y);
+    p.stroke(20); p.strokeWeight(2); p.rect(x0, y0, rw, rh);
+  }},
 ];
 </script>
 <script src="runner.js"></script>

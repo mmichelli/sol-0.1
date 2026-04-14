@@ -68,6 +68,14 @@ const solutions = [
     }
     rec(260, 0);
   }},
+  { strategy: "Mechanicalize something idiosyncratic", draw: (p) => {
+    const cx = p.width/2, cy = p.height/2;
+    let s = 260;
+    while (s >= 8) {
+      drawCube(p, cx, cy, s, 0, 1);
+      s *= 0.7;
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

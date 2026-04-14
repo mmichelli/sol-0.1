@@ -56,6 +56,30 @@ const solutions = [
       p.line(cx, y, cx + side*len, y);
     }
   }},
+  { strategy: "Call your mother and ask her what to do", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, m = 30;
+    p.stroke(20); p.strokeWeight(1.5); p.noFill();
+    p.line(cx, m, cx, H-m);
+    for (let i = 0; i < 100; i++) {
+      const y = m + i * (H - 2*m)/99;
+      const len = p.random(30, 260);
+      const side = i % 2 === 0 ? -1 : 1;
+      const angle = p.random(-0.5, 0.5);
+      const ex = cx + side*len*Math.cos(angle);
+      const ey = y + len*Math.sin(angle);
+      p.strokeWeight(p.random(0.6, 1.4));
+      if (p.random() < 0.4) {
+        const mx = cx + side*len*0.5*Math.cos(angle);
+        const my = y + len*0.5*Math.sin(angle) + p.random(-12, 12);
+        p.beginShape();
+        p.vertex(cx, y);
+        p.quadraticVertex(mx, my, ex, ey);
+        p.endShape();
+      } else {
+        p.line(cx, y, ex, ey);
+      }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

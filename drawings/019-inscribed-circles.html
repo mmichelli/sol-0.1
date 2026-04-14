@@ -50,6 +50,19 @@ const solutions = [
       p.circle(cx, cy, s*0.45);
     }
   }},
+  { strategy: "Balance the consistency principle with the inconsistency principle", draw: (p) => {
+    const N = 12, s = p.width / N;
+    p.noFill(); p.stroke(20); p.strokeWeight(1);
+    for (let j=0;j<N;j++) for (let i=0;i<N;i++) {
+      const cx = i*s + s/2, cy = j*s + s/2;
+      p.circle(cx, cy, s*0.9);
+      if ((i+j) % 2 === 0) {
+        p.circle(cx, cy, s * p.random(0.15, 0.8));
+      } else {
+        p.circle(cx, cy, s * p.random(0.02, 1.5));
+      }
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

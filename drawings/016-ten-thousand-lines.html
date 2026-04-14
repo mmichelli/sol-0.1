@@ -48,6 +48,22 @@ const solutions = [
       p.line(ex - px, ey - py, ex + px, ey + py);
     }
   }},
+  { strategy: "Take a break", draw: (p) => {
+    const W = p.width, H = p.height, len = 8;
+    const breaks = [];
+    const nBreaks = Math.floor(p.random(8, 11));
+    for (let i = 0; i < nBreaks; i++) breaks.push([p.random(W), p.random(H), p.random(60, 120)]);
+    p.stroke(20, 140); p.strokeWeight(0.7);
+    for (let i = 0; i < 10000; i++) {
+      const x = p.random(W), y = p.random(H), a = p.random(p.TWO_PI);
+      let inBreak = false;
+      for (const [bx, by, br] of breaks) {
+        if ((x-bx)*(x-bx) + (y-by)*(y-by) < br*br) { inBreak = true; break; }
+      }
+      if (inBreak) continue;
+      p.line(x, y, x + Math.cos(a)*len, y + Math.sin(a)*len);
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>

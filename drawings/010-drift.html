@@ -62,6 +62,22 @@ const solutions = [
       p.line(x - Math.cos(a)*len/2, y - Math.sin(a)*len/2, x + Math.cos(a)*len/2, y + Math.sin(a)*len/2);
     }
   }},
+  { strategy: "Voice nags", draw: (p) => {
+    const W = p.width, H = p.height;
+    const cx = p.random(W*0.2, W*0.8), cy = p.random(H*0.2, H*0.8);
+    const w = 120;
+    p.strokeWeight(2);
+    for (let i = 0; i < 300; i++) {
+      const x = cx + p.random(-w, w) + p.random(-w, w);
+      const y = cy + p.random(-w, w) + p.random(-w, w);
+      const tx = (x/W - 0.5) * 2;
+      const ty = (y/H - 0.5) * 2;
+      const a = tx * 1.2 + Math.sin(ty*3)*0.3;
+      const len = 22;
+      p.stroke(y < H/2 ? p.color(40,80,200) : p.color(240,200,40));
+      p.line(x - Math.cos(a)*len/2, y - Math.sin(a)*len/2, x + Math.cos(a)*len/2, y + Math.sin(a)*len/2);
+    }
+  }},
 ];
 </script>
 <script src="runner.js"></script>
