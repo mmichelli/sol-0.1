@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 043</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#043</h1>
+  <p>The page covered without gap by a tessellation of rhombuses. Each rhombus filled flat with one of four colours — red, yellow, blue, or green — the colour chosen at random.</p>
+  <p class="source">Seed — <em>succinimide</em>: a white crystalline nitrogenous substance, forming a series of salts.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLORS = [[200,40,40],[240,200,40],[40,80,200],[40,140,70]];
+function rhombus(p, cx, cy, w, h, col) {
+  p.fill(col[0], col[1], col[2]); p.stroke(20); p.strokeWeight(1);
+  p.beginShape();
+  p.vertex(cx, cy - h/2);
+  p.vertex(cx + w/2, cy);
+  p.vertex(cx, cy + h/2);
+  p.vertex(cx - w/2, cy);
+  p.endShape(p.CLOSE);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    const w = 60, h = 80;
+    const rows = Math.ceil(H / (h/2)) + 2, cols = Math.ceil(W / w) + 2;
+    for (let r = -1; r < rows; r++) {
+      const offsetX = (r % 2 === 0) ? 0 : w/2;
+      for (let c = -1; c < cols; c++) {
+        const cx = c * w + offsetX, cy = r * (h/2);
+        rhombus(p, cx, cy, w, h, COLORS[Math.floor(p.random(COLORS.length))]);
+      }
+    }
+  }},
+  { strategy: "Lowest common denominator", draw: (p) => {
+    const W = p.width, H = p.height;
+    const w = 120, h = 160;
+    const rows = Math.ceil(H / (h/2)) + 2, cols = Math.ceil(W / w) + 2;
+    for (let r = -1; r < rows; r++) {
+      const offsetX = (r % 2 === 0) ? 0 : w/2;
+      for (let c = -1; c < cols; c++) {
+        const cx = c * w + offsetX, cy = r * (h/2);
+        rhombus(p, cx, cy, w, h, COLORS[(r + c + 100) % 2 === 0 ? 0 : 2]);
+      }
+    }
+  }},
+  { strategy: "Twist the spine", draw: (p) => {
+    const W = p.width, H = p.height;
+    const w = 50, h = 70;
+    const rows = Math.ceil(H / (h/2)) + 2, cols = Math.ceil(W / w) + 2;
+    for (let r = -1; r < rows; r++) {
+      const offsetX = (r % 2 === 0) ? 0 : w/2;
+      for (let c = -1; c < cols; c++) {
+        const cx = c * w + offsetX, cy = r * (h/2);
+        const localW = w * (0.6 + Math.abs(Math.sin((c + r) * 0.4)) * 0.8);
+        rhombus(p, cx, cy, localW, h, COLORS[Math.floor(p.random(COLORS.length))]);
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

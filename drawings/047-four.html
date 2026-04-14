@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 047</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#047</h1>
+  <p>The page divided into four equal quadrants; each quadrant into four; each into four; for four levels in all. At each level, each of the four children is filled with one of four colours — red, yellow, blue, black — the order rotated from its parent.</p>
+  <p class="source">Seed — <em>four</em>: one more than three; twice two; the sum of four units; four things of the same kind.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const P = [[200,40,40],[240,200,40],[40,80,200],[20,20,20]];
+function quad(p, x, y, w, h, depth, rot) {
+  if (depth === 0) {
+    const col = P[rot % P.length];
+    p.noStroke(); p.fill(col[0], col[1], col[2]);
+    p.rect(x, y, w, h);
+    return;
+  }
+  const hw = w/2, hh = h/2;
+  // children in reading order, each gets rot + index
+  quad(p, x, y, hw, hh, depth-1, (rot + 0) % P.length);
+  quad(p, x+hw, y, hw, hh, depth-1, (rot + 1) % P.length);
+  quad(p, x, y+hh, hw, hh, depth-1, (rot + 2) % P.length);
+  quad(p, x+hw, y+hh, hw, hh, depth-1, (rot + 3) % P.length);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    quad(p, 0, 0, W, H, 4, 0);
+  }},
+  { strategy: "Lowest common denominator", draw: (p) => {
+    const W = p.width, H = p.height;
+    quad(p, 0, 0, W, H, 2, 0);
+  }},
+  { strategy: "Work at a different speed", draw: (p) => {
+    const W = p.width, H = p.height;
+    quad(p, 0, 0, W, H, 6, Math.floor(p.random(4)));
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
