@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 033</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#033</h1>
+  <p>A single circle at the centre of the page. Inside the circle, red rays pushing outward from the centre. Outside, blue rays pushing inward from the edge of the page. Where the two kinds of rays meet at the circumference, a short perpendicular black tick.</p>
+  <p class="source">Seed — <em>gallicanism</em>: the principles of those, within the Roman Catholic Church in France, who sought to restrict the papal authority and increase the power of the national church.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function rays(p, count, innerR, outerR, col, fromCentre, cx, cy) {
+  p.stroke(col[0], col[1], col[2]); p.strokeWeight(1.2);
+  for (let i = 0; i < count; i++) {
+    const a = (i / count) * p.TWO_PI + 0.001;
+    const r1 = fromCentre ? 0 : outerR;
+    const r2 = innerR;
+    p.line(cx + r1*Math.cos(a), cy + r1*Math.sin(a), cx + r2*Math.cos(a), cy + r2*Math.sin(a));
+  }
+}
+function ticks(p, count, R, cx, cy, len) {
+  p.stroke(20); p.strokeWeight(1.4);
+  for (let i = 0; i < count; i++) {
+    const a = (i / count) * p.TWO_PI + 0.001;
+    const nx = Math.cos(a + p.PI/2), ny = Math.sin(a + p.PI/2);
+    const ex = cx + R*Math.cos(a), ey = cy + R*Math.sin(a);
+    p.line(ex - nx*len/2, ey - ny*len/2, ex + nx*len/2, ey + ny*len/2);
+  }
+}
+const RED = [200,40,40], BLUE = [40,80,200];
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2, R = 200, outer = Math.min(W,H)/2 - 20;
+    p.noFill(); p.stroke(20); p.strokeWeight(1.4); p.circle(cx, cy, R*2);
+    rays(p, 72, R, outer, RED, true, cx, cy);
+    rays(p, 72, R, outer, BLUE, false, cx, cy);
+    ticks(p, 72, R, cx, cy, 10);
+  }},
+  { strategy: "Twist the spine", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2, R = 200, outer = Math.min(W,H)/2 - 20;
+    p.noFill(); p.stroke(20); p.strokeWeight(1.4); p.circle(cx, cy, R*2);
+    // Inner rays sweep off-axis, outer rays miss the boundary
+    p.stroke(RED[0],RED[1],RED[2]); p.strokeWeight(1.2);
+    for (let i = 0; i < 72; i++) {
+      const a = (i/72)*p.TWO_PI, a2 = a + 0.3;
+      p.line(cx, cy, cx + R*Math.cos(a2), cy + R*Math.sin(a2));
+    }
+    p.stroke(BLUE[0],BLUE[1],BLUE[2]);
+    for (let i = 0; i < 72; i++) {
+      const a = (i/72)*p.TWO_PI, a2 = a - 0.3;
+      p.line(cx + outer*Math.cos(a), cy + outer*Math.sin(a), cx + R*Math.cos(a2), cy + R*Math.sin(a2));
+    }
+  }},
+  { strategy: "Remove specifics and convert to ambiguities", draw: (p) => {
+    const W = p.width, H = p.height, cx = W/2, cy = H/2, R = 200, outer = Math.min(W,H)/2 - 20;
+    p.noFill(); p.stroke(180); p.strokeWeight(0.8); p.circle(cx, cy, R*2);
+    p.stroke(200,40,40,120); p.strokeWeight(0.6);
+    for (let i = 0; i < 72; i++) {
+      const a = (i/72)*p.TWO_PI;
+      const r = p.random(0, R);
+      p.line(cx, cy, cx + r*Math.cos(a), cy + r*Math.sin(a));
+    }
+    p.stroke(40,80,200,120);
+    for (let i = 0; i < 72; i++) {
+      const a = (i/72)*p.TWO_PI;
+      const r = p.random(R, outer);
+      p.line(cx + outer*Math.cos(a), cy + outer*Math.sin(a), cx + r*Math.cos(a), cy + r*Math.sin(a));
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

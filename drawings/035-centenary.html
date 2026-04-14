@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 035</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#035</h1>
+  <p>A ten-by-ten grid; in each of its hundred cells, a short line segment of equal length, set at a random angle. Any cell in ten, chosen at random, is marked instead by a small black square.</p>
+  <p class="source">Seed — <em>centenary</em>: the aggregate of a hundred single things; specifically, a century; a commemoration of an event which occurred a hundred years before.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, m = 40, N = 10;
+    const cell = (W - 2*m) / N;
+    p.stroke(20); p.strokeWeight(1.2); p.noFill();
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const cx = m + c*cell + cell/2, cy = m + r*cell + cell/2;
+        if (p.random() < 0.1) {
+          p.fill(20); p.noStroke();
+          p.rect(cx - 6, cy - 6, 12, 12);
+          p.noFill(); p.stroke(20);
+        } else {
+          const a = p.random(p.TWO_PI), L = cell * 0.4;
+          p.line(cx - Math.cos(a)*L/2, cy - Math.sin(a)*L/2, cx + Math.cos(a)*L/2, cy + Math.sin(a)*L/2);
+        }
+      }
+    }
+  }},
+  { strategy: "Only one element of each kind", draw: (p) => {
+    const W = p.width, H = p.height, m = 40, N = 10;
+    const cell = (W - 2*m) / N;
+    const markIdx = Math.floor(p.random(100));
+    p.stroke(20); p.strokeWeight(1.2); p.noFill();
+    for (let i = 0; i < 100; i++) {
+      const r = Math.floor(i/N), c = i % N;
+      const cx = m + c*cell + cell/2, cy = m + r*cell + cell/2;
+      if (i === markIdx) {
+        p.fill(20); p.noStroke(); p.rect(cx - 6, cy - 6, 12, 12);
+        p.noFill(); p.stroke(20);
+      } else {
+        const a = 0, L = cell * 0.4;
+        p.line(cx - L/2, cy, cx + L/2, cy);
+      }
+    }
+  }},
+  { strategy: "Emphasize differences", draw: (p) => {
+    const W = p.width, H = p.height, m = 40, N = 10;
+    const cell = (W - 2*m) / N;
+    const cols = [[200,40,40],[240,200,40],[40,80,200],[20,20,20]];
+    p.strokeWeight(1.4); p.noFill();
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const cx = m + c*cell + cell/2, cy = m + r*cell + cell/2;
+        if (p.random() < 0.1) {
+          const col = cols[Math.floor(p.random(cols.length))];
+          p.noStroke(); p.fill(col[0],col[1],col[2]);
+          p.rect(cx - 8, cy - 8, 16, 16);
+          p.noFill();
+        } else {
+          const a = p.random(p.TWO_PI), L = cell * (0.2 + p.random() * 0.6);
+          const col = cols[Math.floor(p.random(cols.length))];
+          p.stroke(col[0],col[1],col[2]);
+          p.line(cx - Math.cos(a)*L/2, cy - Math.sin(a)*L/2, cx + Math.cos(a)*L/2, cy + Math.sin(a)*L/2);
+        }
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 037</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#037</h1>
+  <p>A grid of twenty by twenty small open circles across the page. In every circle, a smaller filled disc at its centre; the colour of each disc chosen at random from black, brown, or empty; roughly one in ten circles filled with a brown acorn.</p>
+  <p class="source">Seed — <em>carpintero</em>: a california woodpecker, noted for its habit of inserting acorns in holes which it drills in trees.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const BLACK = [20,20,20], BROWN = [140,85,40];
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height, m = 40, N = 20;
+    const step = (W - 2*m) / (N - 1);
+    p.strokeWeight(0.8);
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const x = m + c*step, y = m + r*step;
+        p.stroke(60); p.noFill(); p.circle(x, y, 14);
+        const k = p.random();
+        if (k < 0.1) { p.noStroke(); p.fill(BROWN[0],BROWN[1],BROWN[2]); p.ellipse(x, y, 8, 10); }
+        else if (k < 0.7) { p.noStroke(); p.fill(BLACK[0],BLACK[1],BLACK[2]); p.circle(x, y, 5); }
+      }
+    }
+  }},
+  { strategy: "Honor thy error as a hidden intention", draw: (p) => {
+    const W = p.width, H = p.height, m = 40, N = 20;
+    const step = (W - 2*m) / (N - 1);
+    p.strokeWeight(0.8);
+    const nErrors = 6;
+    const errs = new Set();
+    while (errs.size < nErrors) errs.add(Math.floor(p.random(N*N)));
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const x = m + c*step, y = m + r*step;
+        const i = r*N + c;
+        if (errs.has(i)) {
+          // hole gone wrong: an irregular torn hole with an acorn escaping
+          p.noFill(); p.stroke(60); p.strokeWeight(1.1);
+          p.beginShape();
+          for (let a = 0; a < p.TWO_PI; a += 0.4) {
+            const rr = 9 + p.random(-4, 4);
+            p.vertex(x + rr*Math.cos(a), y + rr*Math.sin(a));
+          }
+          p.endShape(p.CLOSE);
+          p.strokeWeight(0.8);
+          p.noStroke(); p.fill(BROWN[0],BROWN[1],BROWN[2]);
+          const dx = p.random(-14,14), dy = p.random(-14,14);
+          p.ellipse(x + dx, y + dy, 9, 11);
+        } else {
+          p.stroke(60); p.noFill(); p.circle(x, y, 14);
+          const k = p.random();
+          if (k < 0.1) { p.noStroke(); p.fill(BROWN[0],BROWN[1],BROWN[2]); p.ellipse(x, y, 8, 10); }
+          else if (k < 0.7) { p.noStroke(); p.fill(BLACK[0],BLACK[1],BLACK[2]); p.circle(x, y, 5); }
+        }
+      }
+    }
+  }},
+  { strategy: "Fill every beat with something", draw: (p) => {
+    const W = p.width, H = p.height, m = 40, N = 20;
+    const step = (W - 2*m) / (N - 1);
+    p.strokeWeight(0.8);
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const x = m + c*step, y = m + r*step;
+        p.stroke(60); p.noFill(); p.circle(x, y, 14);
+        // every circle filled
+        const col = p.random() < 0.3 ? BROWN : BLACK;
+        p.noStroke(); p.fill(col[0],col[1],col[2]);
+        if (col === BROWN) p.ellipse(x, y, 8, 10); else p.circle(x, y, 6);
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
