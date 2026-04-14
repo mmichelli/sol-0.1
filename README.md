@@ -1,12 +1,12 @@
 # sol 0.1
 
-Wall drawings after Sol LeWitt. Each instruction is executed in a browser via p5.js; most have two solutions, one original and one perturbed by an [Oblique Strategy](https://en.wikipedia.org/wiki/Oblique_Strategies) card. Each render rolls fresh randomness.
+Wall drawings after Sol LeWitt, executed in the browser with p5.js. Most drawings have two solutions: one original, and one perturbed by an [Oblique Strategy](https://en.wikipedia.org/wiki/Oblique_Strategies) card. Each render rolls fresh randomness.
 
-Some instructions (022–031) were seeded by a random Wikipedia article.
+Instructions 022–031 were seeded by a random Wikipedia article.
 
 ## Run locally
 
-Open `index.html` in a browser. The 31 previews are pre-rendered PNGs. Click a tile to open the live p5.js page.
+Open `index.html` in a browser. The gallery shows pre-rendered PNG thumbnails; click a tile to open the live p5.js page.
 
 ## Rebuild previews
 
