@@ -5,7 +5,9 @@ p { font-size: 15px; line-height: 1.55; margin: 0; }
 .source { font-size: 11px; color: #888; margin-top: 10px !important; font-style: italic; }
 .strategy { font-size: 11px; color: #0a6; margin-top: 6px !important; font-style: italic; }
 .strategy:empty { display: none; }
-.holder { width: 720px; height: 720px; background: #fff; border: 1px solid #ddd; }
+.holder { width: 720px; height: 720px; background: #fff; border: 1px solid #ddd; order: 1; }
+.card { order: 2; }
+button { order: 3; }
 button { font: inherit; padding: 6px 12px; cursor: pointer; }
 .embedded body { padding: 0; gap: 0; }
 .embedded .card, .embedded button { display: none; }
