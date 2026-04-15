@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 093</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#093</h1>
+  <p>Forty small ovals scattered across the page, each drawn with a thin opening down its centre and short hatched lips — the shape of a cowrie shell. Each oval of a different orientation; every tenth oval filled solid.</p>
+  <p class="source">Seed — <em>cowrie</em>: a marine shell of the genus Cypræa, formerly used as money in Africa.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<div class="holder" id="h"></div>
+<script>
+function shell(p, cx, cy, rx, ry, rot, filled) {
+  p.push();
+  p.translate(cx, cy);
+  p.rotate(rot);
+  p.stroke(20); p.strokeWeight(1.1);
+  if (filled) { p.fill(20); } else { p.noFill(); }
+  p.ellipse(0, 0, rx*2, ry*2);
+  if (!filled) {
+    p.stroke(20); p.strokeWeight(0.9);
+    p.line(-rx*0.75, 0, rx*0.75, 0);
+    const ticks = 12;
+    for (let i = 1; i < ticks; i++) {
+      const t = i / ticks;
+      const x = -rx*0.75 + rx*1.5 * t;
+      p.line(x, -3, x, 3);
+    }
+  }
+  p.pop();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const placed = [];
+    const N = 40;
+    for (let tries = 0; tries < 2000 && placed.length < N; tries++) {
+      const rx = p.random(30, 60);
+      const ry = rx * p.random(0.5, 0.7);
+      const cx = p.random(rx + 20, W - rx - 20);
+      const cy = p.random(rx + 20, H - rx - 20);
+      let ok = true;
+      for (const s of placed) if (Math.hypot(cx - s[0], cy - s[1]) < rx + s[2] + 10) { ok = false; break; }
+      if (ok) placed.push([cx, cy, rx, ry, p.random(p.TWO_PI)]);
+    }
+    placed.forEach((s, i) => shell(p, s[0], s[1], s[2], s[3], s[4], (i % 10) === 9));
+  }},
+  { strategy: "Tidy up", draw: (p) => {
+    const W=p.width, H=p.height;
+    const cols = 6, rows = 7;
+    const padX = (W - cols * 90) / 2 + 45;
+    const padY = (H - rows * 90) / 2 + 45;
+    let idx = 0;
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+      const cx = padX + i * 90;
+      const cy = padY + j * 90;
+      shell(p, cx, cy, 34, 22, 0, (idx % 10) === 9);
+      idx++;
+    }
+  }},
+  { strategy: "Be dirty", draw: (p) => {
+    const W=p.width, H=p.height;
+    const placed = [];
+    const N = 40;
+    for (let tries = 0; tries < 2000 && placed.length < N; tries++) {
+      const rx = p.random(30, 60);
+      const ry = rx * p.random(0.5, 0.7);
+      const cx = p.random(rx + 20, W - rx - 20);
+      const cy = p.random(rx + 20, H - rx - 20);
+      let ok = true;
+      for (const s of placed) if (Math.hypot(cx - s[0], cy - s[1]) < rx + s[2] - 16) { ok = false; break; }
+      if (ok) placed.push([cx, cy, rx, ry, p.random(p.TWO_PI)]);
+    }
+    placed.forEach((s, i) => shell(p, s[0], s[1], s[2], s[3], s[4], (i % 10) === 9));
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

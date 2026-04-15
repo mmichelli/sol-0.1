@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 098</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#098</h1>
+  <p>The page divided into eight horizontal bands of unequal height. Each band is filled with a single kind of mark: dots, short horizontal ticks, small crosses, diagonal hatches, open circles, filled triangles, wavy dashes, asterisks. No band repeats a mark.</p>
+  <p class="source">Seed — <em>algonkian</em>: a period between the Archæan and the Paleozoic, rocks both sedimentary and igneous.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<div class="holder" id="h"></div>
+<script>
+function fillBand(p, x0, y0, w, h, kind) {
+  p.stroke(20); p.noFill();
+  const spacing = 14;
+  for (let y = y0 + spacing/2; y < y0 + h; y += spacing) {
+    for (let x = x0 + spacing/2; x < x0 + w; x += spacing) {
+      const jx = x + (p.random() - 0.5) * 4;
+      const jy = y + (p.random() - 0.5) * 4;
+      switch (kind) {
+        case 'dot':
+          p.noStroke(); p.fill(20);
+          p.circle(jx, jy, 3.5);
+          p.stroke(20); p.noFill();
+          break;
+        case 'tick':
+          p.strokeWeight(1.2);
+          p.line(jx - 4, jy, jx + 4, jy);
+          break;
+        case 'cross':
+          p.strokeWeight(1.1);
+          p.line(jx - 3, jy, jx + 3, jy);
+          p.line(jx, jy - 3, jx, jy + 3);
+          break;
+        case 'hatch':
+          p.strokeWeight(1.2);
+          p.line(jx - 3, jy + 3, jx + 3, jy - 3);
+          break;
+        case 'ring':
+          p.strokeWeight(1.1); p.noFill();
+          p.circle(jx, jy, 6);
+          break;
+        case 'tri':
+          p.noStroke(); p.fill(20);
+          p.triangle(jx - 3, jy + 2.5, jx + 3, jy + 2.5, jx, jy - 3);
+          p.stroke(20);
+          break;
+        case 'wave':
+          p.strokeWeight(1.1); p.noFill();
+          p.beginShape();
+          p.vertex(jx - 5, jy);
+          p.bezierVertex(jx - 2, jy - 3, jx + 2, jy + 3, jx + 5, jy);
+          p.endShape();
+          break;
+        case 'star':
+          p.strokeWeight(1.1);
+          p.line(jx - 3, jy, jx + 3, jy);
+          p.line(jx, jy - 3, jx, jy + 3);
+          p.line(jx - 2.2, jy - 2.2, jx + 2.2, jy + 2.2);
+          p.line(jx - 2.2, jy + 2.2, jx + 2.2, jy - 2.2);
+          break;
+      }
+    }
+  }
+}
+const KINDS = ['dot','tick','cross','hatch','ring','tri','wave','star'];
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const heights = [];
+    let total = 0;
+    for (let i = 0; i < 8; i++) { const h = 60 + p.random() * 80; heights.push(h); total += h; }
+    const scale = H / total;
+    let y = 0;
+    for (let i = 0; i < 8; i++) {
+      const h = heights[i] * scale;
+      fillBand(p, 0, y, W, h, KINDS[i]);
+      p.stroke(20); p.strokeWeight(0.6);
+      p.line(0, y + h, W, y + h);
+      y += h;
+    }
+  }},
+  { strategy: "Tidy up", draw: (p) => {
+    const W=p.width, H=p.height;
+    const h = H / 8;
+    for (let i = 0; i < 8; i++) {
+      fillBand(p, 0, i * h, W, h, KINDS[i]);
+      p.stroke(20); p.strokeWeight(0.6);
+      p.line(0, (i+1) * h, W, (i+1) * h);
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    const heights = [];
+    let total = 0;
+    for (let i = 0; i < 8; i++) { const h = 60 + p.random() * 80; heights.push(h); total += h; }
+    const scale = W / total;
+    let x = 0;
+    for (let i = 0; i < 8; i++) {
+      const w = heights[i] * scale;
+      fillBand(p, x, 0, w, H, KINDS[i]);
+      p.stroke(20); p.strokeWeight(0.6);
+      p.line(x + w, 0, x + w, H);
+      x += w;
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

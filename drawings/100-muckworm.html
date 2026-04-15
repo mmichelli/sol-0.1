@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 100</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#100</h1>
+  <p>Sixty short curved strokes scattered across the page, each stroke curling upon itself like a small grub; each stroke in black, each with a single thicker dot at one end — the grub's head.</p>
+  <p class="source">Seed — <em>muckworm</em>: a larva or grub that lives in muck or manure; applied to the larvæ of the tumbledung.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<div class="holder" id="h"></div>
+<script>
+function grub(p, cx, cy, rot, size, col) {
+  p.push();
+  p.translate(cx, cy);
+  p.rotate(rot);
+  p.stroke(col[0], col[1], col[2]); p.strokeWeight(1.6); p.noFill();
+  p.beginShape();
+  for (let t = 0; t <= 1.001; t += 0.04) {
+    const a = t * p.PI * 1.4;
+    const r = size * t;
+    p.vertex(Math.cos(a) * r, Math.sin(a) * r);
+  }
+  p.endShape();
+  // head dot
+  p.noStroke(); p.fill(col[0], col[1], col[2]);
+  p.circle(Math.cos(p.PI * 1.4) * size, Math.sin(p.PI * 1.4) * size, 5);
+  p.pop();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const placed = [];
+    const N = 60;
+    for (let tries = 0; tries < 3000 && placed.length < N; tries++) {
+      const size = p.random(28, 55);
+      const cx = p.random(size + 20, W - size - 20);
+      const cy = p.random(size + 20, H - size - 20);
+      let ok = true;
+      for (const g of placed) if (Math.hypot(cx - g[0], cy - g[1]) < size + g[2] - 6) { ok = false; break; }
+      if (ok) placed.push([cx, cy, size, p.random(p.TWO_PI)]);
+    }
+    for (const [cx, cy, size, rot] of placed) grub(p, cx, cy, rot, size, [20, 20, 20]);
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W=p.width, H=p.height;
+    const cols = 9, rows = 11;
+    const padX = (W - cols * 60) / 2 + 30;
+    const padY = (H - rows * 60) / 2 + 30;
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+      const cx = padX + i * 60;
+      const cy = padY + j * 60;
+      grub(p, cx, cy, 0, 22, [20, 20, 20]);
+    }
+  }},
+  { strategy: "Faced with a choice, do both", draw: (p) => {
+    const W=p.width, H=p.height;
+    const PAL = [[200,40,40],[40,100,210]];
+    const placed = [];
+    const N = 60;
+    for (let tries = 0; tries < 3000 && placed.length < N; tries++) {
+      const size = p.random(28, 55);
+      const cx = p.random(size + 20, W - size - 20);
+      const cy = p.random(size + 20, H - size - 20);
+      let ok = true;
+      for (const g of placed) if (Math.hypot(cx - g[0], cy - g[1]) < size + g[2] - 6) { ok = false; break; }
+      if (ok) placed.push([cx, cy, size, p.random(p.TWO_PI), PAL[placed.length % 2]]);
+    }
+    for (const [cx, cy, size, rot, col] of placed) grub(p, cx, cy, rot, size, col);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

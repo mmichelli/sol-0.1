@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 096</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#096</h1>
+  <p>The page covered with ten thousand very fine dots, barely visible. The density of dots slightly greater toward the centre; from a distance, a hint of shadow.</p>
+  <p class="source">Seed — <em>suspicion</em>: slight degree; suggestion; a hint.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height, cx=W/2, cy=H/2;
+    const R = Math.hypot(W, H) / 2;
+    p.noStroke();
+    p.fill(20, 220);
+    const N = 10000;
+    let placed = 0;
+    let tries = 0;
+    while (placed < N && tries < N * 4) {
+      tries++;
+      const x = p.random(W);
+      const y = p.random(H);
+      const d = Math.hypot(x - cx, y - cy) / R;
+      const pr = 0.55 + (1 - d) * 0.45;
+      if (p.random() < pr) {
+        p.circle(x, y, 1.4);
+        placed++;
+      }
+    }
+  }},
+  { strategy: "Spectrum analysis", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.noStroke(); p.fill(20, 220);
+    const N = 10000;
+    for (let i = 0; i < N; i++) {
+      const x = p.random(W);
+      const y = p.random(H);
+      const u = x / W;
+      const v = y / H;
+      const pr = 0.35 + Math.sin(u * p.PI) * Math.sin(v * p.PI) * 0.6;
+      if (p.random() < pr) p.circle(x, y, 1.4);
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height, cx=W/2, cy=H/2;
+    const R = Math.hypot(W, H) / 2;
+    p.noStroke(); p.fill(20, 220);
+    const N = 10000;
+    for (let i = 0; i < N; i++) {
+      const x = p.random(W);
+      const y = p.random(H);
+      const d = Math.hypot(x - cx, y - cy) / R;
+      if (p.random() < d) p.circle(x, y, 1.4);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

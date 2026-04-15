@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 094</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#094</h1>
+  <p>The page tiled edge to edge with small overlapping crescents in a fish-scale pattern; each crescent of equal size, each row offset by half its width from the row above. The crescents alternate black and white; the pattern continues without interruption.</p>
+  <p class="source">Seed — <em>exoskeleton</em>: the hardened parts of the external integument — scales, shells, and armour.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<div class="holder" id="h"></div>
+<script>
+function scale(p, cx, cy, r, filled) {
+  // half-disc pointing up, with a small arc inside
+  if (filled) {
+    p.fill(20); p.stroke(20); p.strokeWeight(1);
+  } else {
+    p.fill(255); p.stroke(20); p.strokeWeight(1);
+  }
+  p.arc(cx, cy, r*2, r*2, p.PI, p.TWO_PI, p.CHORD);
+  if (!filled) {
+    p.noFill(); p.stroke(20); p.strokeWeight(0.8);
+    p.arc(cx, cy, r*1.2, r*1.2, p.PI, p.TWO_PI);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const r = 30;
+    const rowH = r;
+    for (let rowIdx = 0, y = 0; y < H + r; y += rowH, rowIdx++) {
+      const xOff = (rowIdx % 2) * r;
+      for (let x = -r; x < W + r; x += r*2) {
+        const cx = x + xOff;
+        const filled = ((Math.floor(cx / (r*2)) + rowIdx) % 2) === 0;
+        scale(p, cx, y, r, filled);
+      }
+    }
+  }},
+  { strategy: "Use an unacceptable colour", draw: (p) => {
+    const W=p.width, H=p.height;
+    const r = 30;
+    const rowH = r;
+    for (let rowIdx = 0, y = 0; y < H + r; y += rowH, rowIdx++) {
+      const xOff = (rowIdx % 2) * r;
+      for (let x = -r; x < W + r; x += r*2) {
+        const cx = x + xOff;
+        const filled = ((Math.floor(cx / (r*2)) + rowIdx) % 2) === 0;
+        if (filled) { p.fill(200, 40, 40); p.stroke(20); p.strokeWeight(1); }
+        else { p.fill(255); p.stroke(20); p.strokeWeight(1); }
+        p.arc(cx, y, r*2, r*2, p.PI, p.TWO_PI, p.CHORD);
+        if (!filled) { p.noFill(); p.stroke(20); p.strokeWeight(0.8); p.arc(cx, y, r*1.2, r*1.2, p.PI, p.TWO_PI); }
+      }
+    }
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    // scale size decreases toward top
+    const W=p.width, H=p.height;
+    let y = H;
+    let r = 40;
+    let rowIdx = 0;
+    while (y > -r && r > 3) {
+      const rowH = r;
+      const xOff = (rowIdx % 2) * r;
+      for (let x = -r; x < W + r; x += r*2) {
+        const cx = x + xOff;
+        const filled = ((Math.floor(cx / (r*2)) + rowIdx) % 2) === 0;
+        scale(p, cx, y, r, filled);
+      }
+      y -= rowH;
+      r *= 0.94;
+      rowIdx++;
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

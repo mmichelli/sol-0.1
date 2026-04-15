@@ -2,7 +2,7 @@
 
 Wall drawings after Sol LeWitt, executed in the browser with p5.js. Most drawings have two solutions: one original, and one perturbed by an [Oblique Strategy](https://en.wikipedia.org/wiki/Oblique_Strategies) card. Each render rolls fresh randomness.
 
-Instructions 022–031 were seeded by a random Wikipedia article. Instructions 032–090 were seeded by a random entry from Webster's 1913 dictionary; 041–050 are a study of colour and shape, 051–060 a study of line, 061–070 a study of three-dimensional primitives, 071–080 a study of the wave, and 081–090 a study of composition — multi-rule rainbow fields after LeWitt's late wall drawings.
+Instructions 022–031 were seeded by a random Wikipedia article. Instructions 032–100 were seeded by a random entry from Webster's 1913 dictionary; 041–050 are a study of colour and shape, 051–060 a study of line, 061–070 a study of three-dimensional primitives, 071–080 a study of the wave, 081–090 a study of composition — multi-rule rainbow fields after LeWitt's late wall drawings — and 091–100 a study of the mark.
 
 ## Run locally
 
