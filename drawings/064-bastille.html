@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 064</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#064</h1>
+  <p>A tall cylinder at the centre of the page, and around it a ring of eight shorter cylinders of equal height, each standing shoulder to shoulder like a fortified tower surrounded by its walls.</p>
+  <p class="source">Seed — <em>bastille</em>: a tower or an elevated work, used for the defense, or in the siege, of a fortified place.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function cyl(p, cx, baseY, rx, ry, h) {
+  p.noFill();
+  // top ellipse
+  p.ellipse(cx, baseY - h, rx*2, ry*2);
+  // bottom ellipse (front half only)
+  p.arc(cx, baseY, rx*2, ry*2, 0, p.PI);
+  // sides
+  p.line(cx - rx, baseY - h, cx - rx, baseY);
+  p.line(cx + rx, baseY - h, cx + rx, baseY);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height, cx=W/2, cy=H*0.62;
+    p.stroke(20); p.strokeWeight(1.1);
+    // outer wall cylinders
+    const N = 8, R = 180, rx = 26, ry = 9, hOuter = 120;
+    for (let i=0; i<N; i++) {
+      const a = (i/N) * p.TWO_PI;
+      const px = cx + Math.cos(a)*R;
+      const py = cy + Math.sin(a)*R*0.5;
+      cyl(p, px, py, rx, ry, hOuter);
+    }
+    // central tower
+    cyl(p, cx, cy, 46, 16, 260);
+  }},
+  { strategy: "Change instrument roles", draw: (p) => {
+    // cylinders become simple rectangles (orthographic, not iso)
+    const W=p.width, H=p.height, cx=W/2, cy=H*0.62;
+    p.stroke(20); p.strokeWeight(1.1); p.noFill();
+    const N = 8, R = 180;
+    for (let i=0; i<N; i++) {
+      const a = (i/N) * p.TWO_PI;
+      const px = cx + Math.cos(a)*R;
+      const py = cy + Math.sin(a)*R*0.5;
+      p.rect(px - 26, py - 120, 52, 120);
+    }
+    p.rect(cx - 46, cy - 260, 92, 260);
+  }},
+  { strategy: "Ghost echoes", draw: (p) => {
+    const W=p.width, H=p.height, cx=W/2, cy=H*0.62;
+    const N = 8, R = 180, rx = 26, ry = 9, hOuter = 120;
+    // echo pass, faint
+    p.stroke(20, 60); p.strokeWeight(0.8);
+    for (let i=0; i<N; i++) {
+      const a = (i/N) * p.TWO_PI;
+      const px = cx + Math.cos(a)*R + 8;
+      const py = cy + Math.sin(a)*R*0.5 + 4;
+      cyl(p, px, py, rx, ry, hOuter);
+    }
+    p.stroke(20, 60);
+    cyl(p, cx + 10, cy + 4, 46, 16, 260);
+    // main pass, bold
+    p.stroke(20); p.strokeWeight(1.1);
+    for (let i=0; i<N; i++) {
+      const a = (i/N) * p.TWO_PI;
+      const px = cx + Math.cos(a)*R;
+      const py = cy + Math.sin(a)*R*0.5;
+      cyl(p, px, py, rx, ry, hOuter);
+    }
+    cyl(p, cx, cy, 46, 16, 260);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

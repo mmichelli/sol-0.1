@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 067</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#067</h1>
+  <p>A torus at the centre of the page, drawn in isometric projection by a pair of ellipses — one for the outer boundary and one for the inner hole — crossed by short lines suggesting the tube's roundness.</p>
+  <p class="source">Seed — <em>ammonite</em>: a fossil cephalopod shell related to the nautilus; also called snake stone.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function torus(p, cx, cy, R, r, tilt, ribs) {
+  p.noFill();
+  // outer ring
+  p.ellipse(cx, cy, (R+r)*2, (R+r)*2*tilt);
+  // inner hole
+  p.ellipse(cx, cy, (R-r)*2, (R-r)*2*tilt);
+  // ribs to suggest tube cross-section
+  for (let i = 0; i < ribs; i++) {
+    const a = (i/ribs) * p.TWO_PI;
+    const x = cx + Math.cos(a) * R;
+    const y = cy + Math.sin(a) * R * tilt;
+    const nx = Math.cos(a), ny = Math.sin(a) * tilt;
+    const L = Math.hypot(nx, ny);
+    const ux = nx/L, uy = ny/L;
+    p.line(x - ux*r, y - uy*r, x + ux*r, y + uy*r);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.1);
+    torus(p, W/2, H/2, 220, 60, 0.35, 32);
+  }},
+  { strategy: "Use fewer notes", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.2); p.noFill();
+    const R = 240, r = 70, tilt = 0.35;
+    p.ellipse(W/2, H/2, (R+r)*2, (R+r)*2*tilt);
+    p.ellipse(W/2, H/2, (R-r)*2, (R-r)*2*tilt);
+  }},
+  { strategy: "Accept advice", draw: (p) => {
+    // torus surrounded by tangent spheres
+    const W=p.width, H=p.height, cx=W/2, cy=H/2;
+    p.stroke(20); p.strokeWeight(1.1);
+    torus(p, cx, cy, 180, 50, 0.35, 24);
+    const N = 10;
+    for (let i = 0; i < N; i++) {
+      const a = (i/N) * p.TWO_PI;
+      const sx = cx + Math.cos(a) * 290;
+      const sy = cy + Math.sin(a) * 290 * 0.55;
+      p.noFill();
+      p.circle(sx, sy, 50);
+      for (let k = 1; k < 4; k++) {
+        const phi = (k/4) * p.PI - p.PI/2;
+        const yy = 25 * Math.sin(phi);
+        const ww = 25 * Math.cos(phi) * 2;
+        p.ellipse(sx, sy + yy, ww, ww * 0.35);
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

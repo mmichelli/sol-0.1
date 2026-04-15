@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 066</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#066</h1>
+  <p>Twenty tetrahedra tumbling across the page at random orientations; each drawn in black lines, all four edges of each face shown through as though transparent.</p>
+  <p class="source">Seed — <em>jumble</em>: a confused mixture; a mass or collection without order.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+// regular tetrahedron vertices
+const TET = [
+  [ 1,  1,  1], [ 1, -1, -1], [-1,  1, -1], [-1, -1,  1],
+];
+const TET_EDGES = [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+function rotX(v, a) { const c=Math.cos(a), s=Math.sin(a); return [v[0], v[1]*c - v[2]*s, v[1]*s + v[2]*c]; }
+function rotY(v, a) { const c=Math.cos(a), s=Math.sin(a); return [v[0]*c + v[2]*s, v[1], -v[0]*s + v[2]*c]; }
+function rotZ(v, a) { const c=Math.cos(a), s=Math.sin(a); return [v[0]*c - v[1]*s, v[0]*s + v[1]*c, v[2]]; }
+function project(v, cx, cy, scale) {
+  // simple parallel projection
+  return [cx + v[0]*scale, cy - v[1]*scale + v[2]*0.3*scale];
+}
+function tetra(p, cx, cy, scale, ax, ay, az) {
+  const verts = TET.map(v => rotZ(rotY(rotX(v, ax), ay), az))
+                   .map(v => project(v, cx, cy, scale));
+  for (const [a, b] of TET_EDGES) p.line(verts[a][0], verts[a][1], verts[b][0], verts[b][1]);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.1); p.noFill();
+    for (let i=0; i<20; i++) {
+      const cx = p.random(80, W-80), cy = p.random(80, H-80);
+      const scale = p.random(30, 60);
+      tetra(p, cx, cy, scale, p.random(p.TWO_PI), p.random(p.TWO_PI), p.random(p.TWO_PI));
+    }
+  }},
+  { strategy: "Tidy up", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.1); p.noFill();
+    const N = 5;
+    const step = (W - 80) / N;
+    for (let i=0; i<N; i++) for (let j=0; j<N; j++) {
+      const cx = 40 + step*(i + 0.5);
+      const cy = 40 + step*(j + 0.5);
+      tetra(p, cx, cy, step*0.32, 0.4, 0.6, 0);
+    }
+  }},
+  { strategy: "Ghost echoes", draw: (p) => {
+    const W=p.width, H=p.height;
+    const tets = [];
+    for (let i=0; i<16; i++) {
+      tets.push([
+        p.random(80, W-80), p.random(80, H-80),
+        p.random(32, 58),
+        p.random(p.TWO_PI), p.random(p.TWO_PI), p.random(p.TWO_PI)
+      ]);
+    }
+    p.stroke(20, 60); p.strokeWeight(0.8); p.noFill();
+    for (const [cx, cy, sc, ax, ay, az] of tets) tetra(p, cx+12, cy+8, sc, ax, ay, az);
+    p.stroke(20); p.strokeWeight(1.1);
+    for (const [cx, cy, sc, ax, ay, az] of tets) tetra(p, cx, cy, sc, ax, ay, az);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

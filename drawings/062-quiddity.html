@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 062</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#062</h1>
+  <p>Twenty-five identical cubes arranged in a square of five by five, each drawn in isometric projection in black lines; no shading, no texture — the cube presented as plainly as possible.</p>
+  <p class="source">Seed — <em>quiddity</em>: the essence, nature, or distinctive peculiarity of a thing; that which answers the question, What is it?</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const C30 = Math.cos(Math.PI/6), S30 = 0.5;
+function iso(x, y, z) { return [(x - z) * C30, (x + z) * S30 - y]; }
+function cube(p, ox, oy, cx, cy, cz, s) {
+  const v = [
+    iso(cx,     cy,     cz),     iso(cx+s,   cy,     cz),
+    iso(cx+s,   cy+s,   cz),     iso(cx,     cy+s,   cz),
+    iso(cx,     cy,     cz+s),   iso(cx+s,   cy,     cz+s),
+    iso(cx+s,   cy+s,   cz+s),   iso(cx,     cy+s,   cz+s),
+  ].map(([a,b]) => [a+ox, b+oy]);
+  const E = [[3,2],[2,6],[6,7],[7,3],[4,5],[5,6],[7,4],[1,2],[5,1]];
+  for (const [a,b] of E) p.line(v[a][0], v[a][1], v[b][0], v[b][1]);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.1); p.noFill();
+    const s = 36, gap = 100, N = 5;
+    const tw = (N-1)*gap + s*2*C30;
+    const th = (N-1)*gap + s*2*S30 + s;
+    const ox = (W - tw)/2 + s*C30;
+    const oy = (H - th)/2 + s;
+    for (let i=0; i<N; i++) for (let j=0; j<N; j++) {
+      cube(p, ox + i*gap, oy + j*gap, 0, 0, 0, s);
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.1); p.noFill();
+    const s = 36, gap = 100, N = 5;
+    const ox = W/2 - (N-1)*gap/2;
+    const oy = H/2 - (N-1)*gap/2 + s;
+    for (let i=0; i<N; i++) for (let j=0; j<N; j++) {
+      // hanging: translate down and flip via translate
+      p.push();
+      p.translate(ox + i*gap, oy + j*gap);
+      p.scale(1, -1);
+      cube(p, 0, 0, 0, 0, 0, s);
+      p.pop();
+    }
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.0); p.noFill();
+    const N = 5, gap = 104;
+    const ox = W/2 - (N-1)*gap/2;
+    const oy = H/2 - (N-1)*gap/2 + 30;
+    for (let i=0; i<N; i++) for (let j=0; j<N; j++) {
+      const t = (i + j*N) / (N*N - 1);
+      const s = 14 + t * 40;
+      cube(p, ox + i*gap, oy + j*gap, 0, 0, 0, s);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

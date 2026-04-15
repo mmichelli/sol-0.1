@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 065</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#065</h1>
+  <p>A pyramid at the centre of the page, drawn in black isometric lines. Within it a smaller pyramid, and within that another, nested three deep — dwellings within dwellings.</p>
+  <p class="source">Seed — <em>habitation</em>: the act of inhabiting; state of inhabiting or dwelling, or of being inhabited.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const C30 = Math.cos(Math.PI/6), S30 = 0.5;
+function iso(x, y, z) { return [(x - z) * C30, (x + z) * S30 - y]; }
+function pyramid(p, ox, oy, base, h) {
+  const s = base/2;
+  const v = [
+    iso(-s, 0, -s), iso( s, 0, -s), iso( s, 0,  s), iso(-s, 0,  s),
+    iso(0, h, 0),
+  ].map(([a,b]) => [a+ox, b+oy]);
+  p.line(v[0][0], v[0][1], v[1][0], v[1][1]);
+  p.line(v[1][0], v[1][1], v[2][0], v[2][1]);
+  p.line(v[2][0], v[2][1], v[3][0], v[3][1]);
+  p.line(v[3][0], v[3][1], v[0][0], v[0][1]);
+  for (let k=0; k<4; k++) p.line(v[k][0], v[k][1], v[4][0], v[4][1]);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.1); p.noFill();
+    const cx = W/2, cy = H/2 + 120;
+    pyramid(p, cx, cy, 320, 260);
+    pyramid(p, cx, cy, 220, 180);
+    pyramid(p, cx, cy, 120,  98);
+  }},
+  { strategy: "Remove specifics and convert to ambiguities", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.0); p.noFill();
+    const N = 7;
+    const placed = [];
+    for (let tries=0; tries<400 && placed.length<N; tries++) {
+      const base = p.random(80, 180);
+      const h = p.random(60, 200);
+      const cx = p.random(base/2 + 40, W - base/2 - 40);
+      const cy = p.random(H*0.4, H - 40);
+      let ok = true;
+      for (const q of placed) if (Math.hypot(cx - q[0], cy - q[1]) < (base + q[2])/2 + 20) { ok=false; break; }
+      if (ok) placed.push([cx, cy, base, h]);
+    }
+    for (const [cx, cy, base, h] of placed) pyramid(p, cx, cy, base, h);
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.1); p.noFill();
+    const cx = W/2, cy = H/2 - 120;
+    // inverted: pyramid pointing down
+    const draw = (base, h) => {
+      const s = base/2;
+      const v = [
+        iso(-s, 0, -s), iso( s, 0, -s), iso( s, 0,  s), iso(-s, 0,  s),
+        iso(0, -h, 0),
+      ].map(([a,b]) => [a+cx, b+cy]);
+      p.line(v[0][0], v[0][1], v[1][0], v[1][1]);
+      p.line(v[1][0], v[1][1], v[2][0], v[2][1]);
+      p.line(v[2][0], v[2][1], v[3][0], v[3][1]);
+      p.line(v[3][0], v[3][1], v[0][0], v[0][1]);
+      for (let k=0; k<4; k++) p.line(v[k][0], v[k][1], v[4][0], v[4][1]);
+    };
+    draw(320, 260);
+    draw(220, 180);
+    draw(120,  98);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
