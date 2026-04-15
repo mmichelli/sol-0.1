@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 059</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#059</h1>
+  <p>Parallel horizontal lines across the page. The density of lines varies continuously, sparse at the top and dense at the bottom; from a distance the page reads as a grey tone dissolving downward.</p>
+  <p class="source">Seed — <em>dissolvent</em>: that which has the power of dissolving or melting other substances.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(0.7);
+    let y = 20;
+    while (y < H-20) {
+      p.line(20, y, W-20, y);
+      const t = (y - 20) / (H - 40);
+      const spacing = 14 - t * 12.6;
+      y += Math.max(1.2, spacing);
+    }
+  }},
+  { strategy: "Spectrum analysis", draw: (p) => {
+    const W=p.width, H=p.height, cx=W/2, cy=H/2, R=Math.hypot(W,H)/2;
+    p.stroke(20); p.strokeWeight(0.7);
+    const cell = 18;
+    for (let y = 20; y < H-20; y += cell) {
+      for (let x = 20; x < W-20; x += cell) {
+        const r = Math.hypot(x - cx, y - cy) / R;
+        const n = Math.floor((1 - r) * 12);
+        for (let k = 0; k < n; k++) {
+          const px = x + p.random(cell);
+          const py = y + p.random(cell);
+          p.line(px, py, px + cell*0.5, py);
+        }
+      }
+    }
+  }},
+  { strategy: "Use an unacceptable colour", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(200, 40, 40); p.strokeWeight(0.7);
+    let y = 20;
+    while (y < H-20) {
+      p.line(20, y, W-20, y);
+      const t = (y - 20) / (H - 40);
+      const spacing = 14 - t * 12.6;
+      y += Math.max(1.2, spacing);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

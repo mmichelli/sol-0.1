@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 055</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#055</h1>
+  <p>From the midpoint of each of the four sides, a nested series of arcs swings into the page; each arc centred on its midpoint, each radius a fixed step larger than the last.</p>
+  <p class="source">Seed — <em>battering-ram</em>: a large beam, suspended by ropes to a beam supported by posts, so balanced as to swing backward and forward.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    p.noFill(); p.stroke(20); p.strokeWeight(1.1);
+    const step = 28;
+    const rMax = Math.hypot(W, H);
+    const sides = [
+      [W/2, 0,   0,      p.PI],
+      [W/2, H,   p.PI,   p.TWO_PI],
+      [0,   H/2, -p.PI/2, p.PI/2],
+      [W,   H/2,  p.PI/2, p.PI*1.5],
+    ];
+    for (const [cx, cy, a1, a2] of sides) {
+      for (let r = step; r < rMax; r += step) {
+        p.arc(cx, cy, r*2, r*2, a1, a2);
+      }
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height, cx=W/2, cy=H/2;
+    p.noFill(); p.stroke(20); p.strokeWeight(1.1);
+    const step = 22;
+    const rMax = Math.hypot(W, H)/2 + 10;
+    for (let r = step; r < rMax; r += step) {
+      for (let k=0; k<4; k++) {
+        const a1 = k*p.PI/2 - p.PI/4;
+        const a2 = k*p.PI/2 + p.PI/4;
+        p.arc(cx, cy, r*2, r*2, a1, a2);
+      }
+    }
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.noFill(); p.stroke(20); p.strokeWeight(0.9);
+    const rMax = Math.hypot(W, H);
+    const sides = [
+      {cx:W/2, cy:0,   a1:0,       a2:p.PI,     n:8},
+      {cx:W/2, cy:H,   a1:p.PI,    a2:p.TWO_PI, n:16},
+      {cx:0,   cy:H/2, a1:-p.PI/2, a2:p.PI/2,   n:32},
+      {cx:W,   cy:H/2, a1:p.PI/2,  a2:p.PI*1.5, n:64},
+    ];
+    for (const s of sides) {
+      for (let i=1; i<=s.n; i++) {
+        const r = (i/s.n) * rMax;
+        p.arc(s.cx, s.cy, r*2, r*2, s.a1, s.a2);
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

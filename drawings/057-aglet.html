@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 057</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#057</h1>
+  <p>A single continuous line enters at the upper-left corner and leaves at the lower-right; along its course it passes through itself many times, threading like a lace.</p>
+  <p class="source">Seed — <em>aglet</em>: a tag of a lace, or of the points, braids, or cords formerly used in dress.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function wanderPath(p, sx, sy, ex, ey, N, jitter) {
+  const pts = [[sx, sy]];
+  let x = sx, y = sy;
+  const W = p.width, H = p.height;
+  for (let i = 1; i < N; i++) {
+    const t = i / (N-1);
+    const tx = sx + (ex - sx) * t;
+    const ty = sy + (ey - sy) * t;
+    x += (tx - x) * 0.07 + p.random(-jitter, jitter);
+    y += (ty - y) * 0.07 + p.random(-jitter, jitter);
+    x = p.constrain(x, 30, W - 30);
+    y = p.constrain(y, 30, H - 30);
+    pts.push([x, y]);
+  }
+  pts.push([ex, ey]);
+  return pts;
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    p.noFill(); p.stroke(20); p.strokeWeight(1.3);
+    const pts = wanderPath(p, 20, 20, W-20, H-20, 180, 42);
+    p.beginShape();
+    p.curveVertex(pts[0][0], pts[0][1]);
+    for (const [x, y] of pts) p.curveVertex(x, y);
+    p.curveVertex(pts[pts.length-1][0], pts[pts.length-1][1]);
+    p.endShape();
+  }},
+  { strategy: "Short circuit", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.noFill(); p.stroke(20); p.strokeWeight(1.3);
+    const pts = wanderPath(p, 20, 20, W-20, H-20, 180, 42);
+    let shape = false;
+    for (let i = 0; i < pts.length; i++) {
+      if (shape && p.random() < 0.06) { p.endShape(); shape = false; continue; }
+      if (!shape) { p.beginShape(); shape = true; }
+      p.curveVertex(pts[i][0], pts[i][1]);
+    }
+    if (shape) p.endShape();
+  }},
+  { strategy: "Faced with a choice, do both", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.noFill(); p.strokeWeight(1.3);
+    const laces = [
+      { col: [200,40,40], sx: 20,   sy: 20,   ex: W-20, ey: H-20 },
+      { col: [40,80,200], sx: W-20, sy: 20,   ex: 20,   ey: H-20 },
+    ];
+    for (const l of laces) {
+      p.stroke(l.col[0], l.col[1], l.col[2]);
+      const pts = wanderPath(p, l.sx, l.sy, l.ex, l.ey, 160, 42);
+      p.beginShape();
+      p.curveVertex(pts[0][0], pts[0][1]);
+      for (const [x, y] of pts) p.curveVertex(x, y);
+      p.curveVertex(pts[pts.length-1][0], pts[pts.length-1][1]);
+      p.endShape();
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

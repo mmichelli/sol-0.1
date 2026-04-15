@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 056</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#056</h1>
+  <p>Two hundred straight line segments, every segment of exactly the same length. Placed at random across the page, each at a random angle; each segment repeating the length of the first.</p>
+  <p class="source">Seed — <em>parrotry</em>: servile imitation or repetition.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height, L=44, N=200;
+    p.stroke(20); p.strokeWeight(1.0);
+    for (let i=0; i<N; i++) {
+      const x = p.random(20, W-20), y = p.random(20, H-20);
+      const a = p.random(p.TWO_PI);
+      p.line(x, y, x + Math.cos(a)*L, y + Math.sin(a)*L);
+    }
+  }},
+  { strategy: "Emphasize differences", draw: (p) => {
+    const W=p.width, H=p.height, L=44, N=200;
+    p.strokeWeight(1.0);
+    for (let i=0; i<N; i++) {
+      const x = p.random(20, W-20), y = p.random(20, H-20);
+      const a = p.random(p.TWO_PI);
+      if (p.random() < 0.1) {
+        p.stroke(200, 40, 40);
+        p.line(x, y, x + Math.cos(a)*L*0.5, y + Math.sin(a)*L*0.5);
+      } else {
+        p.stroke(20);
+        p.line(x, y, x + Math.cos(a)*L, y + Math.sin(a)*L);
+      }
+    }
+  }},
+  { strategy: "Be dirty", draw: (p) => {
+    const W=p.width, H=p.height, L=44, N=200;
+    p.stroke(20); p.strokeWeight(1.0); p.noFill();
+    for (let i=0; i<N; i++) {
+      const x = p.random(20, W-20), y = p.random(20, H-20);
+      const a = p.random(p.TWO_PI);
+      const len = L + p.random(-5, 5);
+      p.beginShape();
+      for (let t=0; t<=1.001; t+=0.1) {
+        const px = x + Math.cos(a)*len*t + p.random(-1.2, 1.2);
+        const py = y + Math.sin(a)*len*t + p.random(-1.2, 1.2);
+        p.vertex(px, py);
+      }
+      p.endShape();
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
