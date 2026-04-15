@@ -85,7 +85,6 @@ seed's headword or a one-word distillation). Use this template:
   <p class="source">Seed — <em>term</em>: short phrase from the source.</p>
   <p class="strategy" id="strategy"></p>
 </div>
-<button onclick="location.reload()">Re-render</button>
 <div class="holder" id="h"></div>
 <script>
 const solutions = [

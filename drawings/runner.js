@@ -16,4 +16,10 @@
       chosen.draw(p);
     };
   });
+  // Click on the image or the card to re-render
+  const reload = () => location.reload();
+  for (const sel of ['#h', '.card']) {
+    const el = document.querySelector(sel);
+    if (el) el.addEventListener('click', reload);
+  }
 })();
