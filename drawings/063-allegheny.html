@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 063</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#063</h1>
+  <p>Seven cones of different heights standing in a row across the page like a ridge of mountains. Each drawn in black lines: a base ellipse and two sides meeting at a single apex.</p>
+  <p class="source">Seed — <em>allegheny</em>: of or pertaining to the Allegheny Mountains, or the region where they are situated.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function cone(p, cx, baseY, rx, ry, h) {
+  p.noFill();
+  p.ellipse(cx, baseY, rx*2, ry*2);
+  p.line(cx - rx, baseY, cx, baseY - h);
+  p.line(cx + rx, baseY, cx, baseY - h);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.1);
+    const N = 7;
+    const baseY = H*0.72;
+    const margin = 40;
+    const spacing = (W - 2*margin) / N;
+    for (let i=0; i<N; i++) {
+      const cx = margin + spacing*(i + 0.5);
+      const rx = spacing * 0.42;
+      const ry = rx * 0.32;
+      const h = p.random(120, 300);
+      cone(p, cx, baseY, rx, ry, h);
+    }
+    // ground line
+    p.line(20, baseY, W-20, baseY);
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.1);
+    const N = 7;
+    const baseY = H*0.28;
+    const margin = 40;
+    const spacing = (W - 2*margin) / N;
+    p.line(20, baseY, W-20, baseY);
+    for (let i=0; i<N; i++) {
+      const cx = margin + spacing*(i + 0.5);
+      const rx = spacing * 0.42;
+      const ry = rx * 0.32;
+      const h = p.random(120, 300);
+      // inverted cone: base at baseY, apex at baseY + h
+      p.noFill();
+      p.ellipse(cx, baseY, rx*2, ry*2);
+      p.line(cx - rx, baseY, cx, baseY + h);
+      p.line(cx + rx, baseY, cx, baseY + h);
+    }
+  }},
+  { strategy: "Water", draw: (p) => {
+    // cones melt into rounded half-domes with soft tops
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.1); p.noFill();
+    const N = 7;
+    const baseY = H*0.72;
+    const margin = 40;
+    const spacing = (W - 2*margin) / N;
+    for (let i=0; i<N; i++) {
+      const cx = margin + spacing*(i + 0.5);
+      const rx = spacing * 0.42;
+      const ry = rx * 0.32;
+      const h = p.random(100, 250);
+      p.ellipse(cx, baseY, rx*2, ry*2);
+      // rounded profile using bezier
+      p.beginShape();
+      p.vertex(cx - rx, baseY);
+      p.bezierVertex(cx - rx, baseY - h*0.7,  cx - rx*0.3, baseY - h,  cx, baseY - h);
+      p.bezierVertex(cx + rx*0.3, baseY - h,  cx + rx, baseY - h*0.7,  cx + rx, baseY);
+      p.endShape();
+    }
+    p.line(20, baseY, W-20, baseY);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 068</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#068</h1>
+  <p>A regular dodecahedron at the centre of the page, drawn in black lines; all twelve of its pentagonal faces shown through as though the solid were made of glass.</p>
+  <p class="source">Seed — <em>alexandrine</em>: a kind of verse consisting in English of twelve syllables.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+// Regular dodecahedron vertices
+const PHI = (1 + Math.sqrt(5)) / 2;
+const IPHI = 1 / PHI;
+const DODEC = [];
+for (const s1 of [-1, 1]) for (const s2 of [-1, 1]) for (const s3 of [-1, 1]) DODEC.push([s1, s2, s3]);
+for (const s1 of [-1, 1]) for (const s2 of [-1, 1]) DODEC.push([0, s1*IPHI, s2*PHI]);
+for (const s1 of [-1, 1]) for (const s2 of [-1, 1]) DODEC.push([s1*IPHI, s2*PHI, 0]);
+for (const s1 of [-1, 1]) for (const s2 of [-1, 1]) DODEC.push([s1*PHI, 0, s2*IPHI]);
+// edges: all vertex pairs at minimum non-zero distance
+const EDGE_LEN = 2 * IPHI;
+const DODEC_EDGES = [];
+for (let i = 0; i < DODEC.length; i++) for (let j = i+1; j < DODEC.length; j++) {
+  const d = Math.hypot(DODEC[i][0]-DODEC[j][0], DODEC[i][1]-DODEC[j][1], DODEC[i][2]-DODEC[j][2]);
+  if (Math.abs(d - EDGE_LEN) < 0.01) DODEC_EDGES.push([i, j]);
+}
+function rotY(v, a) { const c=Math.cos(a), s=Math.sin(a); return [v[0]*c + v[2]*s, v[1], -v[0]*s + v[2]*c]; }
+function rotX(v, a) { const c=Math.cos(a), s=Math.sin(a); return [v[0], v[1]*c - v[2]*s, v[1]*s + v[2]*c]; }
+function drawDodec(p, cx, cy, scale, rx, ry) {
+  const verts = DODEC.map(v => rotX(rotY(v, ry), rx))
+                     .map(v => [cx + v[0]*scale, cy - v[1]*scale + v[2]*0.2*scale]);
+  for (const [a, b] of DODEC_EDGES) p.line(verts[a][0], verts[a][1], verts[b][0], verts[b][1]);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.1); p.noFill();
+    drawDodec(p, W/2, H/2, 140, 0.35, 0.45);
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(0.9); p.noFill();
+    for (let i = 0; i < 5; i++) {
+      const s = 160 - i*24;
+      drawDodec(p, W/2, H/2, s, 0.35 + i*0.1, 0.45 + i*0.15);
+    }
+  }},
+  { strategy: "Honor thy error as a hidden intention", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.1); p.noFill();
+    const cx = W/2, cy = H/2, scale = 150;
+    const verts = DODEC.map(v => rotX(rotY(v, 0.45), 0.35))
+                       .map(v => [cx + v[0]*scale, cy - v[1]*scale + v[2]*0.2*scale]);
+    for (const [a, b] of DODEC_EDGES) {
+      const jax = p.random(-4, 4), jay = p.random(-4, 4);
+      const jbx = p.random(-4, 4), jby = p.random(-4, 4);
+      p.line(verts[a][0]+jax, verts[a][1]+jay, verts[b][0]+jbx, verts[b][1]+jby);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

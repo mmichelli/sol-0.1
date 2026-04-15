@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 061</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#061</h1>
+  <p>Ten spheres of various sizes placed at random on the page; each drawn as a family of concentric ellipses, suggesting its equator and latitudes.</p>
+  <p class="source">Seed — <em>bruiser</em>: a concave tool used in grinding lenses or the speculums of telescopes.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+function sphere(p, cx, cy, r, tilt, bands) {
+  p.noFill();
+  p.circle(cx, cy, r*2);
+  for (let i = 1; i <= bands; i++) {
+    const phi = (i/(bands+1)) * p.PI - p.PI/2;
+    const y = r * Math.sin(phi);
+    const w = r * Math.cos(phi) * 2;
+    p.ellipse(cx, cy + y, w, w * tilt);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const spheres = [];
+    for (let tries=0; tries<500 && spheres.length<10; tries++) {
+      const r = p.random(40, 110);
+      const cx = p.random(r+20, W-r-20), cy = p.random(r+20, H-r-20);
+      let ok = true;
+      for (const s of spheres) if (Math.hypot(cx-s[0], cy-s[1]) < r + s[2] + 12) { ok = false; break; }
+      if (ok) spheres.push([cx, cy, r]);
+    }
+    p.stroke(20); p.strokeWeight(1.0);
+    for (const [cx, cy, r] of spheres) sphere(p, cx, cy, r, 0.35, 7);
+  }},
+  { strategy: "Spectrum analysis", draw: (p) => {
+    // spheres shaded by hatching along latitude density
+    const W=p.width, H=p.height;
+    const spheres = [];
+    for (let tries=0; tries<500 && spheres.length<10; tries++) {
+      const r = p.random(40, 110);
+      const cx = p.random(r+20, W-r-20), cy = p.random(r+20, H-r-20);
+      let ok = true;
+      for (const s of spheres) if (Math.hypot(cx-s[0], cy-s[1]) < r + s[2] + 12) { ok = false; break; }
+      if (ok) spheres.push([cx, cy, r]);
+    }
+    p.stroke(20); p.strokeWeight(0.8);
+    for (const [cx, cy, r] of spheres) {
+      p.noFill(); p.circle(cx, cy, r*2);
+      for (let i = 1; i <= 22; i++) {
+        const phi = (i/23) * p.PI - p.PI/2;
+        const y = r * Math.sin(phi);
+        const w = r * Math.cos(phi) * 2;
+        p.ellipse(cx, cy + y, w, w * 0.35);
+      }
+    }
+  }},
+  { strategy: "Twist the spine", draw: (p) => {
+    const W=p.width, H=p.height;
+    const spheres = [];
+    for (let tries=0; tries<500 && spheres.length<10; tries++) {
+      const r = p.random(40, 110);
+      const cx = p.random(r+20, W-r-20), cy = p.random(r+20, H-r-20);
+      let ok = true;
+      for (const s of spheres) if (Math.hypot(cx-s[0], cy-s[1]) < r + s[2] + 12) { ok = false; break; }
+      if (ok) spheres.push([cx, cy, r, p.random(-p.PI/4, p.PI/4)]);
+    }
+    p.stroke(20); p.strokeWeight(1.0);
+    for (const [cx, cy, r, spin] of spheres) {
+      p.noFill(); p.circle(cx, cy, r*2);
+      p.push(); p.translate(cx, cy); p.rotate(spin);
+      for (let i = 1; i <= 7; i++) {
+        const phi = (i/8) * p.PI - p.PI/2;
+        const y = r * Math.sin(phi);
+        const w = r * Math.cos(phi) * 2;
+        p.ellipse(0, y, w, w * 0.35);
+      }
+      p.pop();
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

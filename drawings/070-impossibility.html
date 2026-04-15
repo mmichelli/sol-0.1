@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 070</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#070</h1>
+  <p>An impossible figure at the centre of the page: three rectangular bars drawn as though meeting at right angles in three-dimensional space, yet so joined that no such object could exist.</p>
+  <p class="source">Seed — <em>impossibility</em>: that which can not be thought, done, or endured.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const C30 = Math.cos(Math.PI/6), S30 = 0.5;
+function impossible(p, cx, cy, s, t) {
+  const iso = (x, y, z) => [cx + (x - z) * C30 - s*C30/2, cy + (x + z) * S30 - y - s/6];
+  function beam(p1, p2, axis) {
+    const [x1,y1,z1] = p1, [x2,y2,z2] = p2;
+    const verts = [];
+    const off = [-t/2, t/2];
+    if (axis === 'x') {
+      for (const dy of off) for (const dz of off) verts.push([x1, y1+dy, z1+dz]);
+      for (const dy of off) for (const dz of off) verts.push([x2, y2+dy, z2+dz]);
+    } else if (axis === 'y') {
+      for (const dx of off) for (const dz of off) verts.push([x1+dx, y1, z1+dz]);
+      for (const dx of off) for (const dz of off) verts.push([x2+dx, y2, z2+dz]);
+    } else {
+      for (const dx of off) for (const dy of off) verts.push([x1+dx, y1+dy, z1]);
+      for (const dx of off) for (const dy of off) verts.push([x2+dx, y2+dy, z2]);
+    }
+    const pts = verts.map(v => iso(v[0], v[1], v[2]));
+    const E = [[0,1],[1,3],[3,2],[2,0],[4,5],[5,7],[7,6],[6,4],[0,4],[1,5],[2,6],[3,7]];
+    for (const [a,b] of E) p.line(pts[a][0], pts[a][1], pts[b][0], pts[b][1]);
+  }
+  beam([0,0,0], [s,0,0], 'x');
+  beam([s,0,0], [s,s,0], 'y');
+  beam([s,s,0], [s,s,s], 'z');
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.2); p.noFill();
+    impossible(p, W/2, H/2, 320, 50);
+  }},
+  { strategy: "Water", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.stroke(20); p.strokeWeight(1.2); p.noFill();
+    impossible(p, W/2, H/2 - 60, 300, 48);
+    // melting puddle underneath
+    for (let i = 0; i < 14; i++) {
+      const y = H*0.78 + i * 6;
+      p.beginShape();
+      for (let x = 160; x <= W - 160; x += 6) {
+        p.vertex(x, y + Math.sin(x * 0.04 + i * 0.5) * 3);
+      }
+      p.endShape();
+    }
+  }},
+  { strategy: "What mistakes did you make last time?", draw: (p) => {
+    const W=p.width, H=p.height;
+    const frames = [];
+    for (let tries=0, i=0; tries<400 && i<5; tries++) {
+      const s = p.random(100, 180);
+      const cx = p.random(s*0.9, W-s*0.9), cy = p.random(s*0.9, H-s*0.9);
+      let ok = true;
+      for (const f of frames) if (Math.hypot(cx-f[0], cy-f[1]) < s + f[2]) { ok = false; break; }
+      if (ok) { frames.push([cx, cy, s]); i++; }
+    }
+    p.stroke(20); p.strokeWeight(1.0); p.noFill();
+    for (const [cx, cy, s] of frames) impossible(p, cx, cy, s, s*0.16);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
