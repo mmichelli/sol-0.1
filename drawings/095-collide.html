@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 095</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#095</h1>
+  <p>Two fields of short dashes, the left one pressing rightward and the right one pressing leftward. Each mark is oriented along its field's direction of motion. Where the fields meet in the middle, the marks scatter in every direction.</p>
+  <p class="source">Seed — <em>collide</em>: to strike or dash against each other; to come into collision.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<div class="holder" id="h"></div>
+<script>
+function dash(p, x, y, a, len, weight, col) {
+  p.stroke(col[0], col[1], col[2]);
+  p.strokeWeight(weight);
+  const hx = Math.cos(a) * len/2, hy = Math.sin(a) * len/2;
+  p.line(x - hx, y - hy, x + hx, y + hy);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const frontX = W/2;
+    const zoneW = 60;
+    const N = 600;
+    for (let i = 0; i < N; i++) {
+      const x = p.random(20, W - 20);
+      const y = p.random(20, H - 20);
+      const d = x - frontX;
+      if (Math.abs(d) < zoneW) {
+        // collision zone: random angle
+        dash(p, x, y, p.random(p.TWO_PI), p.random(8, 18), 1.2, [20,20,20]);
+      } else if (d < 0) {
+        // left field: dashes pointing right
+        dash(p, x, y, p.random(-0.15, 0.15), 14, 1.2, [20,20,20]);
+      } else {
+        // right field: dashes pointing left (same horizontal but mirrored)
+        dash(p, x, y, p.random(-0.15, 0.15) + p.PI, 14, 1.2, [20,20,20]);
+      }
+    }
+  }},
+  { strategy: "Emphasize differences", draw: (p) => {
+    const W=p.width, H=p.height;
+    const frontX = W/2;
+    const zoneW = 60;
+    const N = 600;
+    for (let i = 0; i < N; i++) {
+      const x = p.random(20, W - 20);
+      const y = p.random(20, H - 20);
+      const d = x - frontX;
+      if (Math.abs(d) < zoneW) {
+        dash(p, x, y, p.random(p.TWO_PI), p.random(8, 18), 1.2, [20,20,20]);
+      } else if (d < 0) {
+        dash(p, x, y, p.random(-0.15, 0.15), 16, 1.4, [200, 40, 40]);
+      } else {
+        dash(p, x, y, p.random(-0.15, 0.15) + p.PI, 16, 1.4, [40, 80, 200]);
+      }
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    const frontY = H/2;
+    const zoneW = 60;
+    const N = 600;
+    for (let i = 0; i < N; i++) {
+      const x = p.random(20, W - 20);
+      const y = p.random(20, H - 20);
+      const d = y - frontY;
+      if (Math.abs(d) < zoneW) {
+        dash(p, x, y, p.random(p.TWO_PI), p.random(8, 18), 1.2, [20,20,20]);
+      } else if (d < 0) {
+        dash(p, x, y, p.PI/2 + p.random(-0.15, 0.15), 14, 1.2, [20,20,20]);
+      } else {
+        dash(p, x, y, -p.PI/2 + p.random(-0.15, 0.15), 14, 1.2, [20,20,20]);
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

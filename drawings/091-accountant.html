@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 091</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#091</h1>
+  <p>The page divided into a grid of sixteen by sixteen cells. Within each cell, a tally of short vertical strokes counted one through five; when five is reached, the fifth stroke is drawn diagonally across the first four. The count in each cell chosen at random from one to five.</p>
+  <p class="source">Seed — <em>accountant</em>: a reckoner; one who keeps, or adjusts, accounts.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<div class="holder" id="h"></div>
+<script>
+function tally(p, cx, cy, cellW, cellH, count, weight) {
+  p.stroke(20); p.strokeWeight(weight); p.noFill();
+  const stroke = cellW * 0.12;
+  const height = cellH * 0.55;
+  const x0 = cx - stroke * 2;
+  const y0 = cy - height / 2;
+  const limit = Math.min(count, 5);
+  const verticals = Math.min(limit, 4);
+  for (let i = 0; i < verticals; i++) {
+    const x = x0 + i * stroke;
+    p.line(x, y0, x, y0 + height);
+  }
+  if (count >= 5) {
+    p.line(x0 - stroke*0.4, y0 + height + 2, x0 + stroke*3.6, y0 - 2);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const N = 16;
+    const pad = 20;
+    const cellW = (W - 2*pad) / N;
+    const cellH = (H - 2*pad) / N;
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+      const cx = pad + (j + 0.5) * cellW;
+      const cy = pad + (i + 0.5) * cellH;
+      const count = 1 + Math.floor(p.random(5));
+      tally(p, cx, cy, cellW, cellH, count, 1.4);
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    const N = 16;
+    const pad = 20;
+    const cellW = (W - 2*pad) / N;
+    const cellH = (H - 2*pad) / N;
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+      const cx = pad + (j + 0.5) * cellW;
+      const cy = pad + (i + 0.5) * cellH;
+      const count = 1 + Math.floor(p.random(5));
+      p.push(); p.translate(cx, cy); p.rotate(p.PI); tally(p, 0, 0, cellW, cellH, count, 1.4); p.pop();
+    }
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W=p.width, H=p.height;
+    const N = 16;
+    const pad = 20;
+    const cellW = (W - 2*pad) / N;
+    const cellH = (H - 2*pad) / N;
+    // counts chosen by position — wave across the grid
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+      const cx = pad + (j + 0.5) * cellW;
+      const cy = pad + (i + 0.5) * cellH;
+      const phase = (i + j) / (2 * N - 2) * p.TWO_PI * 2;
+      const count = 1 + Math.floor((Math.sin(phase) + 1) * 2.5);
+      tally(p, cx, cy, cellW, cellH, count, 1.4);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

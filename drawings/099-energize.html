@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 099</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#099</h1>
+  <p>A point chosen near the centre of the page. From it, short dashes radiate outward, each pointing away from the centre. The dashes are densest near the point and thin out toward the edges of the page; the length of each dash proportional to its distance from the point.</p>
+  <p class="source">Seed — <em>energize</em>: to use strength in action; to act or operate with force or vigour.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<div class="holder" id="h"></div>
+<script>
+function radialDash(p, cx, cy, x, y, scale) {
+  const dx = x - cx, dy = y - cy;
+  const d = Math.hypot(dx, dy);
+  if (d < 1) return;
+  const ux = dx/d, uy = dy/d;
+  const len = 6 + (d / 300) * scale;
+  p.line(x - ux*len/2, y - uy*len/2, x + ux*len/2, y + uy*len/2);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const cx = W/2 + p.random(-40, 40);
+    const cy = H/2 + p.random(-40, 40);
+    p.stroke(20); p.strokeWeight(1.1);
+    const maxR = Math.hypot(W, H);
+    const N = 1400;
+    for (let i = 0; i < N; i++) {
+      const r = Math.pow(p.random(), 0.5) * maxR * 0.7;
+      const a = p.random(p.TWO_PI);
+      const x = cx + Math.cos(a) * r;
+      const y = cy + Math.sin(a) * r;
+      if (x < 10 || x > W - 10 || y < 10 || y > H - 10) continue;
+      radialDash(p, cx, cy, x, y, 18);
+    }
+  }},
+  { strategy: "Use an unacceptable colour", draw: (p) => {
+    const W=p.width, H=p.height;
+    const cx = W/2, cy = H/2;
+    p.stroke(200, 40, 40); p.strokeWeight(1.2);
+    const maxR = Math.hypot(W, H);
+    const N = 1400;
+    for (let i = 0; i < N; i++) {
+      const r = Math.pow(p.random(), 0.5) * maxR * 0.7;
+      const a = p.random(p.TWO_PI);
+      const x = cx + Math.cos(a) * r;
+      const y = cy + Math.sin(a) * r;
+      if (x < 10 || x > W - 10 || y < 10 || y > H - 10) continue;
+      radialDash(p, cx, cy, x, y, 18);
+    }
+  }},
+  { strategy: "Faced with a choice, do both", draw: (p) => {
+    const W=p.width, H=p.height;
+    const centers = [
+      [W * 0.28, H * 0.32],
+      [W * 0.72, H * 0.68],
+    ];
+    p.stroke(20); p.strokeWeight(1.0);
+    const maxR = Math.hypot(W, H);
+    const N = 700;
+    for (const [cx, cy] of centers) {
+      for (let i = 0; i < N; i++) {
+        const r = Math.pow(p.random(), 0.5) * maxR * 0.55;
+        const a = p.random(p.TWO_PI);
+        const x = cx + Math.cos(a) * r;
+        const y = cy + Math.sin(a) * r;
+        if (x < 10 || x > W - 10 || y < 10 || y > H - 10) continue;
+        radialDash(p, cx, cy, x, y, 14);
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

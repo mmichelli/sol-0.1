@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 092</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#092</h1>
+  <p>A single horizontal line across the middle of the page. Above the line, one hundred short ticks extending upward at regular intervals; below the line, one hundred ticks extending downward, paired with those above, like the legs of a centipede.</p>
+  <p class="source">Seed — <em>centiped</em>: many-jointed, and have a great number of feet.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const cy = H/2;
+    const pad = 40;
+    const N = 100;
+    const spacing = (W - 2*pad) / (N - 1);
+    const legLen = 70;
+    p.stroke(20); p.strokeWeight(1.2);
+    p.line(pad, cy, W - pad, cy);
+    for (let i = 0; i < N; i++) {
+      const x = pad + i * spacing;
+      p.line(x, cy, x, cy - legLen);
+      p.line(x, cy, x, cy + legLen);
+    }
+  }},
+  { strategy: "Honor thy error as a hidden intention", draw: (p) => {
+    const W=p.width, H=p.height;
+    const cy = H/2;
+    const pad = 40;
+    const N = 100;
+    const spacing = (W - 2*pad) / (N - 1);
+    p.stroke(20); p.strokeWeight(1.2); p.noFill();
+    p.beginShape();
+    for (let x = pad; x <= W - pad; x += 4) {
+      p.vertex(x, cy + Math.sin(x * 0.012) * 16);
+    }
+    p.endShape();
+    for (let i = 0; i < N; i++) {
+      const x = pad + i * spacing;
+      const y = cy + Math.sin(x * 0.012) * 16;
+      const legLen = 60 + Math.sin(i * 0.2) * 20;
+      const tilt = Math.cos(x * 0.012) * 0.25;
+      p.line(x, y, x + Math.sin(tilt)*legLen, y - Math.cos(tilt)*legLen);
+      p.line(x, y, x + Math.sin(tilt)*legLen, y + Math.cos(tilt)*legLen);
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    const cx = W/2;
+    const pad = 40;
+    const N = 100;
+    const spacing = (H - 2*pad) / (N - 1);
+    const legLen = 70;
+    p.stroke(20); p.strokeWeight(1.2);
+    p.line(cx, pad, cx, H - pad);
+    for (let i = 0; i < N; i++) {
+      const y = pad + i * spacing;
+      p.line(cx, y, cx - legLen, y);
+      p.line(cx, y, cx + legLen, y);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

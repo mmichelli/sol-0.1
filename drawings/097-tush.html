@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 097</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#097</h1>
+  <p>Two hundred small pointed triangles placed at random across the page; each triangle with its apex at its top. One triangle in ten is coloured red.</p>
+  <p class="source">Seed — <em>tush</em>: a long, pointed tooth; a tusk.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<div class="holder" id="h"></div>
+<script>
+function fang(p, cx, cy, w, h, col) {
+  p.fill(col[0], col[1], col[2]);
+  p.noStroke();
+  p.triangle(cx - w/2, cy + h/2, cx + w/2, cy + h/2, cx, cy - h/2);
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const N = 200;
+    for (let i = 0; i < N; i++) {
+      const x = p.random(20, W - 20);
+      const y = p.random(20, H - 20);
+      const s = p.random(16, 30);
+      const col = (i % 10 === 0) ? [200, 40, 40] : [20, 20, 20];
+      fang(p, x, y, s * 0.7, s, col);
+    }
+  }},
+  { strategy: "Tidy up", draw: (p) => {
+    const W=p.width, H=p.height;
+    const cols = 14, rows = 14;
+    const padX = (W - cols * 44) / 2 + 22;
+    const padY = (H - rows * 44) / 2 + 22;
+    let idx = 0;
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+      const cx = padX + i * 44;
+      const cy = padY + j * 44;
+      const col = (idx % 10 === 0) ? [200, 40, 40] : [20, 20, 20];
+      fang(p, cx, cy, 18, 28, col);
+      idx++;
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    const N = 200;
+    for (let i = 0; i < N; i++) {
+      const x = p.random(20, W - 20);
+      const y = p.random(20, H - 20);
+      const s = p.random(16, 30);
+      const col = (i % 10 === 0) ? [200, 40, 40] : [20, 20, 20];
+      p.fill(col[0], col[1], col[2]); p.noStroke();
+      p.triangle(x - s*0.35, y - s/2, x + s*0.35, y - s/2, x, y + s/2);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
