@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 087</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#087</h1>
+  <p>Fourteen bands of equal width from the upper-left corner to the lower-right, in rainbow order repeating. Fourteen bands of equal width from the upper-right corner to the lower-left, also in rainbow order. Where the two sets meet, the second is drawn over the first.</p>
+  <p class="source">Seed — <em>scissors</em>: a cutting instrument, consisting of two cutting blades, movable on a pin in the centre.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const RAINBOW = [[220,50,50],[235,130,40],[240,200,40],[40,160,80],[40,100,210],[90,60,180],[140,60,160]];
+function thickBands(p, angle, N, pal, weight, W, H) {
+  p.strokeWeight(weight);
+  p.noFill();
+  const nx = Math.cos(angle + p.PI/2), ny = Math.sin(angle + p.PI/2);
+  const dx = Math.cos(angle), dy = Math.sin(angle);
+  const cx = W/2, cy = H/2;
+  const range = Math.hypot(W, H);
+  const spacing = range / N;
+  for (let i = 0; i < N; i++) {
+    const d = -range/2 + (i + 0.5) * spacing;
+    const px = cx + nx * d, py = cy + ny * d;
+    const col = pal[i % pal.length];
+    p.stroke(col[0], col[1], col[2]);
+    p.line(px - dx * range, py - dy * range, px + dx * range, py + dy * range);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    thickBands(p, -p.PI/4, 14, RAINBOW, 36, W, H);
+    thickBands(p,  p.PI/4, 14, RAINBOW, 36, W, H);
+  }},
+  { strategy: "Use fewer notes", draw: (p) => {
+    const W=p.width, H=p.height;
+    thickBands(p, -p.PI/4, 14, [RAINBOW[0], RAINBOW[4]], 36, W, H);
+    thickBands(p,  p.PI/4, 14, [RAINBOW[2], RAINBOW[3]], 36, W, H);
+  }},
+  { strategy: "Mute and continue", draw: (p) => {
+    const W=p.width, H=p.height;
+    // clip each diagonal set to alternating quadrants
+    p.push();
+    p.drawingContext.save();
+    p.drawingContext.beginPath();
+    p.drawingContext.rect(0, 0, W/2, H/2);
+    p.drawingContext.rect(W/2, H/2, W/2, H/2);
+    p.drawingContext.clip();
+    thickBands(p, -p.PI/4, 14, RAINBOW, 36, W, H);
+    p.drawingContext.restore();
+    p.drawingContext.save();
+    p.drawingContext.beginPath();
+    p.drawingContext.rect(W/2, 0, W/2, H/2);
+    p.drawingContext.rect(0, H/2, W/2, H/2);
+    p.drawingContext.clip();
+    thickBands(p,  p.PI/4, 14, RAINBOW, 36, W, H);
+    p.drawingContext.restore();
+    p.pop();
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

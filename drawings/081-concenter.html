@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 081</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#081</h1>
+  <p>A point at the centre of the page. Around it, ten concentric rings of coloured tiles; the number of tiles in each ring proportional to the ring's radius. The colour of each tile chosen in sequence from the cycle red, orange, yellow, green, blue, indigo, violet.</p>
+  <p class="source">Seed — <em>concenter</em>: to come to one point; to meet in, or converge toward, a common centre.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const RAINBOW = [[220,50,50],[235,130,40],[240,200,40],[40,160,80],[40,100,210],[90,60,180],[140,60,160]];
+function tileRing(p, cx, cy, innerR, outerR, nTiles, offset, pal) {
+  const steps = 8;
+  p.noStroke();
+  for (let i = 0; i < nTiles; i++) {
+    const a1 = i / nTiles * p.TWO_PI;
+    const a2 = (i+1) / nTiles * p.TWO_PI;
+    const col = pal[(i + offset) % pal.length];
+    p.fill(col[0], col[1], col[2]);
+    p.beginShape();
+    for (let k = 0; k <= steps; k++) {
+      const a = a1 + (a2 - a1) * k/steps;
+      p.vertex(cx + Math.cos(a)*outerR, cy + Math.sin(a)*outerR);
+    }
+    for (let k = 0; k <= steps; k++) {
+      const a = a2 - (a2 - a1) * k/steps;
+      p.vertex(cx + Math.cos(a)*innerR, cy + Math.sin(a)*innerR);
+    }
+    p.endShape(p.CLOSE);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height, cx=W/2, cy=H/2;
+    const maxR = Math.min(W, H) * 0.48;
+    const rings = 10;
+    for (let r = 1; r <= rings; r++) {
+      const innerR = (r - 1) / rings * maxR;
+      const outerR = r / rings * maxR;
+      const n = Math.max(6, Math.round((innerR + outerR) / 18));
+      tileRing(p, cx, cy, innerR, outerR, n, r, RAINBOW);
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    const cx = 40, cy = H - 40;
+    const maxR = Math.hypot(W, H) * 0.95;
+    const rings = 10;
+    for (let r = 1; r <= rings; r++) {
+      const innerR = (r - 1) / rings * maxR;
+      const outerR = r / rings * maxR;
+      const n = Math.max(4, Math.round((innerR + outerR) / 30));
+      // only draw the upper-right quarter so the corner sits at the origin of fans
+      const steps = 8;
+      p.noStroke();
+      for (let i = 0; i < n; i++) {
+        const a1 = -p.PI/2 + (i / n) * (p.PI/2);
+        const a2 = -p.PI/2 + ((i+1) / n) * (p.PI/2);
+        const col = RAINBOW[(i + r) % RAINBOW.length];
+        p.fill(col[0], col[1], col[2]);
+        p.beginShape();
+        for (let k = 0; k <= steps; k++) {
+          const a = a1 + (a2 - a1) * k/steps;
+          p.vertex(cx + Math.cos(a)*outerR, cy + Math.sin(a)*outerR);
+        }
+        for (let k = 0; k <= steps; k++) {
+          const a = a2 - (a2 - a1) * k/steps;
+          p.vertex(cx + Math.cos(a)*innerR, cy + Math.sin(a)*innerR);
+        }
+        p.endShape(p.CLOSE);
+      }
+    }
+  }},
+  { strategy: "Use fewer notes", draw: (p) => {
+    const W=p.width, H=p.height, cx=W/2, cy=H/2;
+    const maxR = Math.min(W, H) * 0.48;
+    const rings = 10;
+    const pal = [RAINBOW[0], RAINBOW[4], RAINBOW[2]];
+    for (let r = 1; r <= rings; r++) {
+      const innerR = (r - 1) / rings * maxR;
+      const outerR = r / rings * maxR;
+      const n = Math.max(6, Math.round((innerR + outerR) / 18));
+      tileRing(p, cx, cy, innerR, outerR, n, r, pal);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

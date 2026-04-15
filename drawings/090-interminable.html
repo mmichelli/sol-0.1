@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 090</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#090</h1>
+  <p>The page tiled edge to edge with regular hexagons, each of equal size. Each hexagon coloured with one of seven rainbow colours; the colour of each hexagon chosen so that no two adjacent hexagons share a colour.</p>
+  <p class="source">Seed — <em>interminable</em>: without termination; admitting no limit; boundless; endless.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const RAINBOW = [[220,50,50],[235,130,40],[240,200,40],[40,160,80],[40,100,210],[90,60,180],[140,60,160]];
+function hexagon(p, cx, cy, r) {
+  p.beginShape();
+  for (let i = 0; i < 6; i++) {
+    const a = p.PI/6 + i * p.PI/3;
+    p.vertex(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+  }
+  p.endShape(p.CLOSE);
+}
+// axial coords (q,r) → pixel for pointy-top hexagons
+function axialToXY(q, r, size, ox, oy) {
+  const x = size * Math.sqrt(3) * (q + r/2) + ox;
+  const y = size * 1.5 * r + oy;
+  return [x, y];
+}
+// 3-coloring by (2q + r) mod 3 guarantees no adjacent share; use pattern on 7-coloring:
+// assign color by (q + 2*r) mod 7, which for hexagonal grid avoids most adjacencies
+function hexColor(q, r, pal) {
+  return pal[((q*1 + r*3) % pal.length + pal.length) % pal.length];
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const size = 34;
+    p.stroke(20, 100); p.strokeWeight(1);
+    for (let rr = -1; rr * size * 1.5 < H + size; rr++) {
+      for (let qq = -3; qq * size * Math.sqrt(3) < W + 2*size; qq++) {
+        const [cx, cy] = axialToXY(qq, rr, size, 0, size);
+        if (cx < -size || cx > W + size || cy < -size || cy > H + size) continue;
+        const col = hexColor(qq, rr, RAINBOW);
+        p.fill(col[0], col[1], col[2]);
+        hexagon(p, cx, cy, size);
+      }
+    }
+  }},
+  { strategy: "Use fewer notes", draw: (p) => {
+    const W=p.width, H=p.height;
+    const size = 34;
+    const pal = [RAINBOW[0], RAINBOW[4], RAINBOW[2]];
+    p.stroke(20, 100); p.strokeWeight(1);
+    for (let rr = -1; rr * size * 1.5 < H + size; rr++) {
+      for (let qq = -3; qq * size * Math.sqrt(3) < W + 2*size; qq++) {
+        const [cx, cy] = axialToXY(qq, rr, size, 0, size);
+        if (cx < -size || cx > W + size || cy < -size || cy > H + size) continue;
+        const col = pal[((2*qq + rr) % 3 + 3) % 3];
+        p.fill(col[0], col[1], col[2]);
+        hexagon(p, cx, cy, size);
+      }
+    }
+  }},
+  { strategy: "Honor thy error as a hidden intention", draw: (p) => {
+    const W=p.width, H=p.height;
+    const size = 34;
+    p.stroke(20, 100); p.strokeWeight(1);
+    for (let rr = -1; rr * size * 1.5 < H + size; rr++) {
+      for (let qq = -3; qq * size * Math.sqrt(3) < W + 2*size; qq++) {
+        const [cx, cy] = axialToXY(qq, rr, size, 0, size);
+        if (cx < -size || cx > W + size || cy < -size || cy > H + size) continue;
+        const col = hexColor(qq, rr, RAINBOW);
+        p.fill(col[0], col[1], col[2]);
+        p.push();
+        p.translate(cx, cy);
+        p.rotate(p.random(-0.14, 0.14));
+        hexagon(p, 0, 0, size + p.random(-2, 2));
+        p.pop();
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 089</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#089</h1>
+  <p>The page divided by a horizontal line through the centre. The top half filled with seven equal vertical bands in rainbow order — red, orange, yellow, green, blue, indigo, violet — from left to right. The bottom half filled with the same seven bands, the colours reversed — violet, indigo, blue, green, yellow, orange, red — from left to right.</p>
+  <p class="source">Seed — <em>exchangeable</em>: capable of being exchanged; available for making exchanges.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const RAINBOW = [[220,50,50],[235,130,40],[240,200,40],[40,160,80],[40,100,210],[90,60,180],[140,60,160]];
+function vbands(p, x0, y0, w, h, pal) {
+  p.noStroke();
+  const N = pal.length;
+  const bw = w / N;
+  for (let i = 0; i < N; i++) {
+    const c = pal[i];
+    p.fill(c[0], c[1], c[2]);
+    p.rect(x0 + i*bw, y0, bw + 1, h);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    vbands(p, 0, 0, W, H/2, RAINBOW);
+    vbands(p, 0, H/2, W, H/2, [...RAINBOW].reverse());
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W=p.width, H=p.height;
+    const q = H / 4;
+    vbands(p, 0, 0,    W, q, RAINBOW);
+    vbands(p, 0, q,    W, q, [...RAINBOW].reverse());
+    vbands(p, 0, 2*q,  W, q, RAINBOW);
+    vbands(p, 0, 3*q,  W, q, [...RAINBOW].reverse());
+  }},
+  { strategy: "Faced with a choice, do both", draw: (p) => {
+    const W=p.width, H=p.height;
+    // quadrants: top-left normal, top-right reversed, bottom-left reversed, bottom-right normal
+    vbands(p, 0, 0,      W/2, H/2, RAINBOW);
+    vbands(p, W/2, 0,    W/2, H/2, [...RAINBOW].reverse());
+    vbands(p, 0, H/2,    W/2, H/2, [...RAINBOW].reverse());
+    vbands(p, W/2, H/2,  W/2, H/2, RAINBOW);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

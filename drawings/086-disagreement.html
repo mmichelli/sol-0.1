@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 086</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#086</h1>
+  <p>The page divided by a vertical line through the centre. On the left half, parallel lines at forty-five degrees up-right, coloured in the cycle red, orange, yellow, green, blue, indigo, violet from the bottom-left corner to the top-right. On the right half, parallel lines at forty-five degrees down-right, the same cycle running from the bottom-right corner to the top-left.</p>
+  <p class="source">Seed — <em>disagreement</em>: a being at variance; dissimilitude; unlikeness.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const RAINBOW = [[220,50,50],[235,130,40],[240,200,40],[40,160,80],[40,100,210],[90,60,180],[140,60,160]];
+function diagonalBands(p, x0, y0, w, h, angle, spacing, pal, weight) {
+  p.push();
+  p.drawingContext.save();
+  p.drawingContext.beginPath();
+  p.drawingContext.rect(x0, y0, w, h);
+  p.drawingContext.clip();
+  p.strokeWeight(weight);
+  p.noFill();
+  const nx = Math.cos(angle + p.PI/2), ny = Math.sin(angle + p.PI/2);
+  const dx = Math.cos(angle), dy = Math.sin(angle);
+  const cx = x0 + w/2, cy = y0 + h/2;
+  const range = Math.hypot(w, h);
+  let idx = 0;
+  for (let d = -range; d <= range; d += spacing) {
+    const px = cx + nx * d, py = cy + ny * d;
+    const col = pal[idx % pal.length];
+    p.stroke(col[0], col[1], col[2]);
+    p.line(px - dx * range, py - dy * range, px + dx * range, py + dy * range);
+    idx++;
+  }
+  p.drawingContext.restore();
+  p.pop();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const halfW = W / 2;
+    diagonalBands(p, 0, 0, halfW, H, -p.PI/4, 18, RAINBOW, 14);
+    diagonalBands(p, halfW, 0, halfW, H, p.PI/4, 18, [...RAINBOW].reverse(), 14);
+  }},
+  { strategy: "Emphasize differences", draw: (p) => {
+    const W=p.width, H=p.height;
+    const halfW = W / 2;
+    diagonalBands(p, 0, 0, halfW, H, -p.PI/4, 12, RAINBOW, 8);
+    diagonalBands(p, halfW, 0, halfW, H, p.PI/4, 28, [...RAINBOW].reverse(), 24);
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    const halfH = H / 2;
+    diagonalBands(p, 0, 0, W, halfH, -p.PI/4, 18, RAINBOW, 14);
+    diagonalBands(p, 0, halfH, W, halfH, p.PI/4, 18, [...RAINBOW].reverse(), 14);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

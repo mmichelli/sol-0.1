@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 088</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#088</h1>
+  <p>The page divided into a four by four grid of sixteen equal cells. The sixteen possible combinations of four kinds of line — red vertical, yellow horizontal, blue diagonal-left, black diagonal-right — are drawn one per cell. The empty combination is left blank; all fifteen others appear once.</p>
+  <p class="source">Seed — <em>scriptorium</em>: in an abbey or monastery, the room set apart for writing or copying manuscripts.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+// 4 line kinds, indices 0..3
+// Combinations encoded as bitmask 0..15
+const KINDS = [
+  { col: [210, 40, 40], angle: Math.PI/2 },   // 1: red vertical
+  { col: [240, 200, 40], angle: 0 },          // 2: yellow horizontal
+  { col: [40, 100, 210], angle: -Math.PI/4 }, // 4: blue diagonal-left (/)
+  { col: [30, 30, 30], angle: Math.PI/4 },    // 8: black diagonal-right (\)
+];
+function drawLinesInCell(p, x, y, w, h, mask, spacing, weight) {
+  p.push();
+  p.drawingContext.save();
+  p.drawingContext.beginPath();
+  p.drawingContext.rect(x, y, w, h);
+  p.drawingContext.clip();
+  p.strokeWeight(weight);
+  p.noFill();
+  const cx = x + w/2, cy = y + h/2;
+  const range = Math.hypot(w, h);
+  for (let k = 0; k < KINDS.length; k++) {
+    if (!(mask & (1 << k))) continue;
+    const kind = KINDS[k];
+    p.stroke(kind.col[0], kind.col[1], kind.col[2]);
+    const nx = Math.cos(kind.angle + p.PI/2), ny = Math.sin(kind.angle + p.PI/2);
+    const dx = Math.cos(kind.angle), dy = Math.sin(kind.angle);
+    for (let d = -range; d <= range; d += spacing) {
+      const px = cx + nx * d, py = cy + ny * d;
+      p.line(px - dx * range, py - dy * range, px + dx * range, py + dy * range);
+    }
+  }
+  p.drawingContext.restore();
+  p.pop();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const pad = 10;
+    const gridW = W - 2*pad, gridH = H - 2*pad;
+    const cw = gridW / 4, ch = gridH / 4;
+    p.stroke(20); p.strokeWeight(1.2); p.noFill();
+    for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) {
+      const mask = i * 4 + j;  // 0..15
+      const x = pad + j * cw;
+      const y = pad + i * ch;
+      p.rect(x, y, cw, ch);
+      drawLinesInCell(p, x, y, cw, ch, mask, 8, 1.5);
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    const pad = 10;
+    const gridW = W - 2*pad, gridH = H - 2*pad;
+    const cw = gridW / 4, ch = gridH / 4;
+    p.stroke(20); p.strokeWeight(1.2); p.noFill();
+    for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) {
+      const mask = 15 - (i * 4 + j);
+      const x = pad + j * cw;
+      const y = pad + i * ch;
+      p.rect(x, y, cw, ch);
+      drawLinesInCell(p, x, y, cw, ch, mask, 8, 1.5);
+    }
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W=p.width, H=p.height;
+    const pad = 8;
+    const gridW = W - 2*pad, gridH = H - 2*pad;
+    const N = 5;
+    const cw = gridW / N, ch = gridH / N;
+    p.stroke(20); p.strokeWeight(1.0); p.noFill();
+    let idx = 0;
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+      const mask = (idx % 15) + 1;  // skip empty; 25 cells, 15 distinct combos
+      const x = pad + j * cw;
+      const y = pad + i * ch;
+      p.rect(x, y, cw, ch);
+      drawLinesInCell(p, x, y, cw, ch, mask, 6, 1.2);
+      idx++;
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

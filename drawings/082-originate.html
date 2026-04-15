@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 082</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#082</h1>
+  <p>From the lower-left corner of the page, twenty-four straight rays drawn to the two opposite edges, the rays coloured in the cycle red, orange, yellow, green, blue, indigo, violet. From the upper-right corner, twelve concentric arcs in the same cycle; each arc reaching only as far as the diagonal midline.</p>
+  <p class="source">Seed — <em>originate</em>: to give an origin or beginning to; to take first existence.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const RAINBOW = [[220,50,50],[235,130,40],[240,200,40],[40,160,80],[40,100,210],[90,60,180],[140,60,160]];
+function rays(p, cx, cy, a0, a1, N, pal, maxR) {
+  p.noStroke();
+  for (let i = 0; i < N; i++) {
+    const b1 = a0 + (i / N) * (a1 - a0);
+    const b2 = a0 + ((i+1) / N) * (a1 - a0);
+    const col = pal[i % pal.length];
+    p.fill(col[0], col[1], col[2]);
+    p.beginShape();
+    p.vertex(cx, cy);
+    p.vertex(cx + Math.cos(b1) * maxR, cy + Math.sin(b1) * maxR);
+    p.vertex(cx + Math.cos(b2) * maxR, cy + Math.sin(b2) * maxR);
+    p.endShape(p.CLOSE);
+  }
+}
+function concentricArcs(p, cx, cy, a0, a1, N, pal, maxR, weight) {
+  p.noFill();
+  p.strokeWeight(weight);
+  for (let i = 0; i < N; i++) {
+    const r = (i + 1) / N * maxR;
+    const col = pal[i % pal.length];
+    p.stroke(col[0], col[1], col[2]);
+    p.arc(cx, cy, r*2, r*2, a0, a1);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    rays(p, 0, H, -p.PI/2, 0, 24, RAINBOW, Math.hypot(W, H));
+    concentricArcs(p, W, 0, p.PI/2, p.PI, 12, RAINBOW, Math.hypot(W, H)*0.62, 14);
+  }},
+  { strategy: "Faced with a choice, do both", draw: (p) => {
+    const W=p.width, H=p.height;
+    rays(p, 0, 0, 0, p.PI/2, 14, RAINBOW, Math.hypot(W, H));
+    rays(p, W, 0, p.PI/2, p.PI, 14, RAINBOW, Math.hypot(W, H));
+    rays(p, W, H, p.PI, p.PI*1.5, 14, RAINBOW, Math.hypot(W, H));
+    rays(p, 0, H, -p.PI/2, 0, 14, RAINBOW, Math.hypot(W, H));
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    rays(p, W/2, H/2, 0, p.TWO_PI, 36, RAINBOW, Math.hypot(W, H));
+    concentricArcs(p, W/2, H/2, 0, p.TWO_PI, 8, RAINBOW, Math.min(W,H)*0.32, 10);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
