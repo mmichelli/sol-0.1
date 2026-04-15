@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 072</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#072</h1>
+  <p>A field of wavy spikes rising from the bottom of the page, each drawn as a thick, slightly curving vertical stroke; colours cycling red, yellow, blue, green, and black.</p>
+  <p class="source">Seed — <em>timothy</em>: a grass with long cylindrical spikes; herd's grass, cat's-tail grass.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLS = [[220,50,50],[240,200,40],[40,100,210],[40,160,80],[20,20,20]];
+function spike(p, x0, baseY, h, amp, phase, col, weight) {
+  p.stroke(col[0], col[1], col[2]);
+  p.strokeWeight(weight);
+  p.noFill();
+  p.beginShape();
+  for (let t = 0; t <= 1.001; t += 0.02) {
+    const y = baseY - h * t;
+    const x = x0 + Math.sin(t * 6 + phase) * amp * (1 - t*0.3);
+    p.vertex(x, y);
+  }
+  p.endShape();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    const baseY = H - 30;
+    const N = 28;
+    for (let i = 0; i < N; i++) {
+      const x0 = p.map(i, 0, N-1, 40, W - 40) + p.random(-8, 8);
+      const h = p.random(H*0.45, H*0.82);
+      spike(p, x0, baseY, h, p.random(6, 18), p.random(p.TWO_PI), COLS[i % COLS.length], 8);
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W = p.width, H = p.height;
+    const baseY = 30;
+    const N = 28;
+    for (let i = 0; i < N; i++) {
+      const x0 = p.map(i, 0, N-1, 40, W - 40) + p.random(-8, 8);
+      const h = -p.random(H*0.45, H*0.82);
+      spike(p, x0, baseY, h, p.random(6, 18), p.random(p.TWO_PI), COLS[i % COLS.length], 8);
+    }
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W = p.width, H = p.height;
+    const baseY = H - 30;
+    const N = 40;
+    for (let i = 0; i < N; i++) {
+      const x0 = p.map(i, 0, N-1, 30, W - 30);
+      const t = i / (N-1);
+      const h = H*0.3 + t * H*0.55;
+      const amp = 6 + t * 22;
+      spike(p, x0, baseY, h, amp, i * 0.4, COLS[i % COLS.length], 6 + t*4);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

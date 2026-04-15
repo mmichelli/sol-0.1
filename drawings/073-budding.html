@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 073</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#073</h1>
+  <p>A cluster of bulging organic closed forms pressing against each other across the page, each outlined in a thick coloured line; where a form is crowded, a smaller form buds from its side.</p>
+  <p class="source">Seed — <em>budding</em>: a process of asexual reproduction, in which a new organism is formed by a protrusion of a portion of the parent.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLS = [[220,50,50],[240,200,40],[40,100,210],[40,160,80],[235,130,40],[140,60,160]];
+function blob(p, cx, cy, r, lobes, jitter, col, weight) {
+  p.stroke(col[0], col[1], col[2]);
+  p.strokeWeight(weight);
+  p.noFill();
+  p.beginShape();
+  const N = 64;
+  const offs = [];
+  for (let i = 0; i < lobes; i++) offs.push([p.random(p.TWO_PI), p.random(0.6, 1.3)]);
+  for (let i = 0; i <= N + 2; i++) {
+    const a = (i % N) / N * p.TWO_PI;
+    let k = 1;
+    for (const [oa, oamp] of offs) k += Math.cos(a - oa) * oamp * jitter;
+    p.curveVertex(cx + Math.cos(a) * r * k, cy + Math.sin(a) * r * k);
+  }
+  p.endShape();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    const blobs = [];
+    for (let tries = 0; tries < 400 && blobs.length < 9; tries++) {
+      const r = p.random(55, 120);
+      const cx = p.random(r+20, W-r-20), cy = p.random(r+20, H-r-20);
+      let ok = true;
+      for (const b of blobs) if (Math.hypot(cx - b[0], cy - b[1]) < r + b[2] + 10) { ok = false; break; }
+      if (ok) blobs.push([cx, cy, r]);
+    }
+    for (let i = 0; i < blobs.length; i++) {
+      const [cx, cy, r] = blobs[i];
+      blob(p, cx, cy, r, 4, 0.18, COLS[i % COLS.length], 9);
+      // a bud
+      if (p.random() < 0.6) {
+        const a = p.random(p.TWO_PI);
+        const bx = cx + Math.cos(a) * (r + 18), by = cy + Math.sin(a) * (r + 18);
+        blob(p, bx, by, r * 0.35, 3, 0.15, COLS[(i+3) % COLS.length], 7);
+      }
+    }
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W = p.width, H = p.height;
+    for (let k = 0; k < 40; k++) {
+      const cx = p.random(40, W-40), cy = p.random(40, H-40);
+      const r = p.random(20, 90);
+      blob(p, cx, cy, r, 3 + Math.floor(p.random(3)), 0.22, COLS[k % COLS.length], 5 + p.random(4));
+    }
+  }},
+  { strategy: "Be dirty", draw: (p) => {
+    const W = p.width, H = p.height;
+    const blobs = [];
+    for (let tries = 0; tries < 400 && blobs.length < 9; tries++) {
+      const r = p.random(55, 120);
+      const cx = p.random(r+20, W-r-20), cy = p.random(r+20, H-r-20);
+      let ok = true;
+      for (const b of blobs) if (Math.hypot(cx - b[0], cy - b[1]) < r + b[2] + 10) { ok = false; break; }
+      if (ok) blobs.push([cx, cy, r]);
+    }
+    for (let i = 0; i < blobs.length; i++) {
+      const [cx, cy, r] = blobs[i];
+      const col = COLS[i % COLS.length];
+      for (let pass = 0; pass < 3; pass++) {
+        blob(p, cx + p.random(-3, 3), cy + p.random(-3, 3), r, 4, 0.18, col, 8);
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

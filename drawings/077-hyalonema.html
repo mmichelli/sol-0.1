@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 077</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#077</h1>
+  <p>Several coloured strands twisted together down the page, each a thick line spiralling around the others like the fibres of a braided rope.</p>
+  <p class="source">Seed — <em>hyalonema</em>: long, slender, transparent, siliceous fibres twisted together like the strands of a cord.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLS = [[220,50,50],[240,200,40],[40,100,210],[40,160,80],[235,130,40],[140,60,160]];
+function braid(p, cx, cy1, cy2, strands, amp, twists, weight) {
+  p.noFill();
+  p.strokeWeight(weight);
+  for (let s = 0; s < strands.length; s++) {
+    const col = strands[s];
+    p.stroke(col[0], col[1], col[2]);
+    p.beginShape();
+    const offsetPhase = (s / strands.length) * p.TWO_PI;
+    for (let t = 0; t <= 1.001; t += 0.004) {
+      const y = cy1 + (cy2 - cy1) * t;
+      const x = cx + Math.sin(t * twists * p.TWO_PI + offsetPhase) * amp;
+      p.curveVertex(x, y);
+    }
+    p.endShape();
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    braid(p, W/2, 40, H - 40, COLS.slice(0, 4), 70, 3.5, 10);
+  }},
+  { strategy: "Use fewer notes", draw: (p) => {
+    const W = p.width, H = p.height;
+    braid(p, W/2, 40, H - 40, [COLS[0], COLS[2]], 90, 2.5, 14);
+  }},
+  { strategy: "Faced with a choice, do both", draw: (p) => {
+    const W = p.width, H = p.height;
+    braid(p, W*0.3, 40, H - 40, COLS.slice(0, 3), 45, 4, 8);
+    braid(p, W*0.7, 40, H - 40, COLS.slice(3, 6), 45, 4, 8);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

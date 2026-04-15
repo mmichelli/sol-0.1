@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 076</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#076</h1>
+  <p>Five flowing curves travel across the page from the left edge to the right, each a thick saturated colour, each parallel to the one above but offset by a graceful and steady motion.</p>
+  <p class="source">Seed — <em>gentility</em>: a graceful and easy mien and behaviour.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLS = [[220,50,50],[240,200,40],[40,100,210],[40,160,80],[140,60,160]];
+function flowing(p, y0, amp, freq, phase, col, weight) {
+  p.stroke(col[0], col[1], col[2]);
+  p.strokeWeight(weight);
+  p.noFill();
+  p.beginShape();
+  const W = p.width;
+  for (let x = 20; x <= W - 20; x += 4) {
+    const t = (x - 20) / (W - 40);
+    const env = Math.sin(t * p.PI);
+    const y = y0 + Math.sin(x * freq + phase) * amp * env;
+    p.vertex(x, y);
+  }
+  p.endShape();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const H = p.height;
+    const N = 5;
+    const spacing = (H - 100) / (N - 1);
+    for (let i = 0; i < N; i++) {
+      const y0 = 50 + i * spacing;
+      flowing(p, y0, 60, 0.012, 0, COLS[i], 16);
+    }
+  }},
+  { strategy: "Mute and continue", draw: (p) => {
+    const H = p.height, W = p.width;
+    const N = 5;
+    const muteX = p.random(W*0.35, W*0.6);
+    const muteW = p.random(80, 140);
+    const spacing = (H - 100) / (N - 1);
+    p.noFill();
+    for (let i = 0; i < N; i++) {
+      const y0 = 50 + i * spacing;
+      p.stroke(COLS[i][0], COLS[i][1], COLS[i][2]);
+      p.strokeWeight(16);
+      p.beginShape();
+      let drawing = true;
+      for (let x = 20; x <= W - 20; x += 4) {
+        const t = (x - 20) / (W - 40);
+        const env = Math.sin(t * p.PI);
+        const y = y0 + Math.sin(x * 0.012) * 60 * env;
+        const inMute = x >= muteX && x <= muteX + muteW;
+        if (inMute) { if (drawing) { p.endShape(); drawing = false; } }
+        else { if (!drawing) { p.beginShape(); drawing = true; } p.vertex(x, y); }
+      }
+      if (drawing) p.endShape();
+    }
+  }},
+  { strategy: "Emphasize differences", draw: (p) => {
+    const H = p.height;
+    const N = 5;
+    const spacing = (H - 100) / (N - 1);
+    for (let i = 0; i < N; i++) {
+      const y0 = 50 + i * spacing;
+      flowing(p, y0, 50 + i * 20, 0.01 + i * 0.004, i * 0.6, COLS[i], 10 + i * 3);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

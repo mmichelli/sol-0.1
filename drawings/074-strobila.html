@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 074</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#074</h1>
+  <p>A thick, coiling ribbon travels across the page from edge to edge; along its length the ribbon is divided into transverse segments, each segment a different saturated colour.</p>
+  <p class="source">Seed — <em>strobila</em>: the body becomes elongated, and subdivides transversely into a series of lobate segments.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLS = [[220,50,50],[240,200,40],[40,100,210],[40,160,80],[235,130,40],[140,60,160]];
+function ribbonPath(p, startX, startY, endX, endY, wiggles) {
+  const pts = [];
+  const N = 200;
+  const dx = endX - startX, dy = endY - startY;
+  for (let i = 0; i <= N; i++) {
+    const t = i / N;
+    const baseX = startX + dx * t;
+    const baseY = startY + dy * t;
+    let ox = 0, oy = 0;
+    for (const [amp, freq, phase, axis] of wiggles) {
+      if (axis === 'y') oy += Math.sin(t * freq + phase) * amp;
+      else              ox += Math.sin(t * freq + phase) * amp;
+    }
+    pts.push([baseX + ox, baseY + oy]);
+  }
+  return pts;
+}
+function drawSegmentedRibbon(p, pts, segLen, weight, pal) {
+  let carry = 0;
+  let segStart = 0;
+  let ci = 0;
+  p.strokeWeight(weight);
+  p.noFill();
+  for (let i = 1; i < pts.length; i++) {
+    carry += Math.hypot(pts[i][0] - pts[i-1][0], pts[i][1] - pts[i-1][1]);
+    if (carry >= segLen || i === pts.length - 1) {
+      const col = pal[ci % pal.length]; ci++;
+      p.stroke(col[0], col[1], col[2]);
+      p.beginShape();
+      for (let k = segStart; k <= i; k++) p.vertex(pts[k][0], pts[k][1]);
+      p.endShape();
+      segStart = i;
+      carry = 0;
+    }
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    const pts = ribbonPath(p, 30, H/2, W - 30, H/2, [
+      [H*0.35, 4.5, 0, 'y'],
+      [30,     11,  1, 'y'],
+    ]);
+    drawSegmentedRibbon(p, pts, 60, 14, COLS);
+  }},
+  { strategy: "Faced with a choice, do both", draw: (p) => {
+    const W = p.width, H = p.height;
+    const pts1 = ribbonPath(p, 30, H*0.3, W - 30, H*0.3, [[H*0.18, 5, 0, 'y'], [20, 13, 0.5, 'y']]);
+    const pts2 = ribbonPath(p, 30, H*0.7, W - 30, H*0.7, [[H*0.18, 5, p.PI, 'y'], [20, 13, 1.5, 'y']]);
+    drawSegmentedRibbon(p, pts1, 50, 12, COLS);
+    drawSegmentedRibbon(p, pts2, 50, 12, [...COLS].reverse());
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W = p.width, H = p.height;
+    const pts = ribbonPath(p, W/2, 30, W/2, H - 30, [
+      [W*0.35, 4.5, 0, 'x'],
+      [30,     11,  1, 'x'],
+    ]);
+    drawSegmentedRibbon(p, pts, 60, 14, COLS);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
