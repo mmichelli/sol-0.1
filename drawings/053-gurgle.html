@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 053</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#053</h1>
+  <p>One hundred horizontal lines across the page, each broken into short segments with irregular gaps; the pattern of gaps decided fresh for every line.</p>
+  <p class="source">Seed — <em>gurgle</em>: to run or flow in a broken, irregular, noisy current.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height, N=100;
+    p.stroke(20); p.strokeWeight(1.0);
+    for (let i=0; i<N; i++) {
+      const y = p.map(i, 0, N-1, 30, H-30);
+      let x = 20;
+      while (x < W-20) {
+        const seg = p.random(6, 40);
+        const gap = p.random(4, 24);
+        const x2 = Math.min(x + seg, W-20);
+        p.line(x, y, x2, y);
+        x = x2 + gap;
+      }
+    }
+  }},
+  { strategy: "The tape is now the music", draw: (p) => {
+    const W=p.width, H=p.height, N=100;
+    p.stroke(20); p.strokeWeight(1.8);
+    for (let i=0; i<N; i++) {
+      const y = p.map(i, 0, N-1, 30, H-30);
+      let x = 20;
+      while (x < W-20) {
+        const seg = p.random(6, 40);
+        const gap = p.random(4, 24);
+        const x2 = Math.min(x + seg, W-20);
+        const x3 = Math.min(x2 + gap, W-20);
+        if (x3 > x2) p.line(x2, y, x3, y);
+        x = x3;
+      }
+    }
+  }},
+  { strategy: "Cascades", draw: (p) => {
+    const W=p.width, H=p.height, N=100;
+    p.stroke(20); p.strokeWeight(1.0);
+    const pattern = [];
+    let px = 0;
+    while (px < W*2) {
+      const seg = p.random(6, 40);
+      const gap = p.random(4, 24);
+      pattern.push([seg, gap]);
+      px += seg + gap;
+    }
+    for (let i=0; i<N; i++) {
+      const y = p.map(i, 0, N-1, 30, H-30);
+      let cx = 20 - i*4;
+      for (const [s, g] of pattern) {
+        const x1 = cx, x2 = cx + s;
+        const a = Math.max(x1, 20), b = Math.min(x2, W-20);
+        if (b > a) p.line(a, y, b, y);
+        cx += s + g;
+      }
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

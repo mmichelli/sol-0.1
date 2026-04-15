@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 052</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#052</h1>
+  <p>Sixty lines walking from the left edge of the page to the right. Each line staggers and reels along the way, none holding its course.</p>
+  <p class="source">Seed — <em>tipsy</em>: staggering, as if from intoxication; reeling.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height, N=60;
+    p.stroke(20); p.strokeWeight(1.0); p.noFill();
+    for (let i=0; i<N; i++) {
+      const y0 = p.map(i, 0, N-1, 30, H-30);
+      let y = y0;
+      p.beginShape();
+      for (let x=20; x<=W-20; x+=4) {
+        y += p.random(-2.8, 2.8);
+        y += (y0 - y) * 0.025;
+        p.vertex(x, y);
+      }
+      p.endShape();
+    }
+  }},
+  { strategy: "Honor thy error as a hidden intention", draw: (p) => {
+    const W=p.width, H=p.height, N=40;
+    p.stroke(20); p.strokeWeight(1.0); p.noFill();
+    for (let i=0; i<N; i++) {
+      const y0 = p.map(i, 0, N-1, 30, H-30);
+      let y = y0, vy = 0;
+      p.beginShape();
+      for (let x=20; x<=W-20; x+=3) {
+        vy += p.random(-1.4, 1.4);
+        vy *= 0.92;
+        y += vy;
+        y += (y0 - y) * 0.008;
+        p.vertex(x, y);
+      }
+      p.endShape();
+    }
+  }},
+  { strategy: "Mute and continue", draw: (p) => {
+    const W=p.width, H=p.height, N=60;
+    const muteY = p.random(H*0.3, H*0.6), muteH = p.random(80, 140);
+    p.stroke(20); p.strokeWeight(1.0); p.noFill();
+    for (let i=0; i<N; i++) {
+      const y0 = p.map(i, 0, N-1, 30, H-30);
+      let y = y0;
+      let drawing = false;
+      for (let x=20; x<=W-20; x+=4) {
+        y += p.random(-2.8, 2.8);
+        y += (y0 - y) * 0.025;
+        const inMute = y >= muteY && y <= muteY+muteH;
+        if (inMute) {
+          if (drawing) { p.endShape(); drawing = false; }
+        } else {
+          if (!drawing) { p.beginShape(); drawing = true; }
+          p.vertex(x, y);
+        }
+      }
+      if (drawing) p.endShape();
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 060</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#060</h1>
+  <p>The page covered by twenty continuous whirling lines, each beginning at a random point and looping outward in a slow spiral. Three colours — red, yellow, blue — one chosen for each whirl.</p>
+  <p class="source">Seed — <em>gyre</em>: a circular motion, or a circle described by a moving body; still expanding and ascending gyres.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const PAL = [[200,40,40],[240,200,40],[40,80,200]];
+function whirl(p, cx, cy, turns, dir, rmax, steps, jitter) {
+  p.beginShape();
+  for (let k = 0; k <= steps; k++) {
+    const t = k / steps;
+    const a = t * turns * p.TWO_PI * dir;
+    const r = t * rmax + (jitter ? p.random(-jitter, jitter) : 0);
+    p.vertex(cx + Math.cos(a)*r, cy + Math.sin(a)*r);
+  }
+  p.endShape();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    p.noFill(); p.strokeWeight(1.2);
+    for (let i=0; i<20; i++) {
+      const cx = p.random(100, W-100), cy = p.random(100, H-100);
+      const col = PAL[i % PAL.length];
+      p.stroke(col[0], col[1], col[2]);
+      whirl(p, cx, cy, p.random(3, 6), p.random()<0.5?1:-1, p.random(60, 140), 320, 0);
+    }
+  }},
+  { strategy: "What mistakes did you make last time?", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.noFill(); p.strokeWeight(1.0);
+    for (let i=0; i<16; i++) {
+      const cx = p.random(100, W-100), cy = p.random(100, H-100);
+      const col = PAL[i % PAL.length];
+      const turns = p.random(3, 6), dir = p.random()<0.5?1:-1, rmax = p.random(60, 135);
+      p.stroke(col[0], col[1], col[2], 70);
+      whirl(p, cx, cy, turns, dir, rmax, 320, 0);
+      p.stroke(col[0], col[1], col[2], 255);
+      whirl(p, cx, cy, turns, dir, rmax, 320, 4);
+    }
+  }},
+  { strategy: "Do nothing for as long as possible", draw: (p) => {
+    const W=p.width, H=p.height;
+    p.noFill(); p.strokeWeight(1.0);
+    const N = 8;
+    for (let i=0; i<N; i++) {
+      const cx = p.random(140, W-140), cy = p.random(140, H-140);
+      const col = PAL[i % PAL.length];
+      p.stroke(col[0], col[1], col[2]);
+      p.beginShape();
+      const steps = 2400;
+      const turns = 70;
+      const rmax = p.random(80, 150);
+      const dir = p.random()<0.5?1:-1;
+      for (let k=0; k<=steps; k++) {
+        const t = k / steps;
+        const a = t * turns * p.TWO_PI * dir;
+        const r = Math.pow(t, 3.5) * rmax;
+        p.vertex(cx + Math.cos(a)*r, cy + Math.sin(a)*r);
+      }
+      p.endShape();
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

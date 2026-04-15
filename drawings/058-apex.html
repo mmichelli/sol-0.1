@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 058</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#058</h1>
+  <p>A point chosen at random on the page. Every line in the drawing passes through that point; each line extends a different length on either side, terminating before the edge.</p>
+  <p class="source">Seed — <em>apex</em>: the tip, top, point, or angular summit of anything.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const ax = p.random(W*0.25, W*0.75);
+    const ay = p.random(H*0.25, H*0.75);
+    p.stroke(20); p.strokeWeight(1.0);
+    const N = 44;
+    for (let i=0; i<N; i++) {
+      const a = p.random(p.TWO_PI);
+      const dx = Math.cos(a), dy = Math.sin(a);
+      const l1 = p.random(30, 340), l2 = p.random(30, 340);
+      p.line(ax - dx*l1, ay - dy*l1, ax + dx*l2, ay + dy*l2);
+    }
+    p.noStroke(); p.fill(20); p.circle(ax, ay, 4);
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    const side = Math.floor(p.random(4));
+    const off = p.random(200, 400);
+    let ax, ay;
+    if (side===0) { ax = p.random(W); ay = -off; }
+    else if (side===1) { ax = W+off; ay = p.random(H); }
+    else if (side===2) { ax = p.random(W); ay = H+off; }
+    else { ax = -off; ay = p.random(H); }
+    p.stroke(20); p.strokeWeight(1.0);
+    const N = 55;
+    for (let i=0; i<N; i++) {
+      const a = p.random(p.TWO_PI);
+      const dx = Math.cos(a), dy = Math.sin(a);
+      const l1 = p.random(200, 1100), l2 = p.random(200, 1100);
+      p.line(ax - dx*l1, ay - dy*l1, ax + dx*l2, ay + dy*l2);
+    }
+  }},
+  { strategy: "Cascades", draw: (p) => {
+    const W=p.width, H=p.height;
+    const apexes = [
+      [p.random(W*0.25, W*0.75), p.random(H*0.25, H*0.75), 45],
+      [p.random(W*0.15, W*0.85), p.random(H*0.15, H*0.85), 15],
+      [p.random(W*0.1,  W*0.9 ), p.random(H*0.1,  H*0.9 ), 5],
+    ];
+    p.strokeWeight(1.0);
+    for (const [ax, ay, n] of apexes) {
+      p.stroke(20);
+      for (let i=0; i<n; i++) {
+        const a = p.random(p.TWO_PI);
+        const dx = Math.cos(a), dy = Math.sin(a);
+        const l1 = p.random(30, 260), l2 = p.random(30, 260);
+        p.line(ax - dx*l1, ay - dy*l1, ax + dx*l2, ay + dy*l2);
+      }
+      p.noStroke(); p.fill(20); p.circle(ax, ay, 4);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
