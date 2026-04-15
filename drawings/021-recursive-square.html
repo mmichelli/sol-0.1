@@ -20,14 +20,15 @@
 const solutions = [
   { strategy: null, draw: (p) => {
     p.stroke(20); p.strokeWeight(1); p.noFill();
-    function rec(x, y, s) {
+    function rec(x, y, s, depth) {
       p.rect(x, y, s, s);
       if (s < 10) return;
-      if (p.random() < 0.2) return;
+      if (depth > 0 && p.random() < 0.2) return;
       const h = s/2;
-      rec(x, y, h); rec(x+h, y, h); rec(x, y+h, h); rec(x+h, y+h, h);
+      rec(x, y, h, depth+1); rec(x+h, y, h, depth+1); rec(x, y+h, h, depth+1); rec(x+h, y+h, h, depth+1);
     }
-    rec(0, 0, p.width);
+    const m = 30;
+    rec(m, m, p.width - m*2, 0);
   }},
   { strategy: "Make a sudden, destructive, unpredictable action; incorporate", draw: (p) => {
     p.stroke(20); p.strokeWeight(1);
@@ -35,11 +36,12 @@ const solutions = [
       p.noFill(); p.rect(x, y, s, s);
       if (s < 10) return;
       if (depth > 1 && p.random() < 0.12) { p.fill(20); p.rect(x, y, s, s); return; }
-      if (p.random() < 0.2) return;
+      if (depth > 0 && p.random() < 0.2) return;
       const h = s/2;
       rec(x, y, h, depth+1); rec(x+h, y, h, depth+1); rec(x, y+h, h, depth+1); rec(x+h, y+h, h, depth+1);
     }
-    rec(0, 0, p.width, 0);
+    const m = 30;
+    rec(m, m, p.width - m*2, 0);
   }},
   { strategy: "Be extravagant", draw: (p) => {
     p.stroke(20); p.strokeWeight(1); p.noFill();
@@ -47,13 +49,14 @@ const solutions = [
       p.rect(x, y, s, s);
       if (s < 6) return;
       if (depth >= 5) return;
-      if (p.random() < 0.2) return;
+      if (depth > 0 && p.random() < 0.2) return;
       const h = s/3;
       for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
         rec(x + i*h, y + j*h, h, depth+1);
       }
     }
-    rec(0, 0, p.width, 0);
+    const m = 30;
+    rec(m, m, p.width - m*2, 0);
   }},
   { strategy: "Look at the order in which you do things", draw: (p) => {
     p.noFill(); p.strokeWeight(1);
@@ -62,11 +65,12 @@ const solutions = [
       p.stroke(20, a);
       p.rect(x, y, s, s);
       if (s < 10) return;
-      if (p.random() < 0.2) return;
+      if (depth > 0 && p.random() < 0.2) return;
       const h = s/2;
       rec(x, y, h, depth+1); rec(x+h, y, h, depth+1); rec(x, y+h, h, depth+1); rec(x+h, y+h, h, depth+1);
     }
-    rec(0, 0, p.width, 0);
+    const m = 30;
+    rec(m, m, p.width - m*2, 0);
   }},
 ];
 </script>

@@ -6,6 +6,7 @@ p { font-size: 15px; line-height: 1.55; margin: 0; }
 .strategy { font-size: 11px; color: #0a6; margin-top: 6px !important; font-style: italic; }
 .strategy:empty { display: none; }
 .holder { width: 720px; height: 720px; background: #fff; border: 1px solid #ddd; order: 1; cursor: pointer; }
+.holder canvas { pointer-events: none; }
 .card { order: 2; cursor: pointer; }
 .back { position: fixed; top: 16px; left: 16px; font-size: 12px; color: #666; text-decoration: none; letter-spacing: 0.04em; }
 .back:hover { color: #111; }
