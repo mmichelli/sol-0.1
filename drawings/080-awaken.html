@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 080</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#080</h1>
+  <p>Thick wavy lines rising from the bottom of the page to the top, each a different saturated colour. At the base the lines are calm and nearly flat; higher up they stir, and at the top they roll in great waves.</p>
+  <p class="source">Seed — <em>awaken</em>: to rouse from sleep or torpor; to awake; to wake.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLS = [[220,50,50],[240,200,40],[40,100,210],[40,160,80],[235,130,40],[140,60,160],[20,20,20]];
+function risingWave(p, yBase, xStart, xEnd, peakAmp, freq, phase, col, weight) {
+  p.stroke(col[0], col[1], col[2]);
+  p.strokeWeight(weight);
+  p.noFill();
+  const H = p.height;
+  p.beginShape();
+  for (let x = xStart; x <= xEnd; x += 3) {
+    const depth = (H - yBase) / H;  // 0 near top, 1 near bottom
+    const amp = peakAmp * (1 - depth);  // bigger at top
+    const y = yBase + Math.sin(x * freq + phase) * amp;
+    p.vertex(x, y);
+  }
+  p.endShape();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    const N = 14;
+    for (let i = 0; i < N; i++) {
+      const t = i / (N - 1);
+      const y = H - 30 - t * (H - 60);
+      const amp = 6 + t * t * 80;
+      const col = COLS[i % COLS.length];
+      risingWave(p, y, 20, W - 20, amp, 0.02, p.random(p.TWO_PI), col, 10);
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W = p.width, H = p.height;
+    const N = 14;
+    for (let i = 0; i < N; i++) {
+      const t = i / (N - 1);
+      const y = 30 + t * (H - 60);
+      const amp = 6 + t * t * 80;
+      const col = COLS[i % COLS.length];
+      p.stroke(col[0], col[1], col[2]); p.strokeWeight(10); p.noFill();
+      p.beginShape();
+      for (let x = 20; x <= W - 20; x += 3) {
+        p.vertex(x, y + Math.sin(x * 0.02 + p.random(p.TWO_PI)) * amp);
+      }
+      p.endShape();
+    }
+  }},
+  { strategy: "Spectrum analysis", draw: (p) => {
+    const W = p.width, H = p.height;
+    const N = 20;
+    for (let i = 0; i < N; i++) {
+      const t = i / (N - 1);
+      const y = H - 30 - t * (H - 60);
+      const ampL = 4 + t * t * 40;
+      const ampR = 6 + (1 - t) * (1 - t) * 40;
+      const col = COLS[i % COLS.length];
+      p.stroke(col[0], col[1], col[2]); p.strokeWeight(8); p.noFill();
+      p.beginShape();
+      for (let x = 20; x <= W - 20; x += 3) {
+        const u = (x - 20) / (W - 40);
+        const a = ampL * (1 - u) + ampR * u;
+        p.vertex(x, y + Math.sin(x * 0.025 + i * 0.3) * a);
+      }
+      p.endShape();
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

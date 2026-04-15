@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 079</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#079</h1>
+  <p>On the left half of the page, a dozen wavy thick lines in a row of colours. On the right half, the same lines mirrored across the centre, but with the colours repeated in inverse order.</p>
+  <p class="source">Seed — <em>epanodos</em>: a figure of speech in which parts of a sentence are repeated in inverse order.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLS = [[220,50,50],[240,200,40],[40,100,210],[40,160,80],[235,130,40],[140,60,160]];
+function wavyH(p, x1, x2, y, amp, freq, phase, col, weight) {
+  p.stroke(col[0], col[1], col[2]);
+  p.strokeWeight(weight);
+  p.noFill();
+  p.beginShape();
+  const step = (x1 < x2) ? 4 : -4;
+  for (let x = x1; step > 0 ? x <= x2 : x >= x2; x += step) {
+    p.vertex(x, y + Math.sin(x * freq + phase) * amp);
+  }
+  p.endShape();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    const N = 12;
+    const spacing = (H - 80) / (N - 1);
+    for (let i = 0; i < N; i++) {
+      const y = 40 + i * spacing;
+      const amp = 10 + (i % 3) * 4;
+      const freq = 0.02;
+      const phase = p.random(p.TWO_PI);
+      const col = COLS[i % COLS.length];
+      const mir = COLS[(N - 1 - i) % COLS.length];
+      wavyH(p, 30, W/2 - 10, y, amp, freq, phase, col, 10);
+      wavyH(p, W - 30, W/2 + 10, y, amp, freq, -phase, mir, 10);
+    }
+    p.stroke(20, 100); p.strokeWeight(1);
+    p.line(W/2, 30, W/2, H - 30);
+  }},
+  { strategy: "Change instrument roles", draw: (p) => {
+    const W = p.width, H = p.height;
+    const N = 12;
+    const spacing = (W - 80) / (N - 1);
+    for (let i = 0; i < N; i++) {
+      const x = 40 + i * spacing;
+      const col = COLS[i % COLS.length];
+      const mir = COLS[(N - 1 - i) % COLS.length];
+      p.stroke(col[0], col[1], col[2]); p.strokeWeight(10); p.noFill();
+      p.beginShape();
+      const phase = p.random(p.TWO_PI);
+      for (let y = 30; y <= H/2 - 10; y += 4) p.vertex(x + Math.sin(y * 0.02 + phase) * 12, y);
+      p.endShape();
+      p.stroke(mir[0], mir[1], mir[2]);
+      p.beginShape();
+      for (let y = H - 30; y >= H/2 + 10; y -= 4) p.vertex(x + Math.sin(y * 0.02 - phase) * 12, y);
+      p.endShape();
+    }
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W = p.width, H = p.height;
+    const N = 16;
+    const spacing = (H - 60) / (N - 1);
+    for (let i = 0; i < N; i++) {
+      const y = 30 + i * spacing;
+      const amp = 8 + (i % 4) * 5;
+      const col = COLS[i % COLS.length];
+      const mir = COLS[(i + 3) % COLS.length];
+      wavyH(p, 30, W/2 - 6, y, amp, 0.025, 0, col, 7 + (i % 3)*2);
+      wavyH(p, W - 30, W/2 + 6, y, amp, 0.025, 0, mir, 7 + (i % 3)*2);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 071</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#071</h1>
+  <p>Horizontal wavy bands of thick saturated colour stacked down the page; each band paired with its colour complement — red with green, yellow with purple, blue with orange.</p>
+  <p class="source">Seed — <em>complementary</em>: serving to fill out or complete; as, complementary colors.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const PAIRS = [
+  [[220, 50, 50], [40, 160, 80]],
+  [[240, 200, 40], [140, 60, 160]],
+  [[40, 100, 210], [235, 130, 40]],
+];
+function waveStrip(p, y, amp, freq, phase, col, weight) {
+  p.stroke(col[0], col[1], col[2]);
+  p.strokeWeight(weight);
+  p.noFill();
+  p.beginShape();
+  const W = p.width;
+  for (let x = 20; x <= W - 20; x += 4) {
+    p.vertex(x, y + Math.sin(x * freq + phase) * amp);
+  }
+  p.endShape();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const H = p.height;
+    const bands = 12;
+    const spacing = (H - 80) / (bands - 1);
+    for (let i = 0; i < bands; i++) {
+      const y = 40 + i * spacing;
+      const pair = PAIRS[Math.floor(i / 2) % PAIRS.length];
+      const col = pair[i % 2];
+      waveStrip(p, y, 14 + p.random(-3, 3), 0.022, p.random(p.TWO_PI), col, 11);
+    }
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const H = p.height;
+    const bands = 12;
+    const spacing = (H - 80) / (bands - 1);
+    for (let i = 0; i < bands; i++) {
+      const y = 40 + i * spacing;
+      const pair = PAIRS[Math.floor(i / 2) % PAIRS.length];
+      const col = pair[(i + 1) % 2];
+      waveStrip(p, y, 14 + p.random(-3, 3), 0.022, p.random(p.TWO_PI), col, 11);
+    }
+  }},
+  { strategy: "Emphasize differences", draw: (p) => {
+    const H = p.height;
+    const bands = 10;
+    const spacing = (H - 80) / (bands - 1);
+    for (let i = 0; i < bands; i++) {
+      const y = 40 + i * spacing;
+      const pair = PAIRS[i % PAIRS.length];
+      waveStrip(p, y - 6, 18, 0.02, 0, pair[0], 10);
+      waveStrip(p, y + 6, 18, 0.02, p.PI, pair[1], 10);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

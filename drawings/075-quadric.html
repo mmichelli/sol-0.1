@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 075</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#075</h1>
+  <p>Concentric wavy closed contours around a point at the centre of the page, each contour a different colour; the outermost contours large and soft, the inner contours small and agitated.</p>
+  <p class="source">Seed — <em>quadric</em>: a surface of the second degree — spheres, spheroids, ellipsoids, paraboloids.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLS = [[220,50,50],[240,200,40],[40,100,210],[40,160,80],[235,130,40],[140,60,160],[20,20,20]];
+function wavyContour(p, cx, cy, r, lobes, amp, col, weight) {
+  p.stroke(col[0], col[1], col[2]);
+  p.strokeWeight(weight);
+  p.noFill();
+  const N = 128;
+  const phases = [];
+  for (let i = 0; i < lobes; i++) phases.push(p.random(p.TWO_PI));
+  p.beginShape();
+  for (let i = 0; i <= N + 2; i++) {
+    const a = (i % N) / N * p.TWO_PI;
+    let k = 1;
+    for (let q = 0; q < lobes; q++) k += Math.cos(a * (q + 2) + phases[q]) * amp;
+    p.curveVertex(cx + Math.cos(a) * r * k, cy + Math.sin(a) * r * k);
+  }
+  p.endShape();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    const cx = W/2, cy = H/2;
+    const N = 12;
+    for (let i = 0; i < N; i++) {
+      const t = i / (N - 1);
+      const r = 30 + t * 280;
+      const amp = 0.16 - t * 0.11;
+      wavyContour(p, cx, cy, r, 4 + Math.floor(p.random(3)), amp, COLS[i % COLS.length], 7);
+    }
+  }},
+  { strategy: "Remove specifics and convert to ambiguities", draw: (p) => {
+    const W = p.width, H = p.height;
+    const centres = 3;
+    for (let c = 0; c < centres; c++) {
+      const cx = p.random(W*0.25, W*0.75);
+      const cy = p.random(H*0.25, H*0.75);
+      const N = 6;
+      for (let i = 0; i < N; i++) {
+        const r = 30 + i * 30;
+        wavyContour(p, cx, cy, r, 4, 0.2, COLS[(c*2 + i) % COLS.length], 6);
+      }
+    }
+  }},
+  { strategy: "Use an unacceptable colour", draw: (p) => {
+    const W = p.width, H = p.height;
+    const cx = W/2, cy = H/2;
+    const N = 12;
+    const PINK = [[255, 130, 200], [255, 80, 150], [180, 40, 110]];
+    for (let i = 0; i < N; i++) {
+      const t = i / (N - 1);
+      const r = 30 + t * 280;
+      const amp = 0.16 - t * 0.11;
+      wavyContour(p, cx, cy, r, 4 + Math.floor(p.random(3)), amp, PINK[i % PINK.length], 8);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

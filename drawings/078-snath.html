@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 078</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#078</h1>
+  <p>A single bold curved sweep across the page, from one corner to the opposite — a very thick line in a single saturated colour, curving like the handle of a scythe.</p>
+  <p class="source">Seed — <em>snath</em>: the handle of a scythe.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const COLS = [[220,50,50],[240,200,40],[40,100,210],[40,160,80],[235,130,40],[140,60,160]];
+function snath(p, x0, y0, x1, y1, curveAmt, col, weight) {
+  p.stroke(col[0], col[1], col[2]);
+  p.strokeWeight(weight);
+  p.noFill();
+  const mx = (x0 + x1)/2, my = (y0 + y1)/2;
+  const dx = x1 - x0, dy = y1 - y0;
+  const L = Math.hypot(dx, dy);
+  const nx = -dy/L, ny = dx/L;
+  const cx = mx + nx * curveAmt, cy = my + ny * curveAmt;
+  p.beginShape();
+  for (let t = 0; t <= 1.001; t += 0.01) {
+    const u = 1 - t;
+    const bx = u*u*x0 + 2*u*t*cx + t*t*x1;
+    const by = u*u*y0 + 2*u*t*cy + t*t*y1;
+    p.vertex(bx, by);
+  }
+  p.endShape();
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W = p.width, H = p.height;
+    snath(p, 40, H - 40, W - 40, 40, 260, COLS[Math.floor(p.random(COLS.length))], 46);
+  }},
+  { strategy: "Faced with a choice, do both", draw: (p) => {
+    const W = p.width, H = p.height;
+    const c1 = COLS[Math.floor(p.random(COLS.length))];
+    let c2;
+    do { c2 = COLS[Math.floor(p.random(COLS.length))]; } while (c2 === c1);
+    snath(p, 40, H - 40, W - 40, 40,  240, c1, 36);
+    snath(p, 40, 40,     W - 40, H - 40, -240, c2, 36);
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W = p.width, H = p.height;
+    for (let i = 0; i < 6; i++) {
+      const curve = 180 + i * 30;
+      const off = i * 30;
+      snath(p, 40 + off, H - 40, W - 40 + off, 40, curve, COLS[i % COLS.length], 22);
+    }
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
