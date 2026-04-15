@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 083</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#083</h1>
+  <p>From each of the four corners, a fan of twelve quarter-circle arcs. Within each fan the arcs are coloured by radius — red for the smallest, violet for the largest, the seven rainbow colours in order between. Where fans overlap, the later fan is drawn over the earlier.</p>
+  <p class="source">Seed — <em>aestivation</em>: the arrangement of the petals in a flower bud, as to folding, overlapping.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const RAINBOW = [[220,50,50],[235,130,40],[240,200,40],[40,160,80],[40,100,210],[90,60,180],[140,60,160]];
+function fan(p, cx, cy, a0, a1, N, pal, maxR) {
+  p.noStroke();
+  for (let i = N; i >= 1; i--) {
+    const r = (i / N) * maxR;
+    const col = pal[Math.min(pal.length - 1, Math.floor((i - 1) / (N / pal.length)))];
+    p.fill(col[0], col[1], col[2]);
+    p.beginShape();
+    p.vertex(cx, cy);
+    const steps = 32;
+    for (let k = 0; k <= steps; k++) {
+      const a = a0 + (a1 - a0) * k/steps;
+      p.vertex(cx + Math.cos(a)*r, cy + Math.sin(a)*r);
+    }
+    p.endShape(p.CLOSE);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const maxR = Math.hypot(W, H) * 0.72;
+    const N = 12;
+    fan(p, 0, 0, 0, p.PI/2, N, RAINBOW, maxR);
+    fan(p, W, 0, p.PI/2, p.PI, N, RAINBOW, maxR);
+    fan(p, W, H, p.PI, p.PI*1.5, N, RAINBOW, maxR);
+    fan(p, 0, H, -p.PI/2, 0, N, RAINBOW, maxR);
+  }},
+  { strategy: "Repetition is a form of change", draw: (p) => {
+    const W=p.width, H=p.height;
+    const maxR = Math.min(W, H) * 0.7;
+    const N = 8;
+    fan(p, 0, 0, 0, p.PI/2, N, RAINBOW, maxR);
+    fan(p, W, 0, p.PI/2, p.PI, N, RAINBOW, maxR);
+    fan(p, W, H, p.PI, p.PI*1.5, N, RAINBOW, maxR);
+    fan(p, 0, H, -p.PI/2, 0, N, RAINBOW, maxR);
+    fan(p, W/2, 0, 0, p.PI, N, RAINBOW, maxR*0.7);
+    fan(p, W, H/2, p.PI/2, p.PI*1.5, N, RAINBOW, maxR*0.7);
+    fan(p, W/2, H, p.PI, p.PI*2, N, RAINBOW, maxR*0.7);
+    fan(p, 0, H/2, -p.PI/2, p.PI/2, N, RAINBOW, maxR*0.7);
+  }},
+  { strategy: "Mute and continue", draw: (p) => {
+    const W=p.width, H=p.height;
+    const maxR = Math.hypot(W, H) * 0.72;
+    const N = 12;
+    fan(p, 0, 0, 0, p.PI/2, N, RAINBOW, maxR);
+    fan(p, W, 0, p.PI/2, p.PI, N, RAINBOW, maxR);
+    // upper-right corner muted (no fan)
+    fan(p, 0, H, -p.PI/2, 0, N, RAINBOW, maxR);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

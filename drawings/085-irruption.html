@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 085</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#085</h1>
+  <p>The page filled first with forty vertical stripes, the colours cycling red, orange, yellow, green, blue, indigo, violet from left to right. Afterwards, from the upper-left corner, eight concentric quarter-arcs painted over the stripes in reverse rainbow order, each arc's radius a fixed step greater than the one inside.</p>
+  <p class="source">Seed — <em>irruption</em>: a bursting in; a sudden, violent rushing into a place.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const RAINBOW = [[220,50,50],[235,130,40],[240,200,40],[40,160,80],[40,100,210],[90,60,180],[140,60,160]];
+function stripes(p, x0, y0, w, h, N, pal) {
+  p.noStroke();
+  const bw = w / N;
+  for (let i = 0; i < N; i++) {
+    const c = pal[i % pal.length];
+    p.fill(c[0], c[1], c[2]);
+    p.rect(x0 + i*bw, y0, bw + 1, h);
+  }
+}
+function concentricFan(p, cx, cy, a0, a1, N, pal, rStep, reverse) {
+  p.noStroke();
+  for (let i = N; i >= 1; i--) {
+    const r = i * rStep;
+    const col = reverse ? pal[(N - i) % pal.length] : pal[i % pal.length];
+    p.fill(col[0], col[1], col[2]);
+    p.beginShape();
+    p.vertex(cx, cy);
+    const steps = 32;
+    for (let k = 0; k <= steps; k++) {
+      const a = a0 + (a1 - a0) * k/steps;
+      p.vertex(cx + Math.cos(a)*r, cy + Math.sin(a)*r);
+    }
+    p.endShape(p.CLOSE);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    stripes(p, 0, 0, W, H, 40, RAINBOW);
+    concentricFan(p, 0, 0, 0, p.PI/2, 8, RAINBOW, Math.min(W,H) * 0.52 / 8, true);
+  }},
+  { strategy: "Remove specifics and convert to ambiguities", draw: (p) => {
+    const W=p.width, H=p.height;
+    stripes(p, 0, 0, W, H, 40, RAINBOW);
+    concentricFan(p, 0, 0, 0, p.PI/2, 6, RAINBOW, Math.min(W,H)*0.34/6, true);
+    concentricFan(p, W, H, p.PI, p.PI*1.5, 6, RAINBOW, Math.min(W,H)*0.34/6, true);
+    concentricFan(p, W, 0, p.PI/2, p.PI, 6, RAINBOW, Math.min(W,H)*0.34/6, true);
+  }},
+  { strategy: "Honor thy error as a hidden intention", draw: (p) => {
+    const W=p.width, H=p.height;
+    // stripes that bend around the burst
+    const burstX = 0, burstY = 0, burstR = Math.min(W, H) * 0.55;
+    p.noStroke();
+    const N = 40;
+    for (let i = 0; i < N; i++) {
+      const c = RAINBOW[i % RAINBOW.length];
+      p.fill(c[0], c[1], c[2]);
+      p.beginShape();
+      const x0 = (i / N) * W;
+      const x1 = ((i+1) / N) * W;
+      for (let y = 0; y <= H; y += 6) {
+        const pull = Math.max(0, 1 - Math.hypot(x0 - burstX, y - burstY) / burstR);
+        p.vertex(x0 + pull * 40, y);
+      }
+      for (let y = H; y >= 0; y -= 6) {
+        const pull = Math.max(0, 1 - Math.hypot(x1 - burstX, y - burstY) / burstR);
+        p.vertex(x1 + pull * 40, y);
+      }
+      p.endShape(p.CLOSE);
+    }
+    concentricFan(p, burstX, burstY, 0, p.PI/2, 8, RAINBOW, burstR / 8, true);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>

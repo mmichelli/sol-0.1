@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wall Drawing 084</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script>if (window.self !== window.top || location.search.includes('embed')) document.documentElement.classList.add('embedded');</script>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div class="card">
+  <h1>#084</h1>
+  <p>The page divided into three equal vertical parts. In the left part, seven horizontal bands in rainbow order red to violet, top to bottom. In the middle part, seven concentric half-arcs springing from the centre of the bottom edge, in the same rainbow order innermost to outermost. In the right part, seven wavy vertical lines in rainbow order, left to right.</p>
+  <p class="source">Seed — <em>tripartite</em>: divided into three parts.</p>
+  <p class="strategy" id="strategy"></p>
+</div>
+<button onclick="location.reload()">Re-render</button>
+<div class="holder" id="h"></div>
+<script>
+const RAINBOW = [[220,50,50],[235,130,40],[240,200,40],[40,160,80],[40,100,210],[90,60,180],[140,60,160]];
+function horizontalBands(p, x0, y0, w, h, pal) {
+  p.noStroke();
+  const N = pal.length;
+  const bh = h / N;
+  for (let i = 0; i < N; i++) {
+    const c = pal[i];
+    p.fill(c[0], c[1], c[2]);
+    p.rect(x0, y0 + i*bh, w, bh + 1);
+  }
+}
+function halfArcs(p, cx, cy, x0, y0, w, h, pal) {
+  p.push();
+  p.noStroke();
+  p.beginShape();
+  p.vertex(x0, y0); p.vertex(x0+w, y0); p.vertex(x0+w, y0+h); p.vertex(x0, y0+h);
+  p.endShape(p.CLOSE);
+  p.drawingContext.save();
+  p.drawingContext.beginPath();
+  p.drawingContext.rect(x0, y0, w, h);
+  p.drawingContext.clip();
+  const N = pal.length;
+  const R = Math.max(w, h) * 1.05;
+  for (let i = N - 1; i >= 0; i--) {
+    const r = (i + 1) / N * R;
+    const c = pal[i];
+    p.fill(c[0], c[1], c[2]);
+    p.ellipse(cx, cy, r*2, r*2);
+  }
+  p.drawingContext.restore();
+  p.pop();
+}
+function wavyVerticals(p, x0, y0, w, h, pal) {
+  p.noStroke();
+  const N = pal.length;
+  const bw = w / N;
+  for (let i = 0; i < N; i++) {
+    const c = pal[i];
+    p.fill(c[0], c[1], c[2]);
+    p.beginShape();
+    for (let y = y0; y <= y0 + h; y += 4) {
+      const phase = i * 0.7;
+      const x = x0 + i * bw + Math.sin(y * 0.02 + phase) * 6;
+      p.vertex(x, y);
+    }
+    for (let y = y0 + h; y >= y0; y -= 4) {
+      const phase = i * 0.7;
+      const x = x0 + (i+1) * bw + Math.sin(y * 0.02 + phase) * 6;
+      p.vertex(x, y);
+    }
+    p.endShape(p.CLOSE);
+  }
+}
+const solutions = [
+  { strategy: null, draw: (p) => {
+    const W=p.width, H=p.height;
+    const pw = W / 3;
+    horizontalBands(p, 0, 0, pw, H, RAINBOW);
+    halfArcs(p, pw + pw/2, H, pw, 0, pw, H, RAINBOW);
+    wavyVerticals(p, 2*pw, 0, pw, H, RAINBOW);
+  }},
+  { strategy: "Turn it upside down", draw: (p) => {
+    const W=p.width, H=p.height;
+    const ph = H / 3;
+    // top part: vertical bands
+    p.noStroke();
+    const N = RAINBOW.length;
+    const bw = W / N;
+    for (let i = 0; i < N; i++) {
+      const c = RAINBOW[i];
+      p.fill(c[0], c[1], c[2]);
+      p.rect(i*bw, 0, bw+1, ph);
+    }
+    // middle part: concentric half-arcs from right edge
+    halfArcs(p, W, ph + ph/2, 0, ph, W, ph, RAINBOW);
+    // bottom part: wavy horizontal lines
+    for (let i = 0; i < N; i++) {
+      const c = RAINBOW[i];
+      p.fill(c[0], c[1], c[2]);
+      p.beginShape();
+      const bh = ph / N;
+      for (let x = 0; x <= W; x += 4) {
+        const y = 2*ph + i*bh + Math.sin(x * 0.02 + i*0.7) * 6;
+        p.vertex(x, y);
+      }
+      for (let x = W; x >= 0; x -= 4) {
+        const y = 2*ph + (i+1)*bh + Math.sin(x * 0.02 + i*0.7) * 6;
+        p.vertex(x, y);
+      }
+      p.endShape(p.CLOSE);
+    }
+  }},
+  { strategy: "Use fewer notes", draw: (p) => {
+    const W=p.width, H=p.height;
+    const pw = W / 2;
+    horizontalBands(p, 0, 0, pw, H, RAINBOW);
+    wavyVerticals(p, pw, 0, pw, H, RAINBOW);
+  }},
+];
+</script>
+<script src="runner.js"></script>
+</body>
+</html>
