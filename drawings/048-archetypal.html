@@ -24,7 +24,7 @@ function compose(p, offset) {
   const W = p.width, H = p.height;
   const cx = W/2, cy = H/2, R = 200;
   const offs = offset || [[0,0],[0,0],[0,0]];
-  const mkMask = (fn) => { const g = p.createGraphics(W, H); g.noStroke(); g.fill(255); fn(g); return g; };
+  const mkMask = (fn) => { const g = p.createGraphics(W, H); g.pixelDensity(1); g.noStroke(); g.fill(255); fn(g); return g; };
   const circ = mkMask(g => g.circle(cx + offs[0][0], cy + offs[0][1], R*2));
   const sq   = mkMask(g => { g.rectMode(p.CENTER); g.rect(cx + offs[1][0], cy + offs[1][1], R*1.7, R*1.7); });
   const tri  = mkMask(g => {
@@ -35,6 +35,7 @@ function compose(p, offset) {
   // Inspect each pixel of the three masks and paint
   circ.loadPixels(); sq.loadPixels(); tri.loadPixels();
   const out = p.createGraphics(W, H);
+  out.pixelDensity(1);
   out.loadPixels();
   const idx = (x, y) => (y*W + x) * 4;
   const isOn = (buf, x, y) => buf.pixels[idx(x,y)+3] > 100;
