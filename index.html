@@ -148,6 +148,11 @@ const drawings = [
   { num: '100', file: 'drawings/100-muckworm.html',             instruction: 'Sixty short curved strokes scattered across the page, each stroke curling upon itself like a small grub; each stroke in black, each with a single thicker dot at one end \u2014 the grub\u2019s head.' },
 ];
 
+for (let i = drawings.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [drawings[i], drawings[j]] = [drawings[j], drawings[i]];
+}
+
 const grid = document.getElementById('grid');
 for (const d of drawings) {
   const a = document.createElement('a');
